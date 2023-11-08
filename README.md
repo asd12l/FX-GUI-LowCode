@@ -1,4 +1,4 @@
-# 数据孪生低代码平台
+# 数字孪生低代码平台
 编辑页面
 ![image](https://github.com/skyinfor/FX-GUI-LowCode/assets/62418900/e6803280-74ba-4b63-9cd6-05b95ad20ef0)
 16：9驾驶舱
