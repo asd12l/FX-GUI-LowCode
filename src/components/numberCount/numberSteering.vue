@@ -3,8 +3,8 @@
  * @version: V1.0
  * @Author: 卜倩倩
  * @Date: 2023-08-21 10:21:09
- * @LastEditors: ydl
- * @LastEditTime: 2023-10-19 10:18:22
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-14 17:19:48
 -->
 <template>
   <div
@@ -22,7 +22,10 @@
       arrow="hover"
       :interval="config.box.interval"
     >
-      <el-carousel-item v-for="(item, index) in newArr" :key="index">
+      <el-carousel-item
+        v-for="(item, index) in newArr"
+        :key="index"
+      >
         <div
           class="block"
           v-for="(el, ind) in item"
@@ -45,13 +48,20 @@
           <div
             class="background"
             :style="{
+            height: config.box.height - config.echart.height + 'px'
+          }"
+          >
+            <div
+              class="background-pic"
+              :style="{
               'background-image': 'url(' + config.pic.url + ')',
               width: config.pic.width + 'px',
               height: config.pic.height + 'px',
+              left: config.pic.xPos + 'px',
+              top: config.pic.yPos + 'px'
             }"
-          >
-            <div
-              :style="{
+            ></div>
+            <div :style="{
                 display: config.number.display,
                 fontFamily: config.number.fontFamily,
                 fontStyle: config.number.fontStyle, //是否倾斜
@@ -62,12 +72,10 @@
                 letterSpacing: config.number.letterSpacing + 'px',
                 left: config.number.xPos + 'px',
                 top: config.number.yPos + 'px',
-              }"
-            >
+              }">
               {{ el.value }}/{{ el.total }}
             </div>
-            <div
-              :style="{
+            <div :style="{
                 display: config.title.display,
                 fontFamily: config.title.fontFamily,
                 fontStyle: config.title.fontStyle, //是否倾斜
@@ -78,12 +86,10 @@
                 letterSpacing: config.title.letterSpacing + 'px',
                 left: config.title.xPos + 'px',
                 top: config.title.yPos + 'px',
-              }"
-            >
+              }">
               {{ el.name }}
             </div>
-            <div
-              :style="{
+            <div :style="{
                 display: config.unit.display,
                 fontFamily: config.unit.fontFamily,
                 fontStyle: config.unit.fontStyle, //是否倾斜
@@ -94,9 +100,8 @@
                 letterSpacing: config.unit.letterSpacing + 'px',
                 left: config.unit.xPos + 'px',
                 top: config.unit.yPos + 'px',
-              }"
-            >
-              {{ (el.value / el.total) * 100 }}%
+              }">
+              {{ !el.total ? 0: ((el.value / el.total) * 100).toFixed(2) + '%' }}
             </div>
           </div>
         </div>
@@ -106,19 +111,53 @@
 </template>
 
 <script>
-import resize from "@/mixins/resize";
-import echarts from "echarts";
+import resize from '@/mixins/resize';
+import echarts from 'echarts';
+import { guid } from '@/utils/index';
 export default {
   data() {
     return {
       list: [],
-      newArr: [],
+      newArr: []
     };
   },
   props: {
     config: {
-      type: Object,
+      type: Object
+    }
+  },
+  watch: {
+    // config: {
+    //   handler() {
+    //     this.getArr(this.list, this.config.box.arrangeNum);
+    //   },
+    //   deep: true,
+    //   immediate: true,
+    // },
+    'config.box.arrangeNum'(nval, oval) {
+      this.setList();
+      // console.log(nval, oval);
+      // this.getArr(this.list, this.config.box.arrangeNum);
     },
+    'config.data': {
+      handler() {
+        this.setEchartsStyle();
+        this.setList();
+      },
+      deep: true
+    },
+    'config.echart': {
+      handler() {
+        this.changeEchart();
+      },
+      deep: true
+    },
+    'config.echartStyle': {
+      handler() {
+        this.changeEchart();
+      },
+      deep: true
+    }
   },
   computed: {},
   mounted() {
@@ -128,20 +167,20 @@ export default {
   mixins: [resize],
   methods: {
     initEchart(i, index) {
-      // console.log("重新渲染");
       let d = this.config.data[index];
-      // console.log('initEchart===============', this.$refs['chart' + i]);
-      var myChart = echarts.init(document.getElementById("steeringChart" + i));
+      var myChart = echarts.init(document.getElementById('steeringChart' + i));
       var colorList = [
         this.config.echartStyle[index].backgroundFront,
         this.config.echartStyle[index].backgroundBack,
-        this.config.echartStyle[index].defaultBg,
+        this.config.echartStyle[index].defaultBg
       ];
-      let per = (d.value / d.total) * 100;
+      let per = ((d.value / d.total) * 100).toFixed(2);
       const option = this.getOption(per, colorList);
       myChart.setOption(option);
+      myChart.resize();
     },
     getOption(rate, colorList) {
+      console.log(rate, colorList, 'getOption=========================');
       var value = rate;
       const option = {
         title: [],
@@ -149,30 +188,30 @@ export default {
           show: false,
           // 后面的180表示圆环的跨越的角度， 如max设置为100*360/270,startAngle设置为-135
           max: (100 * 360) / 180,
-          type: "value",
+          type: 'value',
           startAngle: 180,
           splitLine: {
-            show: false,
-          },
+            show: false
+          }
         },
         // 修改环形的宽度
         barMaxWidth: this.config.echart.barWidth,
         radiusAxis: {
           show: false,
-          type: "category",
+          type: 'category'
         },
         polar: {
           // 设置环形的位置
           center: [
-            this.config.echart.xPos + "%",
-            this.config.echart.yPos + "%",
+            this.config.echart.xPos + '%',
+            this.config.echart.yPos + '%'
           ],
           // 设置环形大小
-          radius: this.config.echart.size + "%",
+          radius: this.config.echart.size + '%'
         },
         series: [
           {
-            type: "bar",
+            type: 'bar',
             data: [
               {
                 value: value,
@@ -180,102 +219,102 @@ export default {
                   color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
                     {
                       offset: 0,
-                      color: colorList[1],
+                      color: colorList[1]
                     },
                     {
                       offset: 1,
-                      color: colorList[0],
-                    },
-                  ]),
-                },
-              },
+                      color: colorList[0]
+                    }
+                  ])
+                }
+              }
             ],
-            barGap: "-100%",
-            coordinateSystem: "polar",
-            z: 3,
+            barGap: '-100%',
+            coordinateSystem: 'polar',
+            z: 3
           },
           {
-            type: "bar",
+            type: 'bar',
             data: [
               {
                 value: 100,
                 itemStyle: {
-                  color: colorList[2],
+                  color: colorList[2]
                   // opacity: 0.3,
-                },
-              },
+                }
+              }
             ],
-            barGap: "-100%",
-            coordinateSystem: "polar",
-            z: 1,
+            barGap: '-100%',
+            coordinateSystem: 'polar',
+            z: 1
           },
           {
-            name: "指针",
-            type: "gauge",
+            name: '指针',
+            type: 'gauge',
             center: [
-              this.config.echart.xPos + "%",
-              this.config.echart.yPos + "%",
+              this.config.echart.xPos + '%',
+              this.config.echart.yPos + '%'
             ],
             startAngle: 180,
             endAngle: 0,
-            radius: "80%", // 仪表大小
+            radius: '80%', // 仪表大小
             // min: 0,
             // max: 100,
             axisLine: {
-              show: false,
+              show: false
               // lineStyle: {
               //     width: 10,
               // },
             },
             axisTick: {
-              show: false,
+              show: false
             },
             splitLine: {
-              show: false,
+              show: false
             },
             axisLabel: {
-              show: false,
+              show: false
             },
             pointer: {
               show: true,
-              length: "85%",
-              width: 3,
+              length: '85%',
+              width: 3
               // offsetCenter: ["-120%", "10%"],
             },
             title: {
-              show: false,
+              show: false
             },
             detail: {
               valueAnimation: true,
               show: false,
-              offsetCenter: [0, "100%"],
+              offsetCenter: [0, '100%'],
               textStyle: {
                 fontSize: 20,
-                color: "#fff",
+                color: '#fff'
               },
               // formatter: ["{value}"].join("\n"),
-              formatter: "{value}%",
+              formatter: '{value}%',
               rich: {
                 name: {
                   fontSize: 20,
                   // lineHeight: 10,
-                  color: "#ddd",
-                  padding: [0, 0, 0, 0],
-                },
-              },
+                  color: '#ddd',
+                  padding: [0, 0, 0, 0]
+                }
+              }
             },
             itemStyle: {
               normal: {
-                color: "#FFFFFF",
-              },
+                color: '#FFFFFF'
+              }
             },
             data: [
               {
-                value: value,
-              },
-            ],
-          },
-        ],
+                value: value
+              }
+            ]
+          }
+        ]
       };
       return option;
     },
@@ -286,23 +325,32 @@ export default {
         list.push(newArr.splice(i, num));
       }
       this.newArr = list;
-      console.log(this.newArr, "===newArr");
     },
     setEchartsStyle() {
-      this.config.echartStyle = [];
-      this.config.data.forEach((item) => {
-        this.config.echartStyle.push({
-          backgroundBack: "#2EE5E3",
-          backgroundFront: "#385BF7",
-          defaultBg: "rgba(72, 148, 212, 0.3)",
+      if (!this.config.echartStyle.length) {
+        this.config.echartStyle = [];
+        this.config.data.forEach((item) => {
+          this.config.echartStyle.push({
+            backgroundBack: '#2EE5E3',
+            backgroundFront: '#385BF7',
+            defaultBg: 'rgba(72, 148, 212, 0.3)'
+          });
         });
-      });
+      } else {
+        this.config.data.forEach((item) => {
+          this.config.echartStyle.push({
+            backgroundBack: '#2EE5E3',
+            backgroundFront: '#385BF7',
+            defaultBg: 'rgba(72, 148, 212, 0.3)'
+          });
+        });
+      }
     },
     setList() {
       this.list = this.config.data.map((item, index) => {
         return {
           ...item,
-          id: Date.parse(new Date()) + index,
+          id: guid()
         };
       });
       this.getArr(this.list, this.config.box.arrangeNum);
@@ -320,40 +368,8 @@ export default {
           this.initEchart(this.list[i].id, i);
         }
       });
-    },
-  },
-  watch: {
-    // config: {
-    //   handler() {
-    //     this.getArr(this.list, this.config.box.arrangeNum);
-    //   },
-    //   deep: true,
-    //   immediate: true,
-    // },
-    "config.box.arrangeNum"() {
-      this.setList();
-      // this.getArr(this.list, this.config.box.arrangeNum);
-    },
-    "config.data": {
-      handler() {
-        this.setEchartsStyle();
-        this.setList();
-      },
-      deep: true,
-    },
-    "config.echart": {
-      handler() {
-        this.changeEchart();
-      },
-      deep: true,
-    },
-    "config.echartStyle": {
-      handler() {
-        this.changeEchart();
-      },
-      deep: true,
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -401,10 +417,14 @@ export default {
     }
 
     .background {
-      background-size: 100% 100%;
-      background-position: center center;
-      background-repeat: no-repeat;
+      width: 100%;
       position: relative;
+
+      &-pic {
+        background-size: 100% 100%;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
 
       > div {
         position: absolute;

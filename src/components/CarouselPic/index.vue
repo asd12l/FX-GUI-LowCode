@@ -4,29 +4,29 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-07 16:46:23
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-09-12 11:00:15
+ * @LastEditTime: 2023-11-20 15:09:17
 -->
 <template>
   <div
     class="carousel-wrapper"
     v-show="isShowModuleFunc(config)"
-    :style="{
-    }"
+    :style="cssSass"
   >
     <el-carousel
       class="outside-carousel"
-      indicator-position="outside"
+      indicator-position="none"
       :autoplay="config.box.autoplay"
-      :interval="config.box.interval*1000"
+      :interval="config.box.interval * 1000"
       :direction="config.box.direction"
-      :style="{ cssVars}"
-      arrow="always"
+      :style="{ cssVars }"
+      :arrow="list.length && list.length > 1 ? 'hover' : 'never'"
     >
       <el-carousel-item
-        v-for="item,index in list"
+        v-for="(item, index) in list"
         :key="index"
         :style="{
-          flexDirection: config.box.direction === 'horizontal' ? 'row':'column'
+          flexDirection:
+            config.box.direction === 'horizontal' ? 'row' : 'column',
         }"
       >
         <div
@@ -40,58 +40,77 @@
         >
           <el-carousel
             class="inner-carousel"
-            indicator-position="none"
+            :indicator-position="el.photo.length && el.photo.length > 1 ?'outside':'none'"
             :autoplay="false"
             direction="horizontal"
-            :arrow="el.photo.length && el.photo.length>1? 'hover': 'never'"
+            :arrow="el.photo.length && el.photo.length > 1 ? 'hover' : 'never'"
+            
             :style="{
               width: config.box.width + 'px',
-              height: config.box.height + 'px'
+              height: config.box.height + 'px',
             }"
           >
-            <el-carousel-item
-              v-for="e,index in el.photo"
-              :key="index"
-            >
+            <el-carousel-item v-for="(e, index) in el.photo" :key="index">
               <img
-                :src="e.includes('http') ? e: e.includes('base64')? e: IMG_URL + e"
+                :src="e"
                 :style="{
                   width: config.box.width + 'px',
-                  height: config.box.height + 'px'
+                  height: config.box.height + 'px',
                 }"
                 alt=""
-              >
+              />
             </el-carousel-item>
           </el-carousel>
-          <div
-            class="title"
-            :style="{
-            display: config.title.display,
-            fontFamily: config.title.fontFamily,
-            fontStyle: config.title.fontStyle, //是否倾斜
-            textAlign: config.title.textAlign,
-            color: config.title.color,
-            fontSize: config.title.fontSize+'px',
-            fontWeight: config.title.fontWeight,
-            letterSpacing: config.title.letterSpacing + 'px'
-          }"
-          >
-            {{el.name}}
-          </div>
-          <div
-            class="description"
-            :style="{
+          <div :style="txtStyle">
+            <div
+              class="title"
+              :style="{
+                display: config.title.display,
+                fontFamily: config.title.fontFamily,
+                fontStyle: config.title.fontStyle, //是否倾斜
+                textAlign: config.title.textAlign,
+                color: config.title.color,
+                fontSize: config.title.fontSize + 'px',
+                fontWeight: config.title.fontWeight,
+                letterSpacing: config.title.letterSpacing + 'px',
+              }"
+            >
+              {{ el.name }}
+            </div>
+            <div
+              v-if="config.time"
+              class="title"
+              :style="{
+                display: config.time.display,
+                fontFamily: config.time.fontFamily,
+                fontStyle: config.time.fontStyle, //是否倾斜
+                textAlign: config.time.textAlign,
+                color: config.time.color,
+                fontSize: config.time.fontSize + 'px',
+                fontWeight: config.time.fontWeight,
+                letterSpacing: config.time.letterSpacing + 'px',
+              }"
+            >
+              {{ config.time.content }}{{ el.time }}
+            </div>
+            <div
+              class="description"
+              :style="{
                 display: config.description.display,
                 fontFamily: config.description.fontFamily,
                 fontStyle: config.description.fontStyle, //是否倾斜
                 textAlign: config.description.textAlign,
                 color: config.description.color,
-                fontSize: config.description.fontSize+'px',
+                fontSize: config.description.fontSize + 'px',
                 fontWeight: config.description.fontWeight,
-                letterSpacing: config.description.letterSpacing + 'px'
+                letterSpacing: config.description.letterSpacing + 'px',
+                '-webkit-box-orient': 'vertical',
+                overflow: 'hidden',
+                '-webkit-line-clamp':  config.direction ?config.direction.txtNum:'1',
               }"
-          >
-            {{el.desc}}
+            >
+              {{ el.desc }}
+            </div>
           </div>
         </div>
       </el-carousel-item>
@@ -103,8 +122,8 @@
 export default {
   props: {
     config: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   watch: {
     // handler: {
@@ -115,32 +134,45 @@ export default {
         this.getArr(this.config.data, this.config.box.arrangeNum);
       },
       immediate: true,
-      deep: true
-    }
+      deep: true,
+    },
   },
   data() {
     return {
       list: [],
-      IMG_URL:
-        window.location.host.includes('localhost') ||
-        window.location.host.includes('192.168') ||
-        window.location.host.includes('127.0.0.1')
-          ? 'https://www.sjxks.com'
-          : window.location.protocol + '//' + window.location.host
+      IMG_URL: window.location.origin,
     };
   },
   computed: {
+    txtStyle() {
+      let d =this.config.direction;
+      let width = d ?d.width + "px" : '100%',
+        height =   d ? d.height + "px":'auto';
+          return {
+            width,
+            height,
+          };
+    },
+    cssSass() {
+      let direction =
+        this.config.direction && this.config.direction.direction
+          ? this.config.direction.direction
+          : "column";
+      return {
+        "--direction": direction,
+      };
+    },
     cssVars() {
       return {
-        '--ul-margin-top': this.config.box.height / 2 + 'px',
-        '--ul-margin-right':
-          (this.config.height - this.config.box.height) / 2 + 'px',
-        '--ul-margin-bottom': 100 + 'px',
-        '--button-margin-right':
-          (this.config.width - this.config.box.width) / 2 - 36 + 'px',
-        '--button-margin-top': this.config.box.height / 2 + 'px'
+        "--ul-margin-top": this.config.box.height / 2 + "px",
+        "--ul-margin-right":
+          (this.config.height - this.config.box.height) / 2 + "px",
+        "--ul-margin-bottom": 100 + "px",
+        "--button-margin-right":
+          (this.config.width - this.config.box.width) / 2 - 36 + "px",
+        "--button-margin-top": this.config.box.height / 2 + "px",
       };
-    }
+    },
   },
   mounted() {
     this.getArr(this.config.data, this.config.box.arrangeNum);
@@ -153,8 +185,8 @@ export default {
         list.push(newArr.splice(i, num));
       }
       this.list = list;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -178,10 +210,12 @@ export default {
 
       > div {
         display: flex;
-        flex-direction: column;
+        // flex-direction: column;
+        flex-direction: var(--direction);
         align-items: center;
         padding: 10px;
         border-radius: 4px;
+        justify-content: space-around;
       }
     }
   }
@@ -206,7 +240,11 @@ export default {
       margin: 0 auto;
     }
   }
-
+  .el-carousel__button{
+    width:8px;
+    height: 8px;
+    border-radius: 50%;
+  }
   .el-carousel__indicators--horizontal {
     position: absolute;
     left: 50%;
@@ -225,13 +263,18 @@ export default {
     }
   }
 
-  .description,
+ 
   .title {
     width: 100%;
     height: auto;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-top: 8px;
+  }
+  .description{
+    width: 100%;
+    height: auto;
     margin-top: 8px;
   }
 }

@@ -69,7 +69,7 @@
                 :style="{
                 background: `linear-gradient(to right, ${config.percentBar.backgroundFront}, ${config.percentBar.backgroundBehind})`,
                 borderRadius: config.percentBar.borderRadius + 'px',
-                width: el.per + '%'
+                width: (total ? (el.value / total * 100).toFixed(1)  : 0) + '%'
               }"
               >
                 <div
@@ -89,16 +89,6 @@
                     height: config.percentBar.iconHeight/2 + 'px'
                   }"></span>
                 </div>
-                <!-- <img
-                  class="icon"
-                  :src="config.percentBar.icon"
-                  :style="{
-                  width: config.percentBar.iconWidth + 'px',
-                  height: config.percentBar.iconHeight + 'px',
-                  right: -config.percentBar.iconWidth/4 + 'px',
-                  top: config.percentBar.top + 'px'
-                }"
-                > -->
               </div>
             </div>
             <span :style="{
@@ -112,7 +102,7 @@
              fontWeight: config.percent.fontWeight,
              letterSpacing:config.percent.letterSpacing + 'px',
              marginRight:config.percent.marginRight + 'px'
-            }">{{el.per}}%</span>
+            }">{{total ? (el.value / total * 100).toFixed(1) : 0}}%</span>
             <span :style="{
             display: config.num.display,
             fontFamily: config.num.fontFamily,
@@ -216,7 +206,7 @@
                 fontWeight: config.percent.fontWeight,
                 letterSpacing:config.percent.letterSpacing + 'px',
                 marginRight:config.percent.marginRight + 'px'
-              }">{{el.per}}%</span>
+              }">{{total ? (el.value / total * 100).toFixed(1)  : 0}}%</span>
             </div>
             <div
               class="bar"
@@ -234,7 +224,7 @@
                 :style="{
                 background: `linear-gradient(to right, ${config.percentBar.backgroundFront}, ${config.percentBar.backgroundBehind})`,
                 borderRadius: config.percentBar.borderRadius + 'px',
-                width: el.per + '%'
+                width: (total ? (el.value / total * 100).toFixed(1)  : 0) + '%'
               }"
               >
                 <img
@@ -250,7 +240,6 @@
               </div>
             </div>
           </div>
-
         </div>
       </template>
     </vue-seamless-scroll>
@@ -272,14 +261,15 @@ export default {
   data() {
     return {
       list: [],
-      originArr: []
+      originArr: [],
+      total: 0
     };
   },
   computed: {
     defaultOption() {
       return {
         step: 0.3, // 数值越大速度滚动越快
-        limitMoveNum: 1, // 开始无缝滚动的数据量 this.dataList.length
+        limitMoveNum: Math.ceil(this.config.height / this.config.line.height), // 开始无缝滚动的数据量 this.dataList.length
         hoverStop: false, // 是否开启鼠标悬停stop
         direction: 1, // 0向下 1向上 2向左 3向右
         openWatch: true, // 开启数据实时监控刷新dom
@@ -291,6 +281,11 @@ export default {
   },
   methods: {
     getArr(arr, num) {
+      this.total = 0;
+      arr.forEach((item) => {
+        this.total += Number(item.value);
+      });
+      console.log(this.total, 'this.total================');
       let newArr = JSON.parse(JSON.stringify(arr));
       let list = [];
       for (let i = 0; i < newArr.length; ) {
@@ -316,22 +311,23 @@ export default {
         if (nl.data.length && nl.box.arrangeNum) {
           this.getArr(nl.data, Number(nl.box.arrangeNum)); //数组根据参数分割成n列
           this.originArr = JSON.parse(JSON.stringify(this.list)); //记录原始分割后的数据
+          console.log(this.list, '数组=============================');
         }
 
         //当前数组长度没有组件宽度高时,自动补齐高度
-        let Length = Math.ceil(
-          this.config.height / nl.line.height / this.list.length
-        );
-        if (
-          nl.line.height &&
-          this.list.length &&
-          this.config.height &&
-          nl.line.height * this.list.length < this.config.height
-        ) {
-          for (let i = 0; i < Length - 1; i++) {
-            this.list = this.list.concat(this.originArr);
-          }
-        }
+        // let Length = Math.ceil(
+        //   this.config.height / nl.line.height / this.list.length
+        // );
+        // if (
+        //   nl.line.height &&
+        //   this.list.length &&
+        //   this.config.height &&
+        //   nl.line.height * this.list.length < this.config.height
+        // ) {
+        //   for (let i = 0; i < Length - 1; i++) {
+        //     this.list = this.list.concat(this.originArr);
+        //   }
+        // }
 
         if (nl.box.isScroll && this.$refs.scroll) {
           this.$refs.scroll._startMove();

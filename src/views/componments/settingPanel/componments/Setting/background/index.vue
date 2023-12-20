@@ -10,36 +10,6 @@
         :config="config"
         @changeSize="(type, val) => $emit('changeSize', type, val)"
       />
-      <!-- <el-form-item label="组件宽度：">
-        <el-input
-          v-model="config.width"
-          size="mini"
-          placeholder="请输入组件宽度"
-          @change="(val) => $emit('changeSize', 'width', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="组件高度：">
-        <el-input
-          v-model="config.height"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'height', val)"
-          placeholder="请输入组件高度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="X距离：">
-        <el-input
-          v-model="config.left"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'left', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="Y距离：">
-        <el-input
-          v-model="config.top"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'top', val)"
-        ></el-input>
-      </el-form-item> -->
       <StylesFilter
         @changeOpenFilter="(val) => $emit('changeSize', 'openFilter', val)"
         :openFilter="config.openFilter"
@@ -73,7 +43,6 @@
 </template>
 
 <script>
-import imgSelect from "../imgSelect";
 import ImageSelector from "../componments/ImageSelector";
 import commonSetTitle from "../componments/commonSetTitle";
 import StylesFilter from "../common";
@@ -89,7 +58,7 @@ export default {
       type: Function,
     },
   },
-  components: { imgSelect, commonSetTitle, ImageSelector, StylesFilter },
+  components: { commonSetTitle, ImageSelector, StylesFilter },
   data() {
     return {
       aa: 10,

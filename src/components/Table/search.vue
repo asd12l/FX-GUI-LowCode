@@ -17,6 +17,7 @@
         :placeholder="config.selection.placeholderTxt"
         size="mini"
         :style="styleObj"
+        @keyup.enter.native="toSearch"
       >
         <el-button slot="append" @click="toSearch" icon="el-icon-search">
           搜索
@@ -36,6 +37,9 @@ export default {
     },
     callBack: {
       type: Function,
+      default: () => {
+        return () => {};
+      },
     },
   },
   data() {
@@ -45,6 +49,7 @@ export default {
   },
   methods: {
     toSearch() {
+      console.log("this.config.keyword::::::::", this.config.keyword)
       this.callBack && this.callBack(this.config.keyword);
     },
   },

@@ -114,7 +114,14 @@
             ></el-switch>
           </el-form-item>
           <div v-show="config.textTitle.show">
-            <commonTab :config="config" type1="textTitle"></commonTab>
+            <commonTab
+              :config="config"
+              type1="textTitle"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <el-form-item label="上边距：">
               <div class="flex align-center">
                 <el-input
@@ -135,7 +142,14 @@
             ></el-switch>
           </el-form-item>
           <div v-show="config.txtRowOne.show">
-            <commonTab :config="config" type1="txtRowOne"></commonTab>
+            <commonTab
+              :config="config"
+              type1="txtRowOne"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <el-form-item label="上边距：">
               <div class="flex align-center">
                 <el-input
@@ -160,6 +174,10 @@
               :config="config"
               type1="txtRowtwo"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
             <el-form-item label="字体：">
               <el-select
@@ -430,9 +448,8 @@ export default {
     },
   },
   watch: {
-  'config.txtRowImgs':{
-      handler(nVal, oVal) {
-      },
+    "config.txtRowImgs": {
+      handler(nVal, oVal) {},
       deep: true,
     },
   },

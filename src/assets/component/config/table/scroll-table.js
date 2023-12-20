@@ -3,8 +3,8 @@
  * @version:
  * @Author: ydl
  * @Date: 2023-08-02 09:19:37
- * @LastEditors: ydl
- * @LastEditTime: 2023-10-24 09:22:40
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-21 13:52:41
  */
 export default {
   name: "滚动表格",
@@ -13,7 +13,7 @@ export default {
   left: 0,
   top: 0,
   api:
-    "https://www.sjxks.com/v1/xiaokunshan/index/projectList?account_id=eb71dac7-a4dc-4cbb-9022-251c93acca1e",
+    "",
   sourceType: "api",
   requestType: "get",
   theader: {
@@ -43,6 +43,7 @@ export default {
     borderStyle: "solid",
     borderColor: "rgba(172, 246, 255, 0.05)",
     limitMoveNum: 6,
+    step: 0.3,
     marginTop: 2,
   },
   otherData: {
@@ -50,26 +51,33 @@ export default {
     tableKeyDataString: '["name","project_status","rowid","color"]',
     tableHead: [
       {
-        label: "项目进度",
+        label: "状态",
         value: "project_status",
         color: "#0db681",
         width: 100,
+        colorData: [],
       },
-      { label: "项目名称", value: "name", color: "#fff", width: 260 },
+      {
+        label: "数据",
+        value: "name",
+        color: "#fff",
+        width: 260,
+        colorData: [],
+      },
     ],
     isShowColors: false,
     background: "",
   },
   data: [
     {
-      name: "昆港公路2580号场地改造工程",
-      project_status: "在建",
+      name: "数据1",
+      project_status: "进行中",
       rowid: "e8167e21-454a-454d-a0a9-1fd29cf8ab5b",
       color: "#08C9C9",
     },
     {
-      name: "大港服务站和老年活动室场地局部改造工程",
-      project_status: "在建",
+      name: "数据2",
+      project_status: "进行中",
       rowid: "28f2a862-972f-43cb-ad59-5172ef7244b8",
       color: "#08C9C9",
     },

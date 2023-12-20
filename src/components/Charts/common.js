@@ -48,6 +48,44 @@ function getTitle(config) {
   return config.title;
 }
 
+function getCustomTitle(config) {
+  // text: '{a|' + value + '}\n{c|' + title + '}',
+  const titleInfor = JSON.parse(JSON.stringify(config.title));
+  console.log("configCopy::::::::::", config.data)
+  let value = 0;
+  let title = ''
+  if (titleInfor.type === "total") {
+    for (let index = 0; index < config.data.length; index++) {
+      value += config.data[index].value;
+    }
+    title = titleInfor.textStyle.titletText;
+  }
+  console.log("titleInfor.textStyle::::::", titleInfor.textStyle)
+  titleInfor.text = '{a|' + value + '}{b|' + titleInfor.textStyle.unitText + '}\n{c|' + title + '}';
+  titleInfor.textStyle = {
+    rich: {
+        a: {
+            fontSize:  titleInfor.textStyle.totalFontSize || 20,
+            color: titleInfor.textStyle.totalColor || '#ffffff',
+            fontWeight:'600',
+        },
+        b: {
+          fontSize: titleInfor.textStyle.unitFontSize || 14,
+          color: titleInfor.textStyle.unitcColor || '#ffffff',
+          fontWeight:'600',
+          padding: [0, 5]
+        },
+        c: {
+            fontSize: titleInfor.textStyle.titleFontSize || 20,
+            color: titleInfor.textStyle.titleColor || '#ffffff',
+            padding: [5, 0]
+        }
+    }
+  }
+  
+  return titleInfor;
+}
+
 function getLegend(config) {
   const { scroll, ...rest } = config.legend;
   return {
@@ -317,72 +355,110 @@ function getCustomLegend(config) {
       padding = "",
       width,
       height,
+      titleWidth = 80,
       itemGap,
       show,
-      textStyle: {
-        color,
-        fontSize
-      }
+      unit = '',
+      unitColor = '#99B3C8',
+      unitFontSize,
+      totalColor = "#ffffff",
+      totalFontSize = 14,
+      textStyle: { color, fontSize },
     } = {},
     legend,
   } = config;
-  console.log("legend::::::::::", width, height, legend);
+ 
   if (!show) {
     return [];
   }
+
   const legendArr = [];
+  let topItem = top;
+  let step = Math.floor(config.width / (Number(left) + (Number(width) + Number(titleWidth) + Number(itemGap))));
+  let lineNum = 0;
+  let itemLeft = Number(left);
   data.forEach((item, i) => {
-    console.log("top::::::::", top, (Number(height) + Number(itemGap)) * i, top + (Number(height) + Number(itemGap)) * (i))
+    
+    if (orient === "horizontal") {
+     
+      let itmStep = Math.ceil((i + 1) / step) - 1;
+      topItem = (itmStep * (height + 10)) + Number(top) + Number(itemGap);
+
+      if (lineNum === itmStep) {
+        itemLeft =  Number(left) + (Number(width) + Number(titleWidth) + 60 + Number(itemGap)) * ((i) - step * lineNum);
+      } else {
+        lineNum = itmStep;
+        itemLeft = Number(left);
+      }
+      
+      
+    }
+
+    if (orient === "vertical") {
+      topItem = Number(top) + (Number(height) + Number(itemGap)) * i
+    }
+    
     legendArr.push({
       // selectedMode: false,
-      type: "plain",
+      // type: "plain",
       orient,
       right: 10,
       itemGap: Number(itemGap),
       itemWidth: Number(width),
       itemHeight: Number(height),
-      left:
-        orient === "horizontal"
-          ? Number(left) + (Number(width) + Number(itemGap)) * (i)
-          : Number(left),
-      top:
-        orient === "vertical"
-          ? Number(top) + (Number(height) + Number(itemGap)) * (i)
-          : Number(top),
+      selectedMode: false,
+      left: itemLeft,
+      top: topItem,
       data: [
         {
-          name: item.name, 
+          name: item.name,
           icon: icon,
-          borderWidth: 2 ,
+          borderWidth: 2,
         },
       ],
       padding: padding.split(",").map((item) => Number(item)),
       backgroundColor,
-      // backgroundRadius: 5,
-      // backgroundColor: {
-      //   image: require("../../assets/image/6757.png"),
-      // },
-      formatter: (name) => {
-        // console.log(data[i].value);
-        // name = name.length > 6 ? name.substring(0, 6) + "..." : name;
-        return name;
+      formatter: (parms) => {
+        console.log(data[i].value);
+        const name = item.name.length > 6 ? item.name.substring(0, 6) + "..." : item.name;
+
+        return (
+          "{name|" +
+          name +
+          "}" +
+          "{value|" +
+          item.value +
+          "}" +
+          "{unit|" +
+          unit +
+          "}"
+        );
       },
       textStyle: {
-        color: color,
+        // color: color,
         fontSize: fontSize,
         fontFamily: "微软雅黑",
         rich: {
           name: {
-            padding: [4, 4],
+            padding: [0, 4],
             color: "#fff",
             align: "left",
             backgroundColor: "transparent",
+            width: Number(titleWidth)
           },
-          bfb: {
-            fontSize: 12,
-            padding: [4, -100, 0, 0],
+          value: {
+            padding: [0, 4, 0, 0],
             align: "right",
-            color: "#fff",
+            color: totalColor,
+            fontSize: totalFontSize,
+            backgroundColor: "transparent",
+            // fontWeight: "lighter"
+          },
+          unit: {
+            padding: [0, 4, 0, 0],
+            align: "right",
+            color: unitColor,
+            fontSize: unitFontSize,
             backgroundColor: "transparent",
           },
         },
@@ -393,18 +469,19 @@ function getCustomLegend(config) {
 }
 
 function getPieOption(config) {
-  const title = getTitle(config);
-  console.log("config::::::::::::::::", config);
+  let title;
   let legend;
   if (config.component === "customLegendPie") {
     legend = getCustomLegend(config);
+    title = getCustomTitle(config);
   } else {
     legend = getLegend(config);
+    title = getTitle(config);
   }
-  console.log("legend::::::::::::::", legend);
+ 
   const { series, data } = config;
   legend.data = data.map((item) => item.name);
-  console.log("config:::::::::::::::::", config);
+  
   let {
     name,
     type,

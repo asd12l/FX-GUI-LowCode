@@ -17,7 +17,14 @@
             <el-switch v-model="config.date.show"></el-switch>
           </el-form-item>
           <span v-if="config.date.show">
-            <commonTab :config="config" type1="date"></commonTab>
+            <commonTab
+              :config="config"
+              type1="date"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <el-form-item label="高度：">
               <el-input
                 v-model="config.date.height"
@@ -39,7 +46,14 @@
             <el-switch v-model="config.time.show"></el-switch>
           </el-form-item>
           <span v-if="config.time.show">
-            <commonTab :config="config" type1="time"></commonTab>
+            <commonTab
+              :config="config"
+              type1="time"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <el-form-item label="高度：">
               <el-input
                 v-model="config.time.height"

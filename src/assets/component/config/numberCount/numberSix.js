@@ -3,8 +3,8 @@
  * @version:
  * @Author: ydl
  * @Date: 2023-10-13 16:21:50
- * @LastEditors: ydl
- * @LastEditTime: 2023-10-18 15:13:51
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-24 13:28:32
  */
 export default {
   width: 420,
@@ -21,6 +21,7 @@ export default {
       unit: "个",
       icon: require("@/assets/image/common/icon1.png"),
       rowid: 1,
+      tags:['果园']
     },
     {
       name: "球机数量",
@@ -28,6 +29,7 @@ export default {
       unit: "个",
       icon: require("@/assets/image/common/icon1.png"),
       rowid: 2,
+      tags:'果园'
     },
     {
       name: "枪机数量",
@@ -35,6 +37,7 @@ export default {
       unit: "个",
       icon: require("@/assets/image/common/icon1.png"),
       rowid: 3,
+      tags:['果园']
     },
     {
       name: "掉线设备",
@@ -42,6 +45,7 @@ export default {
       unit: "个",
       icon: require("@/assets/image/common/icon1.png"),
       rowid: 4,
+      tags:['果园','粮田']
     },
   ],
   contain: {
@@ -52,7 +56,8 @@ export default {
     arrangeNum: 2,
     background: require("@/assets/component/img/numBg1.png"),
     isShowActiveBg: false,
-    activeBg: "",
+    activeBg: require("@/assets/component/img/numBg1.png"),
+    selectType: "radio",
   },
   rowOne: {
     show: true,
@@ -119,6 +124,7 @@ export default {
     textAlign: "left",
     fontFamily: "Microsoft YaHei",
     color: "#7EDEFF",
+    width: "auto",
   },
   titleTxt2: {
     isShowColors: false,
@@ -134,10 +140,30 @@ export default {
     fontFamily: "Microsoft YaHei",
     color: "#4498B4",
     marginLeft: 8,
+    width: "auto",
   },
   titleTxt3: {
     isShowColors: false,
     background: "linear-gradient(180deg, #ffffff 17%, #7eb9ff 81%)",
     backgroundColors: ["#ffffff", "17", "#7eb9ff", "81"],
+  },
+  tagsStyle: {
+    show: false,
+    fontSize: 14,
+    fontWeight: "normal",
+    fontStyle: "normal", //'italic' 倾斜
+    textAlign: "left",
+    marginTop:12,
+    fontFamily: "Microsoft YaHei",
+    color: "#EBCD3D",
+    borderRadius:2,
+    backgroundColor: "rgba(235, 205, 61, 0.102)",
+    colorArr:[
+      {
+        txt:'粮田',
+        color:'rgba(83, 195, 255, 1)',
+        background:'rgba(83, 195, 255, 0.102)'
+      }
+    ]
   },
 };

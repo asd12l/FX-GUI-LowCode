@@ -33,15 +33,7 @@
           {{ v.per? v.per:'' }}</div>
       <div
         class="img"
-        :style="{
-              background: config.backgroundImg2.show
-               ? imgStyle2.bgImg.background
-              : '',
-              width:  imgStyle2.bgImg.width+'px',
-               height:  imgStyle2.bgImg.height+'px',
-               left: imgStyle2.bgImg.left+'px',
-               top: imgStyle2.bgImg.top+'px',
-          }"
+        :style="imgStyle2"
       />
       <div    class="txt"
       :style="textStyle2" v-show="config.title2.show">
@@ -65,10 +57,6 @@ export default {
     changeSize: {
       type: Function
     }
-    // isShow: {
-    //   type: Boolean,
-    //   default: true
-    // }
   },
   data() {
     return {
@@ -206,16 +194,19 @@ export default {
       arr.push(txtFamily);
       return arr;
     },
-    imgStyle2() {
-      let obj = { ...this.config.backgroundImg2 };
-      if (obj.bgImg.background.includes("no-repeat")) {
-      } else {
-        obj.bgImg.background = `url(${
-          obj.bgImg.background
-        }) 100% 100%/100% 100% no-repeat `;
-      }
-      return obj;
-    },
+    imgStyle2(){
+      let d = { ...this.config.backgroundImg2 };
+        let obj = {
+            'background': d.show? `url(${d.bgImg.background}) 100% 100%/100% 100% no-repeat `
+            : '',
+              'width': d.bgImg.width+'px',
+              'height': d.bgImg.height+'px',
+              'left':d.bgImg.left+'px',
+              'top': d.bgImg.top+'px',
+
+        }
+        return obj;
+    }
   },
   created() {
   
@@ -240,7 +231,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .num {
-  padding: 15px;
+  // padding: 15px;
   color: #fff;
   width: 100%;
   height: 100%;

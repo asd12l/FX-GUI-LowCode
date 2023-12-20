@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-08 14:54:17
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-09-12 10:10:20
+ * @LastEditTime: 2023-11-24 13:12:14
 -->
 <template>
   <el-scrollbar class="right-setting scrollbar-wrapper">
@@ -105,13 +105,13 @@
         ></el-switch>
       </el-form-item> -->
       <el-form-item label="排列数量：">
-        <span>一{{config.box.direction === 'row'? '行':'列'}}</span>
+        <!-- <span>一{{config.box.direction === 'row'? '行':'列'}}</span> -->
         <el-input-number
           v-model="config.box.arrangeNum"
           :min="1"
           label=""
         ></el-input-number>
-        <span>个</span>
+        <span>{{config.box.direction === 'row'? '行':'列'}}</span>
       </el-form-item>
       <el-form-item label="卡片背景颜色：">
         <el-color-picker
@@ -331,29 +331,19 @@
               style="margin-right: 10px"
             ></el-switch>
           </el-form-item>
-          <el-form-item
+          <!-- <el-form-item label="文本内容：">
+            <el-input
+              v-model="config.second.text"
+              size="mini"
+            ></el-input>
+          </el-form-item> -->
+          <ImageSelector
             label="图片："
-            v-if="config.second.firstPic"
-          >
-            <el-select
-              popper-class="selectedPic-select"
-              v-model="config.first.selectedPic"
-              size="small"
-            >
-              <el-option
-                v-for="(item,index) in picLibrary"
-                :key="item.rowid"
-                :value="item.rowid"
-              >
-                <img
-                  :class="item.rowid === config.first.selectedPic ? 'active':''"
-                  :src="item.url"
-                  alt=""
-                  @click="selectPic(item)"
-                >
-              </el-option>
-            </el-select>
-          </el-form-item>
+            @changeSrc="(val) => $emit('changeValue', 'second', 'selectedPic', val)"
+            worksheetId="pykpzj"
+            imageField="selectedPic"
+            :src="config.second.selectedPic"
+          ></ImageSelector>
         </el-collapse-item>
       </el-collapse>
 
@@ -485,40 +475,154 @@
           </el-form-item>
         </el-collapse-item>
       </el-collapse>
+      <el-collapse>
+      <el-collapse-item title="文本(标签)" name="tag" v-if="config.tagsStyle&&config.tagsStyle.colorArr">
+          <el-form-item label="显示：">
+            <el-switch
+              style="margin-top: 7px;"
+              v-model="config.tagsStyle.show"
+            ></el-switch>
+          </el-form-item>
+          <div v-show="config.tagsStyle.show">
+            <div class="fontStyle">
+            <div class="block">
+              <span
+                class="bg"
+                :class="config.tagsStyle.fontWeight=== 'bold'? 'active':''"
+              ><span
+                  :class="config.tagsStyle.fontWeight=== 'bold'? 'bold':'non-bold'"
+                  @click="$emit('changeValue', 'tagsStyle','fontWeight', config.tagsStyle.fontWeight=== 'bold'? 'normal':'bold')"
+                ></span></span>
+              <span class="title">加粗</span>
+            </div>
+            <div class="block">
+              <span
+                class="bg"
+                :class="config.tagsStyle.fontStyle === 'italic'? 'active':''"
+              ><span
+                  :class="config.tagsStyle.fontStyle === 'italic'? 'incline':'non-incline'"
+                  @click="$emit('changeValue', 'tagsStyle','fontStyle', config.tagsStyle.fontStyle=== 'normal'? 'italic':'normal')"
+                ></span></span>
+              <span class="title">倾斜</span>
+            </div>
+            </div>
+            <el-form-item label="字体大小：">
+            <div class="flex align-center">
+              <el-input
+                v-model="config.tagsStyle.fontSize"
+                size="mini"
+                style="margin: 0 8px 0 0px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+            <el-form-item label="上外边距：">
+            <div class="flex align-center">
+              <el-input
+                v-model="config.tagsStyle.marginTop"
+                size="mini"
+                style="margin: 0 8px 0 0px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+          <el-form-item label="圆角：">
+            <div class="flex align-center">
+              <el-input
+                v-model="config.tagsStyle.borderRadius"
+                size="mini"
+                style="margin: 0 8px 0 0px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+            <el-form-item label="字体背景默认颜色：" label-width="145px">
+              <div class="flex align-center">
+                <el-color-picker
+                  v-model="config.tagsStyle.color"
+                  show-alpha
+                  size="mini"
+                  style="margin-right: 5px;"
+                ></el-color-picker>
+                <el-color-picker
+                  v-model="config.tagsStyle.backgroundColor"
+                  show-alpha
+                  size="mini"
+                  style="margin-right: 5px;"
+                ></el-color-picker>
+                
+              </div>
+            </el-form-item>
+            <el-form-item label="枚举文本颜色：">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  icon="el-icon-plus"
+                  @click="addColorData()"
+                  >添加颜色配置</el-button
+                >
+              </el-form-item>
+              <div
+                class="colorData"
+                v-for="(v, i) in config.tagsStyle.colorArr"
+                :key="i"
+              >
+                <el-form-item class="no-margin">
+
+                  <el-input
+                    v-model="v.txt"
+                    size="mini"
+                    placeholder="请输入值"
+                  ></el-input>
+                  <el-color-picker
+                    v-model="v.color"
+                    size="mini"
+                    style="margin-left: 5px;"
+                    show-alpha
+                  ></el-color-picker>
+                  <el-color-picker
+                    v-model="v.background"
+                    size="mini"
+                    style="margin-left: 5px;"
+                    show-alpha
+                  ></el-color-picker>
+                  <i
+                    style="color: red"
+                    class="el-icon-delete"
+                    @click="delColor(i)"
+                  />
+                </el-form-item>
+              </div>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
     </el-form>
   </el-scrollbar>
 </template>
 
 <script>
+import ImageSelector from '../componments/ImageSelector';
 export default {
+  name: 'appraisingCard',
+  components: {
+    ImageSelector,
+  },
   props: {
     config: {
       type: Object
     }
   },
-  data() {
-    return {
-      selectedPic: 1,
-      picLibrary: [
-        {
-          rowid: 1,
-          url: 'https://www.sjxks.com/file/mdpic/pic/20230526/6I287U8MaU4yb92h38es1ocl7766fzfp28cL547kdNdWfUaJcu0T6M4Ifw7R93ec.png'
-        },
-        {
-          rowid: 2,
-          url: 'https://www.sjxks.com/file/mdpic/pic/20230526/0t1q94152pcX880I4tecbzdg2Z5c0G3J5c9Ef0bK9k8YeGaC8haKbv8Bfb4h7C8Y.png'
-        },
-        {
-          rowid: 3,
-          url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAMiSURBVDiNdZNfaFtVHMc/5/7rTdL8bbqmYtNuTsR1KPRB50DmdOLTBMH55p4E8UEm+CJsxYeosGeF+aYiA6cM+lql6IPoKgjidFsdLaEztbltkiY3yU3uvbnHh9s0M5k/+HHO7/f9/b6/c76cI3iAyeWTh5DqmyBekVIe831X9bqdatd1rqXjE5fF2Z9Lwz1ihOTb06cIel8SjcyQTEIkAkhwOniWhV0uNU3TfD326s2l/yWSy88dJwi+JzeZJZWCegMcJwQjEUgm8K0y9bU7XcM0ziReu/Vjv1c7IPn6nEpQ/oSJdJZ4HIqb0O0OptQbUNtDyz9MtN0e62zd+1RKnhCCAEA5KIxbC6jKKSYyUN4ZkOh66BDmti3M/CyBZL51/ckX++0DIhE8TSwKUoJtg6JANAKZdOjRSJizbYSUGOkMXrf91MjVkGIWXQfXDeMgAE2HVDKMnQ4E+3q5Lopp4spgfJRIyAa+H07tm+MMrtgXHUBRkL4PgeI96ES/4nTANENNvP2a4uZAq/5qmnj1OpphFEc0cu7O7UpbA7sJuakw6R0MHOxzU3iVCoHtIn+ZXx8hEtuPXnBvzkLZAl2DuXwocN9iMZjLIzWV5t07iD8O015VLhz0A9Q/ePuEsTvzk1vcFNGXHLSjGzCZhWQCxP6blRK5V6fx120U6yhyZQZ7q4p6xDg9/dXnP2gAWmvqfc+qCjWdwV/PEDRTqA/9jjq5A4YBUuLaDZyqg2Y9g2odp5euYrY92pu1AvCscArvPC93p1e84t8YjxwBRdCr1+mWSvRi1lry/HbBddoJpXjyjd5vsQUllkBNJiGQuOsb2FsVxvLqy5p0sh/6VgU1F3el7inC07XebgVnp4mujl8cO3vjOkCz8MK6ljm07JVKqPEEUvd8NRcPIp2u0dyoXP7Pp20U3npMFDO3O8Wy6DTt1ZnVayfux1vvffRdcK9xBlOVcq76eGLxyhrAn8fOGcr9hYnFK2tBu3bVqTXRp82LDJk//s+ikk0j27WrfRKA+VvfuMpwcUvsXVJTylJu6YuVYSx56eMbxFufiYXg3WHsX+MhXShZ4rChAAAAAElFTkSuQmCC'
-        }
-      ]
-    };
-  },
-  methods: {
-    selectPic(item) {
-      this.$emit('changeValue', 'second', 'selectedPic', item);
-    }
+  methods:{
+    addColorData(){
+        this.config.tagsStyle.colorArr.push( {
+        txt:'',
+        color:'rgba(83, 195, 255, 1)',
+        background:'rgba(83, 195, 255, 0.102)'
+      })
+    },
+    delColor(i) {
+      this.config.tagsStyle.colorArr.splice(i, 1);
+    },
   }
 };
 </script>
@@ -656,33 +760,33 @@ export default {
 .el-slider {
   width: 113px;
 }
-.selectedPic {
-  display: flex;
+// .selectedPic {
+//   display: flex;
 
-  > span {
-    color: #fff;
-    margin-right: 20px;
-  }
-}
-.selectedPic-select {
-  ul {
-    display: flex;
-    flex-wrap: wrap;
+//   > span {
+//     color: #fff;
+//     margin-right: 20px;
+//   }
+// }
+// .selectedPic-select {
+//   ul {
+//     display: flex;
+//     flex-wrap: wrap;
 
-    li {
-      width: 50px !important;
-      margin: 0 5px;
-    }
+//     li {
+//       width: 50px !important;
+//       margin: 0 5px;
+//     }
 
-    img {
-      width: 50px;
-      height: 50px;
-      border: 1px solid transparent;
+//     img {
+//       width: 50px;
+//       height: 50px;
+//       border: 1px solid transparent;
 
-      &.active {
-        border: 1px solid #fff;
-      }
-    }
-  }
-}
+//       &.active {
+//         border: 1px solid #fff;
+//       }
+//     }
+//   }
+// }
 </style>

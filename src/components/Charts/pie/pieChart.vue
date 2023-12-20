@@ -68,6 +68,9 @@ export default {
         },
         true
       );
+      // myChart.on('click', function(parmas) {
+      //   console.log("parmas:::::::", parmas)
+      // });
     },
   },
 

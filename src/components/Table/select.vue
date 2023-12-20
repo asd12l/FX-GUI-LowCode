@@ -24,7 +24,7 @@
       <el-option
         v-for="item in config.data"
         :key="item.key"
-        :label="item.value"
+        :label="item.label || item.value"
         :value="item.value"
       />
     </el-select>
@@ -40,6 +40,9 @@ export default {
     },
     callBack: {
       type: Function,
+      default: () => {
+        return () => {};
+      },
     },
   },
   data() {

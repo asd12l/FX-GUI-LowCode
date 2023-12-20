@@ -7,19 +7,18 @@ import { message } from "element-ui";
 import qs from "qs";
 
 const service = axios.create({
-  // baseURL:
-  // location.origin || "http://192.168.6.66" || process.env.VUE_APP_BASE_API,
-  // baseURL:  'http://192.168.6.92' || process.env.VUE_APP_BASE_API,
   // baseURL: '/xks' || process.env.VUE_APP_BASE_API,
   // baseURL: '/mdy' || process.env.VUE_APP_BASE_API,
   // baseURL:  process.env.VUE_APP_BASE_API,
-  timeout: 5000, // 请求超时时间
+  timeout: 60000, // 请求超时时间
 });
+
+window.baseURL = "";
 
 // 请求拦截
 // 所有的网络请求都会走这个方法,可以在请求添加自定义内容
 service.interceptors.request.use(
-  function(config, data) {
+  function (config, data) {
     console.log("API_SERVER::::", process.env.API_SERVER, process.env.NODE_ENV);
     if (process.env.NODE_ENV === "development") {
       if (config.url.includes("xiaokunshan")) {
@@ -27,9 +26,7 @@ service.interceptors.request.use(
         // } else if (config.url.includes("api/v2")) {
         //   config.baseURL = "/mdy";
       } else {
-        // config.baseURL = "http://101.227.231.145:81";
-        config.baseURL = "http://192.168.6.66";
-        // config.baseURL = "http://skyinfor.yikuaida.cn";
+        config.baseURL = window.baseURL;
       }
     } else {
       config.baseURL = location.origin;
@@ -40,19 +37,18 @@ service.interceptors.request.use(
       item.includes("md_pss_id")
     );
     config.headers = { ...config.headers, ...config.header };
-    // config.headers.Authorization = authorizationCookie
-    //   ? authorizationCookie.replace("=", " ")
-    //   : "";
-    config.headers.Authorization =
-      "md_pss_id 0230460ad0bd04b0090e608e04605e0cc00a06703d0a6042";
-    // "md_pss_id 03202700f0a704501607d0e506800409d0580f201901d0f1"; // 请求头添加token值
+    config.headers.Authorization = authorizationCookie
+      ? authorizationCookie.replace("=", " ")
+      : "";
+    // md_pss_id 0400050fd0680b20f90480aa0f10d70c60b900c0ed0b20af
+    // config.headers.Authorization =
+    //   "md_pss_id 06e0650d10ce0420a70c50b50cc08c0bd08f0300eb0920c0";
+    // "md_pss_id 0a00f50d90e00e302f0360820dd0de08f0e10970e90230fd";
+    // "md_pss_id 0e600a0280fe0850f606b0040970f60140a900c0a207901b"; // 请求头添加token值
     config.headers["Content-Type"] = "application/json";
-
-    console.log("config::::::::::", config, data);
-
     return config;
   },
-  function(err) {
+  function (err) {
     return Promise.request(err);
   }
 );
@@ -112,7 +108,7 @@ let http = {};
  * @param {Object} params [请求时携带的参数]
  */
 
-http.get = function(url, params = null, header = {}) {
+http.get = function (url, params = null, header = {}) {
   return new Promise((resolve, reject) => {
     service
       .get(url, { params, header })
@@ -131,7 +127,7 @@ http.get = function(url, params = null, header = {}) {
  * @param {Object} params [请求时携带的参数]
  */
 
-http.post = function(url, params, header = {}) {
+http.post = function (url, params, header = {}) {
   return new Promise((resolve, reject) => {
     service
       .post(url, params, header)

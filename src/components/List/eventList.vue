@@ -37,13 +37,14 @@
           >
             <img
               :class="config.alarmImg.auto ? 'imgauto' : 'img'"
-              :style="{ maxWidth: config.alarmImg.width + 'px' ,
-                       maxHeight: config.alarmImg.height + 'px'}"
+              :style="{
+                maxWidth: config.alarmImg.width + 'px',
+                maxHeight: config.alarmImg.height + 'px',
+              }"
               :src="item.alarm_img"
               :onerror="defaultImg"
               alt=""
             />
-            <!-- <canvasImg :link="item.alarm_img_url" :width="120" :height="68" :info="item.drawbox" :area="[]" /> -->
           </div>
           <div
             class="rows-right"
@@ -62,35 +63,38 @@
                 v-show="config.textName.show"
                 :style="[
                   {
-                    color:config.textName.color,
-                    fontWeight:config.textName.fontWeight,
-                    fontStyle:config.textName.fontStyle,
-                    textAlign:config.textName.textAlign,
-                    fontFamily:config.textName.fontFamily,
+                    color: config.textName.color,
+                    fontWeight: config.textName.fontWeight,
+                    fontStyle: config.textName.fontStyle,
+                    textAlign: config.textName.textAlign,
+                    fontFamily: config.textName.fontFamily,
                     lineHeight: config.textName.lineHeight + 'px',
                     fontSize: config.textName.fontSize + 'px',
                     width: `calc(100% - (${config.textTag.minWidth}px)`,
                   },
                 ]"
                 :title="item.event_name"
-                >{{ item.event_name }}</span
-              >
+              >{{ item.event_name }}</span>
               <span
                 v-show="config.textTag.show"
                 :style="[
                   config.textTag,
-                  getColor(item.alarm_source, '事件来源'),
                   {
                     fontSize: config.textTag.fontSize + 'px',
                     marginRight: config.textTag.marginRight + 'px',
                     minWidth: config.textTag.minWidth + 'px',
                     height: config.textTag.height + 'px',
                     lineHeight: config.textTag.lineheight + 'px',
+                    color: color1[item.alarm_source]
+                      ? color1[item.alarm_source].color
+                      : config.textTag.color,
+                      background  : color1[item.alarm_source]
+                      ? color1[item.alarm_source].backgroundColor
+                      : config.textTag.background,
                   },
                 ]"
               >
-                {{ item.alarm_source }}</span
-              >
+                {{ item.alarm_source }}</span>
             </div>
             <div
               v-show="config.textTime.show"
@@ -110,47 +114,48 @@
             >
               {{ item.alarm_time }}
             </div>
-            <div class="line-address"
-               :style="{
-                  marginTop: config.textAddress.marginTop + 'px',
-                }">
+            <div
+              class="line-address"
+              :style="{
+                marginTop: config.textAddress.marginTop + 'px',
+              }"
+            >
               <span
                 v-show="config.textAddress.show"
                 :title="item.address"
                 :style="[
-                  { 
-                    fontWeight:config.textAddress.fontWeight,
-                    fontStyle:config.textAddress.fontStyle,
-                    textAlign:config.textAddress.textAlign,
-                    fontFamily:config.textAddress.fontFamily,
+                  {
+                    fontWeight: config.textAddress.fontWeight,
+                    fontStyle: config.textAddress.fontStyle,
+                    textAlign: config.textAddress.textAlign,
+                    fontFamily: config.textAddress.fontFamily,
                     color: config.textAddress.color,
                     fontSize: config.textAddress.fontSize + 'px',
                     width: `calc(100% - (${config.textStatus.minWidth}px)`,
-                  
                   },
                 ]"
-                >{{ item.address || "未知" }}</span
-              >
+              >{{ item.address || "未知" }}</span>
               <span
                 class="status"
                 v-show="config.textStatus.show"
                 :style="[
                   config.textStatus,
                   {
-                    color: getColor(item.alarm_status, '事件状态'),
+                    color: color2[item.alarm_status]
+                      ? color2[item.alarm_status].color
+                      : config.textStatus.color,
                     fontSize: config.textStatus.fontSize + 'px',
                     minWidth: config.textStatus.minWidth + 'px',
                     marginRight: config.textStatus.marginRight + 'px',
                   },
                 ]"
               >
-                <i
-                  :style="{
-                    backgroundColor: getColor(item.alarm_status, '事件状态'),
-                  }"
-                />
-                {{ item.alarm_status }}</span
-              >
+                <i :style="{
+                    backgroundColor: color2[item.alarm_status]
+                      ? color2[item.alarm_status].color
+                      : config.textStatus.color,
+                  }" />
+                {{ item.alarm_status }}</span>
             </div>
           </div>
         </div>
@@ -160,82 +165,62 @@
 </template>
 
 <script>
-import Scroll from "@/components/scroll.vue";
+import Scroll from '@/components/scroll.vue';
 export default {
-  name: "eventList",
+  name: 'eventList',
   components: { Scroll },
   props: {
     config: {
-      type: Object,
+      type: Object
     },
     callBack: {
-      type: Function,
-    },
+      type: Function
+    }
   },
   data() {
     return {
       isShow: true,
-      defaultImg: 'this.src="' + require("@/assets/image/default.png") + '"',
+      defaultImg: 'this.src="' + require('@/assets/image/default.png') + '"',
+      color1: {},
+      color2: {}
     };
   },
   watch: {
-    config: {
-      handler(nVal, oVal) {
-        // if(nVal.data.length){
-        //   nVal.data.forEach((item,i) =>{
-        //    item.statusColor= this.getColor(item.alarm_status)
-        //   })
-        // }
+    // config: {
+    //   handler(nVal, oVal) {
+    //     console.log(nVal, '事件列表=================');
+    //   },
+    //   deep: true
+    // },
+    'config.tagColor': {
+      handler(nVal) {
+        (this.color1 = {}),
+          nVal.forEach((item, i) => {
+            this.color1[item.label] = item;
+          });
       },
       deep: true,
+      immediate: true
     },
+    'config.statusColor': {
+      handler(nVal) {
+        (this.color2 = {}),
+          nVal.forEach((item, i) => {
+            this.color2[item.label] = item;
+          });
+      },
+      deep: true,
+      immediate: true
+    }
   },
   computed: {},
   created() {},
   mounted() {},
   methods: {
     clickItem(item) {
-      this.callBack && this.callBack(item)
-    },
-    getColor(label, type) {
-      if (type == "事件状态") {
-        let styleData = this.config.statusColor;
-        let color;
-        if (styleData.length > 0) {
-          styleData.forEach((v) => {
-            if (v.label === label) {
-              color = v.color;
-            } else {
-              color = this.config.textStatus.color;
-            }
-          });
-        } else {
-          color = this.config.textStatus.color;
-        }
-        return color;
-      } else {
-        let styleData = this.config.tagColor;
-        let color;
-        let backgroundColor;
-        if (styleData.length > 0) {
-          styleData.forEach((v) => {
-            if (v.label === label) {
-              color = v.color;
-              backgroundColor = v.backgroundColor;
-            } else {
-              color = this.config.textTag.color;
-              backgroundColor = this.config.textTag.background;
-            }
-          });
-        } else {
-          color = this.config.textTag.color;
-          backgroundColor = this.config.textTag.background;
-        }
-
-        return { color, backgroundColor };
-      }
-    },
-  },
+      this.callBack && this.callBack(item);
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

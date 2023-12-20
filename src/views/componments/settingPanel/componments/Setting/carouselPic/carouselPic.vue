@@ -112,6 +112,21 @@
           ></el-input>
         </div>
       </el-form-item>
+      <el-form-item label="文本区域宽高：" v-if="config.direction">
+        <div style="display: flex;align-items:center">
+          <el-input
+            v-model="config.direction.width"
+            size="mini"
+            placeholder=""
+          ></el-input>
+          <span>x</span>
+          <el-input
+            v-model="config.direction.height"
+            size="mini"
+            placeholder=""
+          ></el-input>
+        </div>
+      </el-form-item>
       <el-form-item label="是否自动滚动：">
         <el-switch v-model="config.box.autoplay"></el-switch>
       </el-form-item>
@@ -140,8 +155,19 @@
           ></el-option>
         </el-select>
       </el-form-item>
-
-      <el-collapse>
+      <el-form-item label="图文排列：" v-if="config.direction">
+        <el-select v-model="config.direction.direction">
+          <el-option
+            label="横"
+            value="row-reverse"
+          ></el-option>
+          <el-option
+            label="竖"
+            value="column"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <!-- <el-collapse>
         <el-collapse-item>
           <template slot="title">
             <div
@@ -197,7 +223,7 @@
                 :key="index"
               >
                 <img
-                  :src="item.includes('http') ? item: item.includes('base64')? item: IMG_URL + item"
+                  :src="item"
                   alt=""
                 >
                 <i
@@ -222,7 +248,7 @@
             </el-form-item>
           </el-form>
         </el-collapse-item>
-      </el-collapse>
+      </el-collapse> -->
 
       <el-collapse>
         <el-collapse-item
@@ -323,7 +349,111 @@
           </el-form-item>
         </el-collapse-item>
       </el-collapse>
-
+      <el-collapse v-if="config.time">
+        <el-collapse-item
+          title="文本(时间)"
+          name="time"
+        >
+          <div class="fontStyle">
+            <div class="block">
+              <span
+                class="bg"
+                :class="config.time.fontWeight=== 'bold'? 'active':''"
+              ><span
+                  :class="config.time.fontWeight=== 'bold'? 'bold':'non-bold'"
+                  @click="$emit('changeValue', 'time','fontWeight', config.time.fontWeight=== 'bold'? 'normal':'bold')"
+                ></span></span>
+              <span class="title">加粗</span>
+            </div>
+            <div class="block">
+              <span
+                class="bg"
+                :class="config.time.fontStyle === 'italic'? 'active':''"
+              ><span
+                  :class="config.time.fontStyle === 'italic'? 'incline':'non-incline'"
+                  @click="$emit('changeValue', 'time','fontStyle', config.time.fontStyle=== 'normal'? 'italic':'normal')"
+                ></span></span>
+              <span class="title">倾斜</span>
+            </div>
+            <div class="block">
+              <span
+                class="bg"
+                :class="config.time.textAlign === 'left'? 'active':''"
+              ><span
+                  :class="config.time.textAlign==='left'? 'left':'non-left'"
+                  @click="$emit('changeValue', 'time','textAlign', 'left')"
+                ></span></span>
+              <span class="title">左对齐</span>
+            </div>
+            <div class="block">
+              <span
+                class="bg"
+                :class="config.time.textAlign==='center'? 'active':''"
+              ><span
+                  :class="config.time.textAlign==='center'? 'center':'non-center'"
+                  @click="$emit('changeValue', 'time','textAlign', 'center')"
+                ></span></span>
+              <span class="title">居中</span>
+            </div>
+            <div class="block">
+              <span
+                class="bg"
+                :class="config.time.textAlign==='right'? 'active':''"
+              ><span
+                  :class="config.time.textAlign==='right'? 'right':'non-right'"
+                  @click="$emit('changeValue', 'time','textAlign', 'right')"
+                ></span></span>
+              <span class="time">右对齐</span>
+            </div>
+          </div>
+          <el-form-item label="是否显示：">
+            <el-switch
+              v-model="config.time.display"
+              active-value="block"
+              inactive-value="none"
+            ></el-switch>
+          </el-form-item>
+          <el-form-item label="颜色/字号：">
+            <div class="flex align-center">
+              <el-color-picker
+                v-model="config.time.color"
+                show-alpha
+                size="mini"
+              ></el-color-picker>
+              <el-input
+                v-model="config.time.fontSize"
+                size="mini"
+                style="margin: 0 8px 0 12px"
+              ></el-input>px
+            </div>
+          </el-form-item>
+          <el-form-item label="字体：">
+            <div class="flex align-center">
+              <el-select
+                v-model="config.time.fontFamily"
+                placeholder="请选择"
+              >
+                <el-option
+                  label="微软雅黑"
+                  value="微软雅黑"
+                ></el-option>
+              </el-select>
+            </div>
+          </el-form-item>
+          <el-form-item label="字间距：">
+            <el-input
+              v-model="config.time.letterSpacing"
+              size="mini"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="时间前缀：">
+            <el-input
+              v-model="config.time.content"
+              size="mini"
+            ></el-input>
+          </el-form-item>
+        </el-collapse-item>
+      </el-collapse>
       <el-collapse>
         <el-collapse-item
           title="文本(描述)"
@@ -384,7 +514,7 @@
           <el-form-item label="是否显示：">
             <el-switch
               v-model="config.description.display"
-              active-value="block"
+              active-value="-webkit-box"
               inactive-value="none"
             ></el-switch>
           </el-form-item>
@@ -421,6 +551,18 @@
               size="mini"
             ></el-input>
           </el-form-item>
+          <el-form-item label="文本省略号" v-if="config.direction">
+              <div class="flex align-center" style="margin-left:10px">
+                <el-input-number
+                  v-model="config.direction.txtNum"
+                  :min="1"
+                  :step="1"
+                  step-strictly
+                  label=""
+                ></el-input-number>
+                <div style="margin-left: 10px"></div>
+              </div>
+            </el-form-item>
         </el-collapse-item>
       </el-collapse>
     </el-form>

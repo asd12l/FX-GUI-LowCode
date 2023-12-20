@@ -6,7 +6,10 @@
         :key="ii"
         :class="[
           'box1',
-          selectedData === v.rowid && config.contain.isShowActiveBg
+          config.contain.isShowActiveBg &&
+          (config.contain.selectType === 'radio'
+            ? selectedData === v.rowid
+            : selectedArr.indexOf(v.rowid) > -1)
             ? 'active'
             : '',
         ]"
@@ -38,17 +41,38 @@
           >
             <div
               v-show="config.rowTwoTxt1.show"
-              :class="['txt', config.titleTxt2.isShowColors ? 'gradient' : '']"
+              :class="[
+                'value',
+                config.titleTxt2.isShowColors ? 'gradient' : '',
+              ]"
               :style="textStyle1(config.rowTwoTxt1, config.titleTxt2)"
             >
               {{ v.num }}
             </div>
             <div
               v-show="config.rowTwoTxt2.show"
-              :class="['txt', config.titleTxt3.isShowColors ? 'gradient' : '']"
+              :class="[
+                'value',
+                config.titleTxt3.isShowColors ? 'gradient' : '',
+              ]"
               :style="textStyle1(config.rowTwoTxt2, config.titleTxt3)"
             >
               {{ v.unit }}
+            </div>
+          </div>
+          <div  v-if="config.tagsStyle && config.tagsStyle.show" >
+            <div v-if="(v.tags instanceof Array)"  class="tagsStyle"   :style="styleObjTags">
+              <span v-for="(item, i) in v.tags" :key="i" :style="tagsStyle(item)">
+              {{ item }}
+            </span>
+            </div>
+            <div 
+            v-else
+            class="tagsStyle"   :style="styleObjTags">
+                 <span 
+             :style="tagsStyle(v.tags)">
+                  {{ v.tags }}
+                 </span>
             </div>
           </div>
         </div>
@@ -69,12 +93,19 @@ export default {
     //   type: Boolean,
     //   default: true
     // }
+    callBack: {
+      type: Function,
+      default: () => {
+        return () => {};
+      },
+    },
   },
   data() {
     return {
       isShow: true,
       list: [],
       selectedData: "",
+      selectedArr: [],
     };
   },
   watch: {
@@ -87,6 +118,13 @@ export default {
       deep: true,
       immediate: true,
     },
+    'config.tagsStyle.colorArr':{
+       handler(){
+
+       },
+       immediate:true,
+       deep:true
+    }
   },
   computed: {
     sassStyle() {
@@ -94,6 +132,8 @@ export default {
       return {
         ...d,
         "--activeBg": `url(${this.config.contain.activeBg}) no-repeat`,
+        "--rowOneHeight": this.config.rowOne.height + "px",
+        "--rowTwoHeight": this.config.rowTwo.height + "px",
       };
     },
     styleObj() {
@@ -211,17 +251,53 @@ export default {
       }
       return obj;
     },
+    styleObjTags() {
+      let d = setStyleObj({ ...this.config.tagsStyle });
+      return d;
+    },
+    tagsStyle() {
+
+      return function(v) {
+        let a = this.config.tagsStyle;
+        let b = {
+          color: `${a.color} !important`,
+              background: a.backgroundColor,
+              'border-Radius': a.borderRadius + 'PX'
+            };
+        a.colorArr.some((item,i) => {
+          if (item.txt === v) {
+            b = {
+              color: item.color,
+              background: item.background,
+              'border-Radius': a.borderRadius + 'PX'
+            };
+            return true;
+          }
+        })
+        // for (let i = 0; i < a.colorArr.length; i++) {
+        //     b = {
+        //       color: `${a.color} !important`,
+        //       background: a.backgroundColor,
+        //       'border-Radius': a.borderRadius + 'PX'
+        //     };
+        //   if (a.colorArr[i].txt === v) {
+        //     b = {
+        //       color: a.colorArr[i].color,
+        //       background: a.colorArr[i].background,
+        //       'border-Radius': a.borderRadius + 'PX'
+        //     };
+        //     return b;
+        //   }
+        // }
+        return b;
+      };
+    },
   },
   created() {},
   mounted() {},
   methods: {
     getArr(arr, num) {
-      let newArr = arr.map((item, index) => {
-        return {
-          ...item,
-          rank: index + 1,
-        };
-      }); // 因为splice会改变原数组，要深拷贝一下
+      let newArr = [...arr]; // 因为splice会改变原数组，要深拷贝一下
       let list = [];
       for (let i = 0; i < newArr.length; ) {
         list.push(newArr.splice(i, num));
@@ -229,7 +305,21 @@ export default {
       this.list = list;
     },
     changeSelectedData(v) {
-      this.selectedData = v.rowid;
+      if (this.config.contain.selectType === "radio") {
+        if (this.selectedData === v.rowid) {
+          this.selectedData = "";
+        } else {
+          this.selectedData = v.rowid;
+        }
+      } else {
+        let seat = this.selectedArr.indexOf(v.rowid);
+        this.callBack && this.callBack(v, !this.selectedArr.includes(v.rowid));
+        if (seat === -1) {
+          this.selectedArr.push(v.rowid);
+        } else {
+          this.selectedArr.splice(seat, 1);
+        }
+      }
     },
   },
 };
@@ -249,18 +339,32 @@ export default {
       .img {
         // position: absolute;
       }
-      .row-two {
-        display: flex;
-        align-items: center;
-      }
       .txt {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        line-height: var(--rowOneHeight);
+      }
+      .row-two {
+        display: flex;
+        align-items: center;
+        .value {
+          line-height: var(--rowTwoHeight);
+        }
       }
       .gradient {
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent;
+      }
+    }
+    .tagsStyle {
+      display: flex;
+      > span {
+        padding: 6px 10px;
+        margin-right: 5px;
+        &:last-child{
+          margin-right: 0px;
+        }
       }
     }
     .active {

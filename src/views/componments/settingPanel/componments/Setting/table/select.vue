@@ -31,6 +31,9 @@
             :config="config"
             type1="selectionCommon"
             :isShowFontStyle="false"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
           />
           <el-form-item label="背景颜色：">
             <el-color-picker
@@ -119,19 +122,7 @@ export default {
   components: { commonTab, commonSetTitle },
   data() {
     return {
-      imgList1: [],
       styleList: ["solid", "dashed"],
-      border: {
-        width: "",
-        type: "",
-        color: "",
-      },
-      selectTypeData: [
-        { txt: "日期时间", type: "dateTimePicker" },
-        { txt: "时间", type: "timePicker" },
-        { txt: "关键字搜索", type: "search" },
-        { txt: "选择器", type: "select" },
-      ],
     };
   },
   props: {
@@ -146,74 +137,8 @@ export default {
     },
   },
   watch: {},
-  mounted() {
-    this.getImgList1();
-  },
-  methods: {
-    change(val) {
-      console.log(val);
-    },
-    getImgList1() {
-      this.imgList1 = [
-        { txt: "背景图1", url: require("@/assets/image/xiaokunshan/bg9.png") },
-        { txt: "背景图2", url: require("@/assets/image/xiaokunshan/bg11.png") },
-        { txt: "背景图3", url: require("@/assets/image/xiaokunshan/bg10.png") },
-        { txt: "背景图4", url: require("@/assets/image/xiaokunshan/bg4.png") },
-        { txt: "背景图5", url: require("@/assets/image/xiaokunshan/bg5.png") },
-      ];
-    },
-    addShowTxt() {
-      let length = this.config.data.tableHead.length;
-      this.config.data.tableHead.push({
-        label: "",
-        value: "",
-        width: "",
-        color: "#fff",
-        id: length,
-      });
-      this.$emit(
-        "changeValue",
-        "data",
-        "tableHead",
-        this.config.data.tableHead
-      );
-    },
-    delShowTxt(i) {
-      this.config.data.tableHead.splice(i, 1);
-      this.$emit(
-        "changeValue",
-        "data",
-        "tableHead",
-        this.config.data.tableHead
-      );
-    },
-    changeIndex(type, i, data) {
-      let index;
-      if (type === "pre") {
-        if (i === 0) {
-          this.$message.warning("当前已经是第一个，无法再上移");
-          return;
-        } else {
-          index = i - 1;
-        }
-      } else {
-        if (i === this.config.data.tableHead.length - 1) {
-          this.$message.warning("当前已经是最后一个，无法再下移");
-          return;
-        } else {
-          index = i + 1;
-        }
-      }
-      let d = this.config.data.tableHead;
-      d.splice(index, 1, ...d.splice(i, 1, d[index]));
-      this.$emit(
-        "changeValue",
-        "data",
-        "tableHead",
-        this.config.data.tableHead
-      );
-    },
-  },
+  mounted() {},
+  methods: {},
 };
 </script>
 

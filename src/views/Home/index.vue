@@ -40,7 +40,11 @@
                 class="silder-icon"
                 :style="{ marginBottom: `${index === 0 ? 0 : 6}px` }"
               >
-                <img :src="item.icon" alt="" srcset="" />
+                <img
+                  :src="item.icon"
+                  alt=""
+                  srcset=""
+                />
               </div>
             </div>
           </div>
@@ -55,56 +59,56 @@
 </template>
 
 <script>
-import { getKey, getAppkeyList } from "@/utils/api";
+import { getKey, getAppkeyList } from '@/utils/api';
 export default {
-  name: "Home",
+  name: 'Home',
   components: {},
   data() {
     return {
-      currentIcon: "",
-      hoverIcon: "",
+      currentIcon: '',
+      hoverIcon: '',
       silderList: [
         {
-          title: "",
-          url: "",
-          key: "home",
-          icon: require("../../assets/image/logo.png"),
+          title: '',
+          url: '',
+          key: 'home',
+          icon: require('../../assets/image/logo.png')
         },
         {
-          title: "场景",
-          url: "/earth",
-          icon: require("../../assets/image/scene.png"),
-          icon_active: require("../../assets/image/scene_active.png"),
+          title: '场景',
+          url: '/earth',
+          icon: require('../../assets/image/scene.png'),
+          icon_active: require('../../assets/image/scene_active.png')
         },
         {
-          title: "数据",
-          url: "/data",
-          icon: require("../../assets/image/data.png"),
-          icon_active: require("../../assets/image/data_active.png"),
+          title: '数据',
+          url: '/data',
+          icon: require('../../assets/image/data.png'),
+          icon_active: require('../../assets/image/data_active.png')
         },
         {
-          title: "面板",
-          url: "/chart",
-          icon: require("../../assets/image/panel.png"),
-          icon_active: require("../../assets/image/panel_active.png"),
-        },
+          title: '面板',
+          url: '/chart',
+          icon: require('../../assets/image/panel.png'),
+          icon_active: require('../../assets/image/panel_active.png')
+        }
       ],
-      key: "",
+      key: ''
     };
   },
   computed: {},
   watch: {
     $route(to, form) {
-      const { title = "" } =
+      const { title = '' } =
         this.silderList.find(
           (item) => item.url && location.hash.includes(item.url)
         ) || {};
       this.currentIcon = title;
-    },
+    }
   },
   async mounted() {
-    console.log("location.hash:::::::", location.hash);
-    const { title = "" } =
+    console.log('location.hash:::::::', location.hash);
+    const { title = '' } =
       this.silderList.find(
         (item) => item.url && location.hash.includes(item.url)
       ) || {};
@@ -115,16 +119,16 @@ export default {
   methods: {
     async loadKey() {
       const {
-        data: { key },
+        data: { key }
       } = await getKey();
       this.key = key;
     },
     async loadAppkeyList() {
       const { data } = await getAppkeyList(this.key);
-      console.log("result:::::::::::::", data);
+      console.log('result:::::::::::::', data);
       data.length &&
         localStorage.setItem(
-          "systemInfo",
+          'systemInfo',
           JSON.stringify({ app_key: data[0].app_key, sign: data[0].sign })
         );
     },
@@ -132,19 +136,18 @@ export default {
       this.hoverIcon = data.title;
     },
     nodeMouseleave() {
-      this.hoverIcon = "";
+      this.hoverIcon = '';
     },
     toJump(data) {
       this.currentIcon = data.title;
-      if (data.key === "home") {
-        window.location.href = window.origin + "/custom/cockpit";
-        // window.location.href = "http://localhost:30001/custom/cockpit";
+      if (data.key === 'home') {
+        window.location.href = window.origin + '/custom/cockpit';
         return;
       }
 
       this.$router.push({ path: data.url });
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

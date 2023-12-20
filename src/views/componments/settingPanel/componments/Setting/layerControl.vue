@@ -198,6 +198,13 @@
           title="图片"
           name="title"
         >
+          <ImageSelector
+            label="背景图片："
+            @changeSrc="(val) => $emit('changeValue', 'icon', 'backgroundUrl', val)"
+            worksheetId="tckzzj"
+            imageField="backgroundPic"
+            :src="config.icon.backgroundUrl"
+          ></ImageSelector>
           <el-form-item label="宽：">
             <el-input
               v-model="config.icon.width"
@@ -277,10 +284,11 @@
 </template>
   
   <script>
+import ImageSelector from './componments/ImageSelector';
 export default {
   name: 'layerControl',
-  data() {
-    return {};
+  components: {
+    ImageSelector
   },
   props: {
     config: {
@@ -289,8 +297,7 @@ export default {
         return {};
       }
     }
-  },
-  methods: {}
+  }
 };
 </script>
   

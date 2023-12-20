@@ -1,12 +1,12 @@
 export default {
     width:220,
-    height: 150,
+    height: 110,
     left: 0,
     top: 0,
     name:'按钮',
     show: true,
     sourceType: '静态',
-    worksheetId:'anzj',
+    worksheetId:'buttonView',
     data: [
       {
           name:'三维地图',
@@ -21,13 +21,13 @@ export default {
     buttonStyle:{
        hoverShow:true,
        imgShow:true,
-       width:60,
-       height: 65,
+      
        txtShow:false,
        txt:'社区管理',
        color:'#fff',
        fontSize:24,
        lineHeight:65,
+       fontFamily:'Microsoft YaHei',
     },
     hoverStyle:{
       txt:'地图切换',
@@ -36,6 +36,8 @@ export default {
       lineHeight:30,
       width:80,
       height: 30,
+      bottom:110,
+      fontFamily:'Microsoft YaHei',
       background: require("@/assets/image/xiaokunshan/img1.png"),
     },
     optionStyle:{
@@ -46,6 +48,7 @@ export default {
        borderColor:'#1b7ef2',
        color:'#fff',
        fontSize:'16',
+       bottom:110,
        span:{
         height: 30,
         textIndent:5,
@@ -63,10 +66,14 @@ export default {
         marginBottom:5,
     },
     backgroundImg:{
+        width:89,
+        height: 76,
         background:require("@/assets/image/xiaokunshan/icon3.png"),
     },
     backgroundActive:{
-        background:require("@/assets/component/img/bg-active.png"),
+        width:110,
+        height: 104,
+        background:require("@/assets/image/xiaokunshan/icon3-active.png"),
     },
   };
   

@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-29 16:40:27
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-09-11 15:20:08
+ * @LastEditTime: 2023-11-21 11:19:48
  */
 export default {
   name: '电量柱状图',
@@ -32,15 +32,15 @@ export default {
     }
   },
   data: [
-    { name: "入宅", total: "89", satisfied: "42" },
-    { name: "刑事", total: "18", satisfied: "12" },
-    { name: "110出警", total: "96", satisfied: "76" },
-    { name: "犯罪", total: "95", satisfied: "31" },
-    { name: "两抢", total: "70", satisfied: "58" },
-    { name: "犯罪", total: "95", satisfied: "31" },
-    { name: "两抢", total: "70", satisfied: "58" }
+    { name: "星期一", total: "89", satisfied: "42" },
+    { name: "星期二", total: "18", satisfied: "12" },
+    { name: "星期三", total: "96", satisfied: "76" },
+    { name: "星期四", total: "95", satisfied: "31" },
+    { name: "星期五", total: "70", satisfied: "58" },
+    { name: "星期六", total: "95", satisfied: "31" },
+    { name: "星期天", total: "70", satisfied: "58" }
   ],
-  api: 'https://www.sjxks.com/v1/xiaokunshan/security/view4',
+  api: '',
   requestType: "GET",
   requestParams: {
     account_id: 'eb71dac7-a4dc-4cbb-9022-251c93acca1e'

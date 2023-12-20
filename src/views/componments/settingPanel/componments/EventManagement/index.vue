@@ -1,116 +1,64 @@
 <template>
   <div class="event-management_wrap">
     <div class="add-event_btn">
-      <el-button type="primary" size="mini" @click="addEvent"
-        >新增交互</el-button
-      >
+      <el-button type="primary" size="mini" @click="addEvent">新增交互</el-button>
     </div>
     <div class="event-list">
       <!-- 组件内部添加事件 -->
       <el-collapse accordion>
         <el-collapse-item v-for="(ele, index) in eventList" :key="index">
           <template slot="title">
-            <el-select
-              size="mini"
-              v-model="ele.eventType"
-              placeholder="请选择"
-              @change="(val) => changeEventType(val, index)"
-            >
-              <el-option
-                v-for="item in eventOptions"
-                :key="item.type"
-                :label="item.title"
-                :value="item.type"
-              >
+            <el-select size="mini" v-model="ele.eventType" placeholder="请选择"
+              @change="(val) => changeEventType(val, index)">
+              <el-option v-for="item in eventOptions" :key="item.type" :label="item.title" :value="item.type">
               </el-option>
             </el-select>
-            <el-button
-              icon="el-icon-plus"
-              type="primary"
-              circle
-              size="mini"
-              @click="(e) => addMovement(e, ele.eventType, index)"
-            ></el-button>
+            <el-button icon="el-icon-plus" type="primary" circle size="mini"
+              @click="(e) => addMovement(e, ele.eventType, index)"></el-button>
           </template>
           <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane
-              v-for="(item, i) in getEventDom(ele.eventType)"
-              :label="item.name + i"
-              :key="item.name + i"
-              :name="item.name + i"
-            >
+            <el-tab-pane v-for="(item, i) in getEventDom(ele.eventType)" :label="item.name + i" :key="item.name + i"
+              :name="item.name + i">
               <el-collapse>
-                <el-collapse-item
-                  :name="inx + 'movement'"
-                  v-for="(movementItem, inx) in getEventDom(ele.eventType)[i]
-                    .movementList"
-                  :key="inx + 'movement'"
-                >
+                <el-collapse-item :name="inx + 'movement'" v-for="(movementItem, inx) in getEventDom(ele.eventType)[i]
+                  .movementList" :key="inx + 'movement'">
                   <template slot="title">
                     <div class="event-item">
-                      交互效果：<el-select
-                        size="mini"
-                        v-model="
-                          getEventDom(ele.eventType)[i].movementList[inx]
-                            .movement
-                        "
-                        @change="
-                          (e) => changeMovement(e, ele.eventType, inx, i)
-                        "
-                        placeholder="请选择"
-                      >
-                        <el-option
-                          v-for="val in movementOptions"
-                          :key="val.type"
-                          :label="val.title"
-                          :value="val.type"
-                        >
+                      交互效果：<el-select size="mini" v-model="
+                        getEventDom(ele.eventType)[i].movementList[inx]
+                          .movement
+                      " @change="
+  (e) => changeMovement(e, ele.eventType, inx, i)
+" placeholder="请选择">
+                        <el-option v-for="val in movementOptions" :key="val.type" :label="val.title" :value="val.type">
                         </el-option>
                       </el-select>
                     </div>
                   </template>
 
-                  <div
-                    class="event-item"
-                    v-show="movementItem.movement === 'flyTo'"
-                  >
-                    关联字段：<el-input
-                      size="mini"
-                      v-model="movementItem.flyToField"
-                      @change="
-                        (e) =>
-                          changeFlyToField(e, movementItem.eventType, inx, i)
-                      "
-                      placeholder="请填写跳转"
-                    >
+                  <div class="event-item" v-show="movementItem.movement === 'flyTo'">
+                    关联字段：<el-input size="mini" v-model="movementItem.flyToField" @change="
+                      (e) =>
+                        changeFlyToField(e, movementItem.eventType, inx, i)
+                    " placeholder="请填写跳转">
                     </el-input>
                   </div>
-                  <div
-                    class="event-item"
-                    v-show="movementItem.movement === 'jumpLink'"
-                  >
-                    外部链接：<el-input
-                      size="mini"
-                      v-model="movementItem.jumpLink"
-                      @change="(e) => changeJumpLink(e, ele.eventType, inx, i)"
-                      placeholder="请填写跳转"
-                    >
+                  <div class="event-item" v-show="movementItem.movement === 'jumpLink'">
+                    外部链接：<el-input size="mini" v-model="movementItem.jumpLink"
+                      @change="(e) => changeJumpLink(e, ele.eventType, inx, i)" placeholder="请填写跳转">
                     </el-input>
                   </div>
 
-                  <div
-                    class="event-item"
-                    v-show="
-                      [
-                        'showAndHidden',
-                        'parameterPassing',
-                        'show',
-                        'hidden',
-                        'dynamicParameterPassing',
-                        'componentParameterPassing',
-                      ].includes(movementItem.movement)
-                    "
-                  >
+                  <div class="event-item" v-show="
+                    [
+                      'showAndHidden',
+                      'parameterPassing',
+                      'show',
+                      'hidden',
+                      'dynamicParameterPassing',
+                      'componentParameterPassing',
+                    ].includes(movementItem.movement)
+                  ">
                     <!-- <el-cascader
                       v-model="movementItem.eventAssociatedComponentIds"
                       :options="getEventAssociatedComponentIds()"
@@ -122,11 +70,8 @@
                       }"
                     ></el-cascader> -->
                     组件选择：
-                    <el-select
-                      size="mini"
-                      popper-class="eventTypeSelector"
-                      v-model="movementItem.eventAssociatedComponentIds"
-                      @change="
+                    <el-select size="mini" popper-class="eventTypeSelector"
+                      v-model="movementItem.eventAssociatedComponentIds" @change="
                         (e) =>
                           changeEventAssociatedComponentIds(
                             e,
@@ -134,129 +79,82 @@
                             inx,
                             i
                           )
-                      "
-                      multiple
-                      placeholder="请选择"
-                    >
-                      <el-option
-                        v-for="item in getEventAssociatedComponentIds()"
-                        :key="item.id"
-                        :label="item.config.name"
-                        :value="item.id"
-                      >
+                      " multiple placeholder="请选择">
+                      <el-option v-for="item in getEventAssociatedComponentIds()" :key="item.id" :label="item.config.name"
+                        :value="item.id">
                       </el-option>
                     </el-select>
                   </div>
-                  <div
-                    class="event-item"
-                    v-show="movementItem.movement === 'switchPage'"
-                  >
-                    选择页面：<el-select
-                      v-model="movementItem.switchPageId"
-                      size="small"
-                      @change="
-                        (e) => changeSwitchPageId(e, ele.eventType, inx, i)
-                      "
-                      popper-class="eventTypeSelector"
-                      placeholder="请选择"
-                    >
-                      <el-option
-                        v-for="item in switchPage"
-                        :key="item.id"
-                        :label="item.title"
-                        :value="item.id"
-                      >
+                  <div class="event-item" v-show="movementItem.movement === 'switchPage'">
+                    选择页面：<el-select v-model="movementItem.switchPageId" size="small" @change="
+                      (e) => changeSwitchPageId(e, ele.eventType, inx, i)
+                    " popper-class="eventTypeSelector" placeholder="请选择">
+                      <el-option v-for="item in switchPage" :key="item.id" :label="item.title" :value="item.id">
                       </el-option>
                     </el-select>
                   </div>
 
                   <!-- 时间选择器特殊处理 start -->
-                  <div
-                    v-if="
-                      movementItem.movement === 'dynamicParameterPassing' &&
-                      currentConfig.component === 'dateTimePicker'
-                    "
-                  >
+                  <div v-if="
+                    movementItem.movement === 'dynamicParameterPassing' &&
+                    currentConfig.component === 'dateTimePicker'
+                  ">
                     <div class="event-item">
-                      开始时间key：<el-input
-                        size="mini"
-                        v-model="movementItem.startTimePicker"
-                        @change="
-                          (e) =>
-                            changeStartTimePickerField(
-                              e,
-                              movementItem.eventType,
-                              inx,
-                              i
-                            )
-                        "
-                        placeholder="请填写开始时间key"
-                      >
+                      开始时间key：<el-input size="mini" v-model="movementItem.startTimePicker" @change="
+                        (e) =>
+                          changeStartTimePickerField(
+                            e,
+                            movementItem.eventType,
+                            inx,
+                            i
+                          )
+                      " placeholder="请填写开始时间key">
                       </el-input>
                     </div>
                     <div class="event-item">
-                      结束时间key：<el-input
-                        size="mini"
-                        v-model="movementItem.endTimePicker"
-                        @change="
-                          (e) =>
-                            changeEndTimePickerField(
-                              e,
-                              movementItem.eventType,
-                              inx,
-                              i
-                            )
-                        "
-                        placeholder="请填写结束时间key"
-                      >
+                      结束时间key：<el-input size="mini" v-model="movementItem.endTimePicker" @change="
+                        (e) =>
+                          changeEndTimePickerField(
+                            e,
+                            movementItem.eventType,
+                            inx,
+                            i
+                          )
+                      " placeholder="请填写结束时间key">
                       </el-input>
                     </div>
                   </div>
                   <!-- 时间选择器特殊处理 end -->
 
                   <!-- 下拉框和输入框特殊处理 start -->
-                  <div
-                    v-if="
-                      movementItem.movement === 'dynamicParameterPassing' &&
-                      ['searchBox', 'selectBox'].includes(
-                        currentConfig.component
-                      )
-                    "
-                  >
+                  <div v-if="
+                    movementItem.movement === 'dynamicParameterPassing' &&
+                    ['searchBox', 'selectBox'].includes(
+                      currentConfig.component
+                    )
+                  ">
                     <div class="event-item">
-                      自定义key：<el-input
-                        type="text"
-                        size="mini"
-                        v-model="movementItem.selectBoxValue"
-                        @change="
-                          (e) =>
-                            changeSelectBoxValueField(
-                              e,
-                              movementItem.eventType,
-                              inx,
-                              i
-                            )
-                        "
-                        placeholder="请填写自定义key"
-                      >
+                      自定义key：<el-input type="text" size="mini" v-model="movementItem.selectBoxValue" @change="
+                        (e) =>
+                          changeSelectBoxValueField(
+                            e,
+                            movementItem.eventType,
+                            inx,
+                            i
+                          )
+                      " placeholder="请填写自定义key">
                       </el-input>
                     </div>
                   </div>
                   <!-- 下拉框和输入框特殊处理 end -->
-
-                  <div
-                    class="event-item"
-                    v-show="
+                  <!-- v-show="
                       !(formFiledList || []).includes(currentConfig.component)
-                    "
-                  >
+                    " -->
+                  <div class="event-item">
                     参数传递：
-                    <CodeEdit
-                      v-model="movementItem.componentParams"
-                      @change="
-                        (e) => changeComponentParams(e, ele.eventType, inx, i)
-                      "
-                    />
+                    <CodeEdit v-model="movementItem.componentParams" @change="
+                      (e) => changeComponentParams(e, ele.eventType, inx, i)
+                    " />
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -451,19 +349,21 @@ export default {
             //   return childrenConfig;
             // })
           );
+
+
           selectOptions.push(item);
         } else {
           selectOptions.push(item);
         }
       });
-      if (parentId) {
-        const parentIndex = this.drawingList.findIndex(
-          (item) => item.id === parentId
-        );
-        return this.drawingList[parentIndex].config.drawingList.concat(
-          this.drawingList[parentIndex]
-        );
-      }
+      // if (parentId) {
+      //   const parentIndex = this.drawingList.findIndex(
+      //     (item) => item.id === parentId
+      //   );
+      //   return this.drawingList[parentIndex].config.drawingList.concat(
+      //     this.drawingList[parentIndex]
+      //   );
+      // }
       console.log("this.drawingList:::::::::::::::22", this.drawingList);
       return selectOptions;
     },
@@ -645,7 +545,7 @@ export default {
       } = this.currentConfig;
 
       const name = this.currentConfig[this.getComponentsTab(component)];
-      console.log("component:::::", component, name)
+      console.log("component:::::", component, name, lineClickEventList, this.currentConfig)
       if (multieventComList.includes(component)) {
         eventList.forEach((element) => {
           if (element.eventType === "click") {
@@ -692,18 +592,14 @@ export default {
           this.$nextTick(() => {
             this.activeName =
               (clickEventList.length === 0 ? data : clickEventList)[0][
-                this.getComponentsTab(component)
+              this.getComponentsTab(component)
               ] + 0;
           });
         });
       } else {
-        console.log(
-          "eventList:::::::::::::::",
-          eventList,
-          lineClickEventList,
-          changeFiledEventList
-        );
+
         let tabName = name;
+        const tabAppendList = []
         // 多屏组件特殊处理
         if (component === 'splitCameraScreen') {
           tabName = '退出全屏'
@@ -712,6 +608,21 @@ export default {
         if (component === 'eventList') {
           tabName = '事件列表'
         }
+
+        if (component === "switchList") {
+          tabAppendList.push({
+            name: '收藏成功按钮回调'
+          })
+        }
+
+        if (component === "eventDetailParticular") {
+          tabName = '关闭按钮回调1'
+          tabAppendList.push({
+            name: '状态弹窗回调'
+          })
+        }
+
+
         eventList.forEach((element) => {
           if (element.eventType === "click") {
             this.clickEventList = (
@@ -733,26 +644,50 @@ export default {
             });
           }
 
-          this.lineClickEventList = (
-            lineClickEventList.length === 0 ? [{ name: tabName }] : lineClickEventList
-          ).map((item, index) => {
-            return {
-              name,
-              movementList: [
-                {
-                  eventAssociatedComponentIds: [],
-                  movement: "",
-                  componentParams: "",
-                  flyToField: "",
-                  jumpLink: "",
-                },
-              ],
-              ...item,
-            };
-          });
+
+          if (component === "eventDetailParticular") {
+            this.lineClickEventList = (
+              lineClickEventList.length < 2 ? [{ name: tabName }, ...tabAppendList] : lineClickEventList
+            ).map((item, index) => {
+              return {
+                name,
+                movementList: [
+                  {
+                    eventAssociatedComponentIds: [],
+                    movement: "",
+                    componentParams: "",
+                    flyToField: "",
+                    jumpLink: "",
+                  },
+                ],
+                ...item,
+              };
+            });
+          } else {
+            this.lineClickEventList = (
+              lineClickEventList.length === 0 ? [{ name: tabName }, ...tabAppendList] : lineClickEventList
+            ).map((item, index) => {
+              return {
+                name,
+                movementList: [
+                  {
+                    eventAssociatedComponentIds: [],
+                    movement: "",
+                    componentParams: "",
+                    flyToField: "",
+                    jumpLink: "",
+                  },
+                ],
+                ...item,
+              };
+            });
+          }
+
+          
+
           this.changeFiledEventList = (
             changeFiledEventList.length === 0
-              ? [{ name }]
+              ? [{ name }, ...tabAppendList]
               : changeFiledEventList
           ).map((item, index) => {
             return {
@@ -770,7 +705,7 @@ export default {
             };
           });
         });
-        
+
         this.$nextTick(() => {
           this.activeName = tabName + '0';
         });
@@ -803,7 +738,6 @@ export default {
   watch: {
     "currentConfig.id"(value) {
       this.setEventOptions();
-      console.log("value:::::::::::::::::", value);
       this.init();
     },
   },
@@ -819,6 +753,7 @@ export default {
     background-color: rgba($color: #000000, $alpha: 0);
   }
 }
+
 .event-management_wrap {
   padding: 10px;
   box-sizing: border-box;
@@ -836,7 +771,7 @@ export default {
   .event-item {
     color: #eee;
 
-    & + .event-item {
+    &+.event-item {
       margin-top: 10px;
     }
   }

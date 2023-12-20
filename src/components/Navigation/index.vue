@@ -4,7 +4,7 @@
  * @Author: ydl
  * @Date: 2023-07-21 09:10:12
  * @LastEditors: ydl
- * @LastEditTime: 2023-10-18 11:09:06
+ * @LastEditTime: 2023-11-22 14:38:17
 -->
 <template>
   <div
@@ -124,6 +124,7 @@ export default {
   computed: {
     styleObj() {
       let c = setStyleObj({ ...this.config.box });
+      console.log(c, "===c");
       return {
         ...c,
         "--leftActive": `url(${

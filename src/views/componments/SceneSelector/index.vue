@@ -28,50 +28,60 @@
             </div>
             <img
               :src="
-                (item.scene_snapshot && (JSON.parse(item.scene_snapshot).lenght > 0))
-                  ? JSON.parse(item.scene_snapshot)[0].DownloadUrl
+                item.scene_snapshot
+                  ? item.scene_snapshot
                   : require('../../../assets/image/cockpit_default.png')
               "
               alt=""
-            /> 
+            />
           </div>
           <div class="scene-item-title">{{ item.name }}</div>
         </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button size="mini" @click="onClose">取 消</el-button>
-      <el-button size="mini" type="primary" @click="onSure">确 定</el-button>
+    <span
+      slot="footer"
+      class="dialog-footer"
+    >
+      <el-button
+        size="mini"
+        @click="onClose"
+      >取 消</el-button>
+      <el-button
+        size="mini"
+        type="primary"
+        @click="onSure"
+      >确 定</el-button>
     </span>
   </el-dialog>
 </template>
 <script>
-import "./index.scss";
+import './index.scss';
 export default {
-  name: "SceneSelector",
+  name: 'SceneSelector',
   data() {
     return {
       isShow: false,
       scenceData: [],
       activeIndex: -1,
-      selectedObj: {},
+      selectedObj: {}
     };
   },
   props: {
     dialogVisible: {
       type: Boolean,
-      default: false,
+      default: false
     },
     scenceList: {
       type: Array,
       default: () => {
         return [];
-      },
+      }
     },
     sceneId: {
       type: String,
-      default: "",
-    },
+      default: ''
+    }
   },
   methods: {
     changeScenceData(item) {
@@ -79,32 +89,38 @@ export default {
     },
     onClose() {
       this.selectedObj = {};
-      this.$emit("onClose");
+      this.$emit('onClose');
     },
     onSure() {
-      this.$emit("onSure", this.selectedObj);
+      console.log(this.selectedObj, '当前选择场景');
+      this.$emit('onSure', this.selectedObj);
       this.selectedObj = {};
-    },
+    }
   },
   mounted() {
-    
+    let scene = sessionStorage.getItem('scene') || '[]';
+    this.scenceData = JSON.parse(scene);
     // this.isShow = this.dialogVisible;
   },
   watch: {
     dialogVisible(nVal) {
       this.isShow = nVal;
-      console.log("nVal::::::::::::::::::::", nVal, this.selectedObj.rowid)
       this.selectedObj.rowid = this.sceneId;
     },
     scenceList(nVal) {
-      console.log("scenceList:::::", nVal)
       this.scenceData = nVal;
-    },
-    sceneId(nVal) {
-      console.log("nVal::::::::::::::::::::", nVal)
-      // this.selectedObj.rowid = nVal;
     }
-  },
+    // sceneId(nVal) {
+    //   console.log('nVal::::::::::::::::::::', nVal);
+    //   // this.selectedObj.rowid = nVal;
+    // }
+  }
 };
 </script>
+
+<style lang="scss" scoped>
+.scene-item {
+  margin-right: 20px;
+}
+</style>
     

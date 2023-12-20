@@ -314,7 +314,9 @@
     color: #FFFFFF;
     border-radius: 4px;
   }
-
+  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected{
+    background: #45494C;
+  }
   // el-select-dropdown el-popper
   .el-select-dropdown__item.hover {
     background: rgba(255, 255, 255, 0.1) !important;

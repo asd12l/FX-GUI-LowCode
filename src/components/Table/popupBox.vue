@@ -4,7 +4,11 @@
     v-show="isShowModuleFunc(config)"
     @click="clickCanvas"
   >
-    <div v-if="isEdit" class="message-wrap" v-on:dblclick="handleDoubleClick">
+    <div
+      v-if="isEdit"
+      class="message-wrap"
+      v-on:dblclick="handleDoubleClick"
+    >
       双击进入编辑
     </div>
     <div
@@ -30,8 +34,15 @@
         circle
       ></el-button>
 
-      <div class="canvas-main" :style="styleObj1">
-        <div class="top" :style="styleObj2" v-show="config.header.show">
+      <div
+        class="canvas-main"
+        :style="styleObj1"
+      >
+        <div
+          class="top"
+          :style="styleObj2"
+          v-show="config.header.show"
+        >
           <div class="top-left">
             <img
               :src="config.header.icon"
@@ -53,11 +64,14 @@
               {{ config.header.txt }}
             </div>
           </div>
-          <div class="top-right" v-show="config.close.show">
+          <div
+            class="top-right"
+            v-show="config.close.show"
+          >
             <div
               class="close"
               :style="{ ...styleObj3, ...filterStyles }"
-              @click="config.isShowModule = false"
+              @click="closeDialog"
             ></div>
           </div>
         </div>
@@ -109,7 +123,7 @@
 </template>
 
 <script>
-import { setStyleObj, getFilterStyles } from "@/utils/index.js";
+import { setStyleObj, getFilterStyles } from '@/utils/index.js';
 import {
   barChart,
   lineChart,
@@ -118,50 +132,53 @@ import {
   gaugeChart,
   wordChart,
   radarChart,
-  treeChart,
-} from "@/components/Charts";
-import mixedLineandBar from "@/components/Charts/mixedLineandBar/index.vue";
-import tabPanel from "@/components/title/tabPanel";
-import vueDragResize from "../../views/componments/vueDragResize/vue-drag-resize.vue";
-import DateComponent from "@/components/Date";
-import NumberComponent from "@/components/Number";
-import dateMap from "@/components/date";
-import smallTitle from "@/components/title/smallTitle";
-import progressBar from "@/components/List/progressBar.vue";
-import PowerBarChart from "@/components/Charts/powerBarChart.vue";
-import Statistic from "@/components/Statistic/statistic.vue";
-import LayerControl from "@/components/LayerControl/layerControl.vue";
-import CheckboxGroup from "@/components/LayerControl/checkboxGroup.vue";
-import BasicText from "@/components/Text/text.vue";
-import RichEditor from "@/components/Text/richEditor.vue";
-import navigation from "@/components/Navigation";
-import background from "@/components/Background";
-import numberCount from "@/components/NumberCount";
-import importCamera from "@/components/Camera/importCamera";
-import splitCameraScreen from "@/components/Camera/splitCameraScreen";
-import numberScroll from "@/components/NumberCount/numberScroll";
-import eventList from "@/components/List/eventList.vue";
-import buttonGroup from "@/components/NumberCount/buttonGroup";
-import numberThree from "@/components/NumberCount/numberThree";
-import CarouselPic from "@/components/CarouselPic/index.vue";
-import AppraisingCard from "@/components/List/appraisingCard/appraisingCard.vue";
-import NumberSteering from "@/components/NumberCount/numberSteering.vue";
-import SwitchList from "@/components/List/switchList/index";
+  treeChart
+} from '@/components/Charts';
+import mixedLineandBar from '@/components/Charts/mixedLineandBar/index.vue';
+import tabPanel from '@/components/title/tabPanel';
+import vueDragResize from '../../views/componments/vueDragResize/vue-drag-resize.vue';
+import DateComponent from '@/components/date';
+import NumberComponent from '@/components/Number';
+import dateMap from '@/components/date';
+import smallTitle from '@/components/title/smallTitle';
+import progressBar from '@/components/List/progressBar.vue';
+import PowerBarChart from '@/components/Charts/powerBarChart.vue';
+import Statistic from '@/components/Statistic/statistic.vue';
+import LayerControl from '@/components/LayerControl/layerControl.vue';
+import CheckboxGroup from '@/components/LayerControl/checkboxGroup.vue';
+import BasicText from '@/components/Text/text.vue';
+import RichEditor from '@/components/Text/richEditor.vue';
+import navigation from '@/components/Navigation';
+import background from '@/components/Background';
+import importCamera from '@/components/Camera/importCamera';
+import splitCameraScreen from '@/components/Camera/splitCameraScreen';
+import eventList from '@/components/List/eventList.vue';
+import CarouselPic from '@/components/CarouselPic/index.vue';
+import AppraisingCard from '@/components/List/appraisingCard/appraisingCard.vue';
+import SwitchList from '@/components/List/switchList/index';
+import numberCount from '@/components/numberCount/index.js';
 import {
   commonTable,
+  commonTable1,
+  commonTable2,
   scrollTable,
   selectBox,
   dateTimePicker,
   searchBox,
-  popupBox,
-} from "@/components/Table";
-import stackedLine from "@/components/Charts/lineChart/stackedLine";
-import groupBar from "@/components/Charts/barChart/groupBar.vue";
-import Track from "@/components/Track/track";
-import weather from "@/components/Weather";
+  popupBox
+} from '@/components/table';
+import stackedLine from '@/components/Charts/lineChart/stackedLine';
+import groupBar from '@/components/Charts/barChart/groupBar.vue';
+import Track from '@/components/Track/track';
+import weather from '@/components/Weather';
+import eventDetail from '@/components/eventDetail';
+import eventDetailParticular from '@/components/eventDetail/eventDetailParticular';
+import privateCloud from '@/components/privateCloud/index.js';
 export default {
-  name: "dialog",
+  name: 'dialog',
   components: {
+    eventDetailParticular,
+    eventDetail,
     mixedLineandBar,
     stackedLine,
     groupBar,
@@ -175,7 +192,6 @@ export default {
     radarChart,
     treeChart,
     vueDragResize,
-    DateComponent,
     NumberComponent,
     dateMap,
     smallTitle,
@@ -186,16 +202,14 @@ export default {
     RichEditor,
     navigation,
     background,
-    numberCount,
     importCamera,
     splitCameraScreen,
-    numberScroll,
     eventList,
-    buttonGroup,
-    numberThree,
     CarouselPic,
     AppraisingCard,
     commonTable,
+    commonTable1,
+    commonTable2,
     scrollTable,
     selectBox,
     dateTimePicker,
@@ -203,22 +217,30 @@ export default {
     popupBox,
     PowerBarChart,
     CheckboxGroup,
-    NumberSteering,
     SwitchList,
     Track,
     weather,
+    DateComponent,
+    ...numberCount, //按钮及数值组件
+    ...privateCloud
   },
   props: {
     scale: {
       type: Number,
-      default: 1,
+      default: 1
     },
     config: {
-      type: Object,
+      type: Object
     },
     id: {
-      type: String,
+      type: String
     },
+    callBack: {
+      type: Function,
+      default: () => {
+        return () => {};
+      }
+    }
   },
   data() {
     return {
@@ -226,16 +248,16 @@ export default {
       isEdit: true,
       containterDrawingList: [],
       currentContainterConfig: {
-        drawingList: [],
+        drawingList: []
       },
-      currentConfig: {},
+      currentConfig: {}
     };
   },
   watch: {
-    "$store.state.currentConfig": {
+    '$store.state.currentConfig': {
       handler(nVal, oVal) {
-        if (!location.hash.includes("view") && this.id === nVal.id) {
-          if (nVal.component === "popupBox") {
+        if (!location.hash.includes('view') && this.id === nVal.id) {
+          if (nVal.component === 'popupBox') {
             this.containterDrawingList = nVal.drawingList;
           }
           if (nVal.parentId) {
@@ -247,8 +269,8 @@ export default {
         // this.currentConfig = nVal;
       },
       deep: true,
-      immediate: true, //立即执行
-    },
+      immediate: true //立即执行
+    }
     // id: {
     //   handler(nVal, oVal) {
     //     console.log(nVal, "===watch");
@@ -269,7 +291,7 @@ export default {
         b.background && (d.background = `url(${b.background}) no-repeat`);
       } else {
         b.background && (d.background = b.background);
-        b.borderWidth && (d.borderWidth = b.borderWidth + "px");
+        b.borderWidth && (d.borderWidth = b.borderWidth + 'px');
         b.borderStyle && (d.borderStyle = b.borderStyle);
         if (b.isShowColors) {
           b.borderImage && (d.borderImage = b.borderImage);
@@ -280,14 +302,15 @@ export default {
       return d;
     },
     styleObj2() {
+      console.log(this.config.header);
       let d = setStyleObj({ ...this.config.header });
-      d.display = d.display === "block" ? "flex" : "none";
+      d.display = d.display === 'block' ? 'flex' : 'none';
       return d;
     },
     styleObj3() {
       let d = setStyleObj({ ...this.config.close });
       return d;
-    },
+    }
     // currentConfig: {
     //   get() {
     //     console.log(
@@ -317,19 +340,23 @@ export default {
   },
   created() {},
   mounted() {
-    if (location.hash.includes("view")) {
+    if (location.hash.includes('view')) {
       this.isEdit = false;
     }
     this.containterDrawingList = this.config.drawingList;
   },
   methods: {
+    closeDialog() {
+      this.callBack && this.callBack();
+      this.config.isShowModule = false;
+    },
     onActivated(e, item) {
       // 下拉框组件单独处理
-      if (item.component === "selectBox") {
-        this.$store.commit("SET_CURRENT_CONFIG", {
+      if (item.component === 'selectBox') {
+        this.$store.commit('SET_CURRENT_CONFIG', {
           id: item.id,
           ...item.config,
-          component: item.component,
+          component: item.component
         });
       }
     },
@@ -338,12 +365,12 @@ export default {
       const drawingList = this.$store.state.drawingList.filter(
         (item) => item.id !== this.id
       );
-      this.$store.commit("SET_DRAWING_LIST", drawingList);
+      this.$store.commit('SET_DRAWING_LIST', drawingList);
 
       this.isEdit = true;
-      this.$store.commit("SET_ISSHOWCONTAINERMASK", false);
-      this.$store.commit("SET_CURRENT_CONFIG", {});
-      this.$store.commit("SET_SELECTEDCONTAINERID", "");
+      this.$store.commit('SET_ISSHOWCONTAINERMASK', false);
+      this.$store.commit('SET_CURRENT_CONFIG', {});
+      this.$store.commit('SET_SELECTEDCONTAINERID', '');
     },
     getIsActive(item) {
       // console.log("this.$store.state.currentConfig.id == item.id::::::::::::", this.$store.state.currentConfig.id, item.id, this.$store.state.drawingList)
@@ -351,7 +378,7 @@ export default {
     },
     // 是否是查看状态
     isView() {
-      return location.hash.includes("view");
+      return location.hash.includes('view');
     },
     // 点击容器组件
     clickCanvas(e) {
@@ -361,26 +388,26 @@ export default {
     },
     handleDoubleClick(e) {
       this.isEdit = false;
-      this.$store.commit("SET_ISSHOWCONTAINERMASK", true);
-      this.$store.commit("SET_SELECTEDCONTAINERID", this.id);
+      this.$store.commit('SET_ISSHOWCONTAINERMASK', true);
+      this.$store.commit('SET_SELECTEDCONTAINERID', this.id);
     },
     changeComponmentStatus(e) {
       e.stopPropagation();
       this.isEdit = true;
-      this.$store.commit("SET_ISSHOWCONTAINERMASK", false);
-      this.$store.commit("SET_CURRENT_CONFIG", {});
-      this.$store.commit("SET_SELECTEDCONTAINERID", "");
+      this.$store.commit('SET_ISSHOWCONTAINERMASK', false);
+      this.$store.commit('SET_CURRENT_CONFIG', {});
+      this.$store.commit('SET_SELECTEDCONTAINERID', '');
     },
     //盒子自适应
     handleResizeStop(e, val) {
       this.$nextTick(() => {
         Object.assign(this.currentConfig, {
           width: e.width,
-          height: e.height,
+          height: e.height
         });
         val.config.width = e.width;
         val.config.height = e.height;
-        if (!["date", "table"].includes(val.config.series.type)) {
+        if (!['date', 'table'].includes(val.config.series.type)) {
           this.$refs[val.id][0].myChart.resize();
         }
       });
@@ -388,28 +415,28 @@ export default {
     //点击选中当前拖拽的组件
     handleComponentClick(e, item) {
       e.stopPropagation();
-      console.log(item, "====currentConfig11111");
+      console.log(item, '====currentConfig11111');
 
       //   if (item.id == this.currentConfig.id) return;
-      this.$store.commit("SET_CURRENT_CONFIG", {
+      this.$store.commit('SET_CURRENT_CONFIG', {
         id: item.id,
         ...item.config,
-        component: item.component,
+        component: item.component
       });
     },
     //拖拽移动停止
     handleDragStop(e, val) {
-      console.log("val:::::::::::::::::", e, val);
+      console.log('val:::::::::::::::::', e, val);
       Object.assign(this.currentConfig, {
         left: e.left,
-        top: e.top,
+        top: e.top
       });
       val.config.left = e.left;
       val.config.top = e.top;
       this.currentConfig = {
         id: val.id,
         ...val.config,
-        component: val.component,
+        component: val.component
       };
     },
     //删除当前图
@@ -430,15 +457,14 @@ export default {
       //     this.drawingList.findIndex((item) => item.id === id),
       //     1
       //   );
-      this.$store.commit("SET_CURRENT_CONFIG", {
+      this.$store.commit('SET_CURRENT_CONFIG', {
         id: this.$store.state.drawingList[parentContainerIndex].id,
         ...this.$store.state.drawingList[parentContainerIndex].config,
-        component: this.$store.state.drawingList[parentContainerIndex]
-          .component,
+        component: this.$store.state.drawingList[parentContainerIndex].component
       });
       //   this.currentConfig = {};
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -518,25 +544,25 @@ export default {
             }
 
             > span:nth-child(1) {
-              background: url("../../assets/image/xiaokunshan/icon1.png")
+              background: url('../../assets/image/xiaokunshan/icon1.png')
                 no-repeat;
               background-size: 100% 100%;
             }
 
             > span:nth-child(2) {
-              background: url("../../assets/image/xiaokunshan/icon2.png")
+              background: url('../../assets/image/xiaokunshan/icon2.png')
                 no-repeat;
               background-size: 100% 100%;
             }
 
             > span:nth-child(1).hight1 {
-              background: url("../../assets/image/xiaokunshan/aicon1.png")
+              background: url('../../assets/image/xiaokunshan/aicon1.png')
                 no-repeat;
               background-size: 100% 100%;
             }
 
             > span:nth-child(2).hight2 {
-              background: url("../../assets/image/xiaokunshan/aicon2.png")
+              background: url('../../assets/image/xiaokunshan/aicon2.png')
                 no-repeat;
               background-size: 100% 100%;
             }

@@ -1,89 +1,31 @@
 <template>
-    <el-scrollbar class="right-setting scrollbar-wrapper number">
-        
-  <el-form
-        label-width="110px"
-        size="small"
-        class="border-box"
-        style="padding: 8px 16px"
-      >
-      <el-form-item label="名称：">
-          <div
-          class="componentName"
-          style="display:flex;align-items:center"
-        >
-          <el-input
-           v-model="config.name"
-            size="mini"
-            placeholder=""
-            @change="(val) => $emit('changeSize', 'name', val)"
-          ></el-input>
-          <span
-            :class="config.isLock? 'active': ''"
-            @click="(val) => $emit('changeSize', 'isLock', !config.isLock)"
-          ></span>
-          <span
-            :class="config.isShow? 'active': ''"
-            @click="(val) => $emit('changeSize', 'isShow', !config.isShow)"
-          ></span>
-        </div>
-        </el-form-item>
-        <el-form-item label="组件宽度：">
-          <el-input
-            v-model="config.width"
-            size="mini"
-            @change="(val) => $emit('changeSize', 'width', val)"
-            placeholder="请输入组件宽度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="组件高度：">
-          <el-input
-            v-model="config.height"
-            size="mini"
-            @change="(val) => $emit('changeSize', 'height', val)"
-            placeholder="请输入组件高度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="X距离：">
-        <el-input
-          v-model="config.left"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'left', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="Y距离：">
-        <el-input
-          v-model="config.top"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'top', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="默认展示隐藏：" label-width="110px">
-        <el-switch 
-        style="margin-top: 7px;"
-        v-model="config.isShowModule"
-        @change="(val) => $emit('changeSize', 'isShowModule', val)"
-        ></el-switch>
-      </el-form-item>
+  <el-scrollbar class="right-setting scrollbar-wrapper number imageSelector">
+    <el-form
+      label-width="110px"
+      size="small"
+      class="border-box"
+      style="padding: 8px 16px"
+    >
+      <commonSetTitle
+        :config="config"
+        @changeSize="(type, val) => $emit('changeSize', type, val)"
+      />
       <el-form-item label="单个容器宽度：">
-          <el-input
-            v-model="config.contain.width"
-            size="mini"
-            placeholder="请输入单个容器宽度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="单个容器高度：">
-          <el-input
-            v-model="config.contain.height"
-            size="mini"
-            placeholder="请输入单个容器高度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="排列：">
-        <div
-          class="flex"
-          style="color: #fff"
-        >
+        <el-input
+          v-model="config.contain.width"
+          size="mini"
+          placeholder="请输入单个容器宽度"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="单个容器高度：">
+        <el-input
+          v-model="config.contain.height"
+          size="mini"
+          placeholder="请输入单个容器高度"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="排列：">
+        <div class="flex" style="color: #fff">
           <div style="margin-right: 10px">一行</div>
           <el-input-number
             v-model="config.contain.arrangeNum"
@@ -94,29 +36,43 @@
           <div style="margin-left: 10px">个</div>
         </div>
       </el-form-item>
-        <el-form-item label="容器右边距：">
-          <el-input
-            v-model="config.contain.marginRight"
-            size="mini"
-            placeholder="请输入右边距高度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="容器下边距：">
-          <el-input
-            v-model="config.contain.marginBottom"
-            size="mini"
-            placeholder="请输入下边距高度"
-          ></el-input>
-        </el-form-item>
-        <el-collapse>
-          <el-collapse-item title="文本(数值)" name="title">
-            <el-form-item label="显示文本：">
-              <el-switch v-model="config.title1.show"  style="margin-top: 7px;"></el-switch>
-            </el-form-item>
-    <div v-if="config.title1.show">
-         <commonTab :config="config.title1" type1="txtFamily"  :isShowFontSet="false" ></commonTab>
+      <el-form-item label="容器右边距：">
+        <el-input
+          v-model="config.contain.marginRight"
+          size="mini"
+          placeholder="请输入右边距高度"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="容器下边距：">
+        <el-input
+          v-model="config.contain.marginBottom"
+          size="mini"
+          placeholder="请输入下边距高度"
+        ></el-input>
+      </el-form-item>
+      <el-collapse>
+        <el-collapse-item title="文本(数值)" name="title">
+          <el-form-item label="显示文本：">
+            <el-switch
+              v-model="config.title1.show"
+              style="margin-top: 7px;"
+            ></el-switch>
+          </el-form-item>
+          <div v-if="config.title1.show">
+            <commonTab
+              :config="config.title1"
+              type1="txtFamily"
+              :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <el-form-item label="渐变颜色：">
-              <el-switch v-model="config.title1.linearTxt"  style="margin-top: 7px;"></el-switch>
+              <el-switch
+                v-model="config.title1.linearTxt"
+                style="margin-top: 7px;"
+              ></el-switch>
             </el-form-item>
             <el-form-item label="颜色：">
               <div class="flex align-center">
@@ -167,7 +123,7 @@
                 >px
               </div>
             </el-form-item>
-            <el-form-item label="上边距："   >
+            <el-form-item label="上边距：">
               <div class="flex align-center">
                 <el-input
                   v-model="config.title1.textStylePx.top"
@@ -182,17 +138,27 @@
 
         <el-collapse-item title="文本(名称)">
           <el-form-item label="显示文本：">
-            <el-switch v-model="config.title2.show"  style="margin-top: 7px;"></el-switch>
+            <el-switch
+              v-model="config.title2.show"
+              style="margin-top: 7px;"
+            ></el-switch>
           </el-form-item>
           <div v-if="config.title2.show">
             <commonTab
               :config="config.title2"
               type1="txtFamily"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
-         
+
             <el-form-item label="渐变颜色：">
-              <el-switch v-model="config.title2.linearTxt"  style="margin-top: 7px;"></el-switch>
+              <el-switch
+                v-model="config.title2.linearTxt"
+                style="margin-top: 7px;"
+              ></el-switch>
             </el-form-item>
             <el-form-item label="颜色：">
               <div class="flex align-center">
@@ -243,7 +209,7 @@
                 >px
               </div>
             </el-form-item>
-            <el-form-item label="上边距："   >
+            <el-form-item label="上边距：">
               <div class="flex align-center">
                 <el-input
                   v-model="config.title2.textStylePx.top"
@@ -257,16 +223,26 @@
         </el-collapse-item>
         <el-collapse-item title="文本(说明)">
           <el-form-item label="显示文本：">
-            <el-switch v-model="config.title3.show"  style="margin-top: 7px;"></el-switch>
+            <el-switch
+              v-model="config.title3.show"
+              style="margin-top: 7px;"
+            ></el-switch>
           </el-form-item>
           <div v-if="config.title3.show">
             <commonTab
               :config="config.title3"
               type1="txtFamily"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
             <el-form-item label="渐变颜色：">
-              <el-switch v-model="config.title3.linearTxt"  style="margin-top: 7px;"></el-switch>
+              <el-switch
+                v-model="config.title3.linearTxt"
+                style="margin-top: 7px;"
+              ></el-switch>
             </el-form-item>
             <el-form-item label="颜色：">
               <div class="flex align-center">
@@ -317,7 +293,7 @@
                 >px
               </div>
             </el-form-item>
-            <el-form-item label="上边距："   >
+            <el-form-item label="上边距：">
               <div class="flex align-center">
                 <el-input
                   v-model="config.title3.textStylePx.top"
@@ -331,7 +307,10 @@
         </el-collapse-item>
         <el-collapse-item title="图片1" name="img1">
           <el-form-item label="显示图片：">
-            <el-switch v-model="config.backgroundImg1.show"  style="margin-top: 7px;"></el-switch>
+            <el-switch
+              v-model="config.backgroundImg1.show"
+              style="margin-top: 7px;"
+            ></el-switch>
           </el-form-item>
           <div v-if="config.backgroundImg1.show">
             <el-form-item label="图片宽度：">
@@ -347,79 +326,54 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="上边距：">
-              <el-input v-model="config.backgroundImg1.bgImg.top" size="mini"></el-input>
+              <el-input
+                v-model="config.backgroundImg1.bgImg.top"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <el-form-item label="左边距：">
-              <el-input v-model="config.backgroundImg1.bgImg.left" size="mini"></el-input>
+              <el-input
+                v-model="config.backgroundImg1.bgImg.left"
+                size="mini"
+              ></el-input>
             </el-form-item>
 
-            <el-collapse-item title="图标配置" name="rowfour" v-if="config.txtRowImgs&&config.txtRowImgs.length">
+            <el-collapse-item
+              title="图标配置"
+              name="rowfour"
+              v-if="config.txtRowImgs && config.txtRowImgs.length"
+            >
               <el-form-item
                 v-for="(item, i) in config.txtRowImgs"
                 :key="i"
                 :label="`图标${i + 1}：`"
-              > 
-              <!-- 
-                   -->
-              <el-select
-                  popper-class="setting-select"
-                  :value="config.txtRowImgs[i].background"
-                  placeholder="请选择图片"
-                  @change="(val) => changeIcon(i,val)"
-                  clearable
+              >
+                <div
+                  class="img-item pointer"
+                  @click="openDialogVisible('tpyfj', i)"
                 >
-                  <el-option
-                    v-for="(item, i) in imgList[0]"
-                    :key="i"
-                    :label="item"
-                    :value="item"
-                  >
-                <div class="img-box">
-                  <img :src="item" />
+                  <img :src="config.txtRowImgs[i].background" alt="" />
                 </div>
-              </el-option>
-            </el-select>
               </el-form-item>
             </el-collapse-item>
-              </div>  
-         </el-collapse-item>
+          </div>
+        </el-collapse-item>
         <el-collapse-item title="图片2" name="img2">
           <el-form-item label="显示图片：">
-            <el-switch v-model="config.backgroundImg2.show"  style="margin-top: 7px;"></el-switch>
+            <el-switch
+              v-model="config.backgroundImg2.show"
+              style="margin-top: 7px;"
+            ></el-switch>
           </el-form-item>
           <div v-if="config.backgroundImg2.show">
-            <el-form-item label="图片：">
-              <el-select
-                  popper-class="setting-select"
-                  v-model="config.backgroundImg2.bgImg.background"
-                  placeholder="请选择图片"
-                  clearable
-                >
-                  <el-option
-                    v-for="(item, i) in imgList[1]"
-                    :key="i"
-                    :label="item"
-                    :value="item"
-                  >
-                <div class="img-box">
-                  <img :src="item" />
-                </div>
-              </el-option>
-            </el-select>
-              <!-- <el-select
-                v-model="config.backgroundImg2.bgImg.background"
-                placeholder="请选择图片"
-              >
-                <el-option
-                  v-for="(item, i) in imgList2"
-                  :label="item.name"
-                  :key="i"
-                  :value="item.src"
-                >
-                  <img class="img" :src="item.src" alt="" />
-                </el-option>
-                
-              </el-select> -->
+            <el-form-item label="图片：" v-if="config.backgroundImg2.bgImg.background"> 
+              <div
+                class="img-item pointer"
+                @click="openDialogVisible('tpefj', '图片2')"
+              > 
+                <img 
+                :src="config.backgroundImg2.bgImg.background" alt="" />
+              </div>
             </el-form-item>
 
             <el-form-item label="图片宽度：">
@@ -435,15 +389,55 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="上边距：">
-              <el-input v-model="config.backgroundImg2.bgImg.top" size="mini"></el-input>
+              <el-input
+                v-model="config.backgroundImg2.bgImg.top"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <el-form-item label="左边距：">
-              <el-input v-model="config.backgroundImg2.bgImg.left" size="mini"></el-input>
+              <el-input
+                v-model="config.backgroundImg2.bgImg.left"
+                size="mini"
+              ></el-input>
             </el-form-item>
           </div>
         </el-collapse-item>
       </el-collapse>
     </el-form>
+    <!-- 图片弹框 -->
+    <el-dialog
+      :modal="false"
+      title="图片选择"
+      :visible.sync="dialogVisible"
+      width="30%"
+      custom-class="image-selector"
+    >
+      <el-tabs v-model="activeName">
+        <el-tab-pane
+          :label="item"
+          :name="item"
+          v-for="item in tabsList"
+          :key="item"
+          class="tab-image"
+        >
+        <!--  :class="{
+              active:
+                img.src ===
+                  (config.txtRowImgs[indexImg] &&
+                    config.txtRowImgs[indexImg].background) ||
+               ( img.src === config.backgroundImg2.bgImg.background),
+            }" -->
+          <div
+            class="image-wrap"
+            @click="changeImageSrc(img)"
+            v-for="img in tabImagesList"
+            :key="img"
+          >
+            <img :src="img" alt="" />
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </el-dialog>
   </el-scrollbar>
 </template>
 
@@ -452,9 +446,11 @@ import commonTab from "../componments/commonTab";
 import { appKey, sign } from "@/utils/const.js";
 import { getFilterRows } from "@/utils/api";
 
+import commonSetTitle from "../componments/commonSetTitle";
+import ImageSelector from "../componments/ImageSelector";
 export default {
   name: "setting",
-  components: { commonTab },
+  components: { commonTab, commonSetTitle, ImageSelector },
   data() {
     return {
       directionOption: [
@@ -514,7 +510,11 @@ export default {
         },
       ],
       fontList: ["Microsoft YaHei"],
-      imgList:[[],[]],
+      imgList: [],
+      tabsList: [],
+      activeName: "",
+      dialogVisible: false,
+      indexImg: "",
     };
   },
   props: {
@@ -529,51 +529,57 @@ export default {
     },
   },
   watch: {
-  'config.txtRowImgs':{
-      handler(nVal, oVal) {
-      },
+    "config.txtRowImgs": {
+      handler(nVal, oVal) {},
       deep: true,
     },
   },
-  created() {
-    this.getImgData()
-  },
-  methods: {
-    changeIcon(i,v){
-      this.$set(this.config.txtRowImgs[i],'background',v)
+  computed: {
+    tabImagesList() {
+      let d = this.imgList.find((item) => item.name === this.activeName);
+      let src = d ? d.src : [];
+      return src;
     },
-    async getImgData() {
-      let { data } = await getFilterRows({
+  },
+  created() {},
+  methods: {
+    changeImageSrc(v) {
+      if (this.indexImg == "图片2") {
+        console.log("this.indexImg图片2");
+        this.$set(this.config.backgroundImg2.bgImg, "background", v);
+      } else {
+        this.$set(this.config.txtRowImgs[this.indexImg], "background", v);
+      }
+      this.dialogVisible = false;
+    },
+    async openDialogVisible(imageField, i) {
+      this.indexImg = i;
+      console.log("this.indexImg", this.indexImg, i);
+      let {
+        data: { rows },
+      } = await getFilterRows({
         appKey: appKey,
         sign: sign,
-        worksheetId: this.config.worksheetId,
+        worksheetId: 'szyzj',
         pageSize: 500,
         pageIndex: 1,
       });
-      let dataImg = data
-      this.imgList=[[],[]]
-      dataImg.rows.forEach((item) => {
-        if (item.sfqy === "启用") {
-          let b = item.tpyfj ? JSON.parse(item.tpyfj) : [];
-          let d = item.tpefj ? JSON.parse(item.tpefj) : [];
-          if (b.length > 0) {
-            b.forEach((v) => {
-              this.imgList[0].push(v.DownloadUrl);
-            });
+      const enableImageList = rows.filter((item) => item.sfqy === "启用");
+      this.tabsList = enableImageList.map((item) => item.mingcheng);
+      this.imgList = enableImageList
+        .map((item) => {
+          if (item[imageField]) {
+            console.log("item[imageField]", JSON.parse(item[imageField]));
+            return {
+              name: item.mingcheng,
+              src: JSON.parse(item[imageField]).map((ele) => ele.DownloadUrl),
+            };
           }
-          if (d.length > 0) {
-            d.forEach((v) => {
-              this.imgList[1].push(v.DownloadUrl);
-            });
-          }
-        }
-      });
-    },
-    changeBar(data) {
-      this.currectBar = data.key;
-    },
-    handleClick(tab, event) {
-      console.log(tab, event);
+          return "";
+        })
+        .filter((item) => item);
+      this.activeName = this.tabsList[0];
+      this.dialogVisible = true;
     },
   },
 };
@@ -619,6 +625,28 @@ export default {
         color: #ffffff;
         border: none;
       }
+    }
+  }
+}
+.imageSelector {
+  .el-slider {
+    width: 200px;
+  }
+
+  .img-item {
+    width: 95px;
+    height: 95px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    &.pointer {
+      cursor: pointer;
     }
   }
 }

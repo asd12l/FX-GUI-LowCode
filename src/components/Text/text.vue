@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-07-31 16:49:55
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-08-02 14:57:45
+ * @LastEditTime: 2023-11-23 09:30:58
 -->
 <template>
   <div
@@ -24,7 +24,7 @@
       writingMode: config.writingMode,
     }"
   >
-    {{ config.data }}
+    {{ data }}
   </div>
 </template>
 
@@ -33,30 +33,42 @@ export default {
   data() {
     return {
       isShow: true,
+      data: '111'
     };
   },
   props: {
     config: {
-      type: Object,
-    },
-  },
-  watch:{
-    isShow(nVal) {
-      console.log("nVal:::::::::::::", nVal)
+      type: Object
     }
   },
-  methods:{
+  watch: {
+    isShow(nVal) {
+      console.log('nVal:::::::::::::', nVal);
+    },
+    'config.data': {
+      handler(nval) {
+        if (typeof nval === 'string') {
+          this.data = nval;
+        } else {
+          this.data = nval[0].text;
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  methods: {
     aaa(type) {
-      console.log("type::::::::::::::::", type)
-      this.isShow = type
-      console.log(1111)
+      console.log('type::::::::::::::::', type);
+      this.isShow = type;
+      console.log(1111);
     }
   }
 };
 </script>
 
 <style>
-  .basicText {
-    pointer-events: all !important
-  }
+.basicText {
+  pointer-events: all !important;
+}
 </style>

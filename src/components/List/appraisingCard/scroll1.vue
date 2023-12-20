@@ -34,7 +34,7 @@
         >
           <div :style="{height: (config.box.height - 12) + 'px'}">
             <img
-              :src="el.photo.includes('http') ? el.photo: IMG_URL + el.photo"
+              :src="el.photo"
               alt=""
               :style="{...photoStyle}"
             >
@@ -64,10 +64,10 @@
              letterSpacing: config.second.letterSpacing + 'px',
             }"><img
                 v-if="config.second.firstPic"
-                :src="config.second.selectedPic.url"
+                :src="config.second.selectedPic"
                 style="max-width: 15px;max-height: 15px;margin-right: 5px"
                 alt=""
-              ><span style="flex: 1;padding-right: 3px">荣誉</span></div>
+              ><span style="flex: 1;padding-right: 3px">{{el.text}}</span></div>
             <div
               :style="{
              display: config.third.display,
@@ -81,6 +81,21 @@
             }"
               style="padding-right: 3px"
             >{{el.description}}</div>
+            <div  v-if="config.tagsStyle && config.tagsStyle.show" >
+            <div v-if="(el.tags instanceof Array)"  class="tagsStyle"   :style="styleObjTags">
+              <span v-for="(itemm, i) in el.tags" :key="i" :style="tagsStyle(itemm)" >
+              {{ itemm }}
+            </span>
+            </div>
+            <div 
+            v-else
+            class="tagsStyle"   :style="styleObjTags">
+                 <span 
+             :style="tagsStyle(el.tags)">
+                  {{el.tags }}
+                 </span>
+            </div>
+          </div>
           </div>
         </div>
       </div>
@@ -90,6 +105,7 @@
 
 <script>
 import vueSeamlessScroll from 'vue-seamless-scroll';
+import { setStyleObj } from "@/utils/index.js";
 export default {
   components: {
     vueSeamlessScroll
@@ -100,10 +116,35 @@ export default {
     }
   },
   computed: {
+    styleObjTags() {
+      let d = setStyleObj({ ...this.config.tagsStyle });
+      return d;
+    },
+    tagsStyle() {
+        return function(v) {
+          let a = this.config.tagsStyle;
+          let b = {
+            color: `${a.color} !important`,
+                background: a.backgroundColor,
+                'border-Radius': a.borderRadius + 'PX'
+              };
+          a.colorArr.some((item,i) => {
+            if (item.txt === v) {
+              b = {
+                color: item.color,
+                background: item.background,
+                'border-Radius': a.borderRadius + 'PX'
+                  };
+                  return true;
+                }
+              })
+          return b;
+        };
+        },
     defaultOption() {
       return {
         step: 0.3, // 数值越大速度滚动越快
-        limitMoveNum: 1, // 开始无缝滚动的数据量 this.dataList.length
+        limitMoveNum: Math.ceil(this.config.width / this.config.box.width), // 开始无缝滚动的数据量 this.dataList.length
         hoverStop: this.config.box.isScroll, // 是否开启鼠标悬停stop
         direction: 2, // 0向下 1向上 2向左 3向右
         openWatch: true, // 开启数据实时监控刷新dom
@@ -126,22 +167,24 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      IMG_URL:
-        window.location.host.includes('localhost') ||
-        window.location.host.includes('192.168') ||
-        window.location.host.includes('127.0.0.1')
-          ? 'https://www.sjxks.com'
-          : window.location.protocol + '//' + window.location.host
-    };
-  },
   methods: {
+    test(arr,num){
+      return arr.reduce((t, l, i) => {
+   
+        if( !t.length || t.at(-1).length >= Math.ceil(arr.length / num) || arr.length - i === num - t.length) {
+            t.push([]);
+        }
+        t.at(-1).push(l)
+        return t;
+  
+      }, []);
+    },
     getArr(arr, num) {
       let newArr = JSON.parse(JSON.stringify(arr));
+      let result = Math.ceil((Number(arr.length)/num)); 
       let list = [];
       for (let i = 0; i < newArr.length; ) {
-        list.push(newArr.splice(i, num));
+        list.push(newArr.splice(i, result));
       }
       this.list = list;
     }
@@ -165,6 +208,7 @@ export default {
   watch: {
     config: {
       handler(nl) {
+        console.log(nl.data, '数据变化=====================');
         this.list = [];
         if (nl.data.length && nl.box.arrangeNum) {
           this.getArr(nl.data, Number(nl.box.arrangeNum)); //数组根据参数分割成n列
@@ -206,6 +250,16 @@ export default {
   width: 100%;
   height: 100%;
 }
+.tagsStyle {
+      display: flex;
+      > span {
+        padding: 6px 10px;
+        margin-right: 5px;
+        &:last-child{
+          margin-right: 0px;
+        }
+      }
+    }
 .list {
   display: flex;
 

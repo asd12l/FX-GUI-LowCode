@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-10-09 10:58:20
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-10-24 15:14:59
+ * @LastEditTime: 2023-11-02 14:30:18
 -->
 <template>
   <div
@@ -19,10 +19,14 @@
     <div
       class="head"
       :style="{
-        backgroundImage: 'url(' + config.box.headPic + ')',
+        
       }"
     >
       <span :style="{
+          width: config.box.headWidth + 'px',
+          height: config.box.headHeight + 'px',
+          lineHeight: config.box.headHeight + 'px',
+          backgroundImage: 'url(' + config.box.headPic + ')',
           fontSize: config.box.headFontSize + 'px',
         }">事件基本信息</span>
       <span
@@ -42,14 +46,16 @@
       <div
         class="alarm-img"
         :style="{
+          width: '100%',
+          height: (config.width - 20)/1.8 + 'px',
           backgroundImage: 'url(' + config.box.emptyPic + ')',
         }"
       >
         <CanvasImg
           :id="eventDetail.rowid"
           ref="canvas"
-          width="650"
-          height="358"
+          :width="config.width - 20"
+          :height="(config.width - 20)/1.8"
           :link="eventDetail.alarm_img"
           :info="eventDetail.alam_drawbox"
           :area_new="area_new"
@@ -61,39 +67,40 @@
           @click="showArea = !showArea"
         >{{showArea? '隐藏': '显示'}}区域</span>
       </div>
+      <!-- <el-scrollbar style="height: calc(100% - 426px)"> -->
       <div
         class="alarm-info"
         :style="{
-          fontSize: config.showField.fontSize + 'px',
-        }"
+          width: '100%',
+            fontSize: config.showField.fontSize + 'px',
+          }"
       >
-        <div>
-          <span class="alarm-info-key">事件名称：</span><span class="alarm-info-value">{{eventDetail.event_name}}</span>
-        </div>
-        <div>
-          <span class="alarm-info-key">事件状态：</span><span class="alarm-info-value"></span>
-        </div>
-        <div>
-          <span class="alarm-info-key">发生时间：</span><span class="alarm-info-value">{{eventDetail.alarm_time}}</span>
-        </div>
-        <div>
-          <span class="alarm-info-key">发生地址：</span><span class="alarm-info-value">{{eventDetail.alarm_address}}</span>
+        <div
+          v-for="item,index in config.fieldConfig"
+          :key="index"
+        >
+          <span class="alarm-info-key">{{item.name}}：</span>
+          <span
+            class="alarm-info-value"
+            :style="{
+                color: getColor(item.byname, 'valueColor'),
+                backgroundColor: getColor(item.byname, 'valueBackground')
+            }"
+          >{{getVal(item.byname)}}</span>
         </div>
       </div>
+      <!-- </el-scrollbar> -->
       <div class="buttons">
         <span
           v-for="(item, index) in config.buttons"
           :key="index"
+          v-show="!item.hidevalue || (item.hidevalue && item.hidevalue !== config.fields.filter(el=> el.key === item.hidekey)[0].value)"
         >
-          <span
-            v-if="item.effect === '作废'"
-            style="border: 1px solid #0cb8f2; color: #0cb8f2"
-            @click="cancel"
-          >{{ item.title }}</span>
-          <span
-            v-if="item.effect !== '作废'"
-            style="background: #0cb8f2; color: #081b22"
-          >{{ item.title }}</span>
+          <span :style="{
+              backgroundColor: item.fillColor,
+              borderColor: item.borderColor,
+              color: item.textColor
+            }">{{ item.title }}</span>
         </span>
       </div>
     </div>
@@ -138,29 +145,7 @@ export default {
     return {
       id: '',
       showArea: true,
-      eventDetail: {
-        // alam_drawbox: [
-        //   {
-        //     w: 0.015104166666666667,
-        //     h: 0.053703703703703705,
-        //     x: 0.3072916666666667,
-        //     y: 0.49907407407407406,
-        //     text: '越界',
-        //     confident: '0.85',
-        //     attr: []
-        //   }
-        // ],
-        // alarm_address: '',
-        // alarm_grade: '紧急',
-        // alarm_img_url:
-        //   'http://skyinfor.yikuaida.cn/file/mdpic/doc/20231011/d419f991d5944ffe9ada8ef808f01bc3.jpg',
-        // alarm_time: '2023-10-11 11:55:06',
-        // alarm_type: '人员越界',
-        // camera_name: '顶楼鹰眼',
-        // event_name: '[人员越界] 顶楼鹰眼 20231011-00007',
-        // position: '121.246544,31.057797',
-        // rowid: '366b41a4-aa82-4134-b201-d97bb3f7afc1'
-      },
+      eventDetail: {},
       area_new: {
         area_n: [],
         area_y: [],
@@ -178,9 +163,31 @@ export default {
     }
   },
   mounted() {
-    // this.updateComponentData('99e5fd8e-37cc-45b1-ae6d-7af06375b495');
+    // this.updateComponentData({ rowid: '99e5fd8e-37cc-45b1-ae6d-7af06375b495' });
   },
   methods: {
+    getVal(byname) {
+      if (this.config.fields.filter((item) => item.key === byname).length) {
+        return this.config.fields.filter((item) => item.key === byname)[0]
+          .value;
+      }
+    },
+    getColor(byname, param) {
+      if (
+        this.config.fieldConfig.filter((item) => item.byname === byname).length
+      ) {
+        let colorList = this.config.fieldConfig.filter(
+          (item) => item.byname === byname
+        )[0].valueSet;
+        let color = '';
+        colorList.forEach((item) => {
+          if (item.value === this.getVal(byname)) {
+            color = item[param];
+          }
+        });
+        return color;
+      }
+    },
     cancel() {
       this.isShowModal = true;
     },
@@ -195,11 +202,6 @@ export default {
       };
       const result = await getRowDetail(data);
       this.eventDetail = result.data;
-      // this.eventDetail.alam_drawbox = data.alam_drawbox
-      //   ? JSON.parse(data.alam_drawbox)
-      //   : [];
-      // this.eventDetail.alarm_img_url =
-      //   'http://skyinfor.yikuaida.cn/file/mdpic/doc/20231011/d419f991d5944ffe9ada8ef808f01bc3.jpg';
     }
   }
 };
@@ -211,16 +213,19 @@ export default {
   pointer-events: all;
   .head {
     width: 100%;
-    height: 48px;
-    line-height: 48px;
+    height: auto;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     position: relative;
-    padding-left: 20px;
     font-size: 20px;
     font-family: Alibaba PuHuiTi 2;
     font-weight: normal;
     color: #fff;
+
+    > span:nth-child(1) {
+      display: flex;
+      padding-left: 20px;
+    }
   }
   .close-icon {
     display: inline-block;
@@ -235,6 +240,8 @@ export default {
     padding: 10px;
     width: 100%;
     height: calc(100% - 48px);
+    display: flex;
+    flex-direction: column;
 
     .alarm-img {
       width: 100%;
@@ -265,6 +272,7 @@ export default {
       line-height: normal;
       letter-spacing: 0em;
       margin-top: 10px;
+      // height: calc(100% - );
 
       > div {
         line-height: 32px;
@@ -296,6 +304,7 @@ export default {
           line-height: 38px;
           text-align: center;
           font-size: 16px;
+          border: 1px solid;
           border-radius: 2px;
           cursor: pointer;
         }
@@ -355,5 +364,14 @@ export default {
   //     }
   //   }
   // }
+  .el-scrollbar__bar.is-horizontal {
+    display: none !important;
+  }
+}
+.el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+.is-horizontal {
+  display: none;
 }
 </style>

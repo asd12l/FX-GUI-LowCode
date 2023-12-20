@@ -67,6 +67,9 @@
             type="box"
             gradientType="background"
             txt="背景是否渐变："
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
           />
           <!-- <el-form-item label="背景颜色：">
             <el-input v-model="config.box.background" size="mini"></el-input>
@@ -135,11 +138,10 @@
 </template>
 
 <script>
-import commonTab from "../componments/commonTab";
 import txtGradient from "../componments/txtGradient";
 export default {
   name: "setting",
-  components: { commonTab, txtGradient },
+  components: { txtGradient },
   data() {
     return {};
   },

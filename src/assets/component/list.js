@@ -4,9 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-07-20 11:26:02
  * @LastEditors: ydl
- * @LastEditTime: 2023-10-20 14:52:34
- * @LastEditors: ydl
- * @LastEditTime: 2023-08-02 10:14:18
+ * @LastEditTime: 2023-11-22 14:57:55
  */
 import bar from "./config/bar";
 import line from "./config/line";
@@ -61,6 +59,8 @@ import text from "./config/text";
 import richEditor from "./config/richEditor";
 // 高级组件
 import commonTable from "./config/table/common-table";
+import commonTable1 from "./config/table/common-table1";
+import commonTable2 from "./config/table/common-table2";
 import scrollTable from "./config/table/scroll-table";
 import popupBox from "./config/table/popupBox";
 import select from "./config/table/select";
@@ -78,6 +78,7 @@ import singleCamera from "./config/singleCamera";
 import tabPanel from "./config/title/tabPanel";
 import container from "./config/container";
 import eventDetail from "./config/eventDetail";
+import eventDetailParticular from "./config/eventDetailParticular";
 //列表
 import switchList from "./config/list/switchList";
 import progressBar from "./config/progressBar";
@@ -99,10 +100,24 @@ import numberCount from "./config/numberCount";
 import numberScroll from "./config/numberCount/numberScroll";
 import numberThree from "./config/numberCount/numberThree";
 import numberSteering from "./config/numberCount/numberSteering";
-import numberFive from "./config/numberCount/numberFive";
+import numberFive from "./config/numberCount/numberFive2";
 import numberSix from "./config/numberCount/numberSix";
 // 业务组件
 import personnelHouse from "./config/table/personnelHouse";
+import buttonView from "./config/numberCount/buttonView";
+import buttonMeasure from "./config/numberCount/buttonMeasure";
+// 私有云组件
+import integrationCenter from "./config/privateCloud/integrationCenter";
+import chartAI from "./config/privateCloud/chartAI";
+import shortCuts from "./config/privateCloud/shortCuts";
+import pendingProcessing from "./config/privateCloud/pendingProcessing";
+import myApplication from "./config/privateCloud/myApplication";
+import LatestAnnouncement from "./config/privateCloud/LatestAnnouncement"
+// poi 数据
+import billBoard from "./config/poi/billBoard";
+import polygonArea from "./config/poi/polygonArea";
+import customPolygonArea from "./config/poi/customPolygonArea";
+
 
 export default [
   {
@@ -301,10 +316,16 @@ export default [
         key: "eventDetail",
         example: [
           {
+            title: "事件详情(简易版)",
+            url: require("../component/img/table.png"),
+            config: { ...eventDetail, ...common },
+            component: "eventDetail",
+          },
+          {
             title: "事件详情",
             url: require("../component/img/table.png"),
-            config: { ...eventDetail },
-            component: "eventDetail",
+            config: { ...eventDetailParticular, ...common },
+            component: "eventDetailParticular",
           },
         ],
       },
@@ -355,12 +376,6 @@ export default [
             url: require("@/assets/component/img/button.jpg"),
             config: { ...buttonGroup, ...common },
             component: "buttonGroup",
-          },
-          {
-            title: "按钮",
-            url: require("@/assets/component/img/button.jpg"),
-            config: { ...buttonOne, ...common },
-            component: "buttonOne",
           },
         ],
       },
@@ -449,7 +464,7 @@ export default [
             title: "数值五",
             url: require("@/assets/component/img/five.png"),
             config: { ...numberFive, ...common },
-            component: "numberFive",
+            component: "numberFive2",
           },
           {
             title: "数值六",
@@ -560,6 +575,18 @@ export default [
             component: "commonTable",
           },
           {
+            title: "基础表格第二版",
+            url: require("@/assets/image/popup-table.png"),
+            config: { ...commonTable1, ...common },
+            component: "commonTable1",
+          },
+          // {
+          //   title: "基础表格最初版",
+          //   url: require("@/assets/image/popup-table.png"),
+          //   config: { ...commonTable2, ...common },
+          //   component: "commonTable2",
+          // },
+          {
             title: "滚动表格",
             url: require("@/assets/image/scroll-table.png"),
             config: { ...scrollTable, ...common },
@@ -669,7 +696,7 @@ export default [
             url: require("../component/img/personnel.png"),
             config: { ...personnelHouse, ...common },
             component: "personnelHouse",
-          }
+          },
         ],
       },
       {
@@ -682,7 +709,116 @@ export default [
             url: require("@/assets/image/video.png"),
             config: { ...danbing, ...common },
             component: "danbing",
-          }
+          },
+        ],
+      },
+      {
+        component: "buttonSubassembly",
+        title: "按钮",
+        key: "buttonSubassembly",
+        example: [
+          {
+            title: "按钮",
+            url: require("@/assets/component/img/anniu.jpg"),
+            config: { ...buttonOne, ...common },
+            component: "buttonOne",
+          },
+          {
+            title: "按钮-切换视角",
+            url: require("@/assets/component/img/anniu.jpg"),
+            config: { ...buttonView, ...common },
+            component: "buttonView",
+          },
+          {
+            title: "按钮-测量工具",
+            url: require("@/assets/component/img/anniu.jpg"),
+            config: { ...buttonMeasure, ...common },
+            component: "buttonMeasure",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    icon: "privateCloud",
+    key: "privateCloud",
+    title: "私有云组件",
+    children: [
+      {
+        component: "privateCloud1",
+        title: "私有云组件",
+        key: "privateCloud1",
+        example: [
+          {
+            title: "集成中心",
+            url: require("../component/img/cloud1.png"),
+            config: { ...integrationCenter, ...common },
+            component: "integrationCenter",
+          },
+          {
+            title: "chat-AI",
+            url: require("../component/img/cloud2.png"),
+            config: { ...chartAI, ...common },
+            component: "integrationCenter",
+          },
+          {
+            title: "快捷入口",
+            url: require("../component/img/cloud3.png"),
+            config: { ...shortCuts, ...common },
+            component: "integrationCenter",
+          },
+          {
+            title: "待办事项",
+            url: require("../component/img/cloud3.png"),
+            config: { ...pendingProcessing, ...common },
+            component: "integrationCenter",
+          },
+          {
+            title: "我的应用",
+            url: require("../component/img/cloud3.png"),
+            config: { ...myApplication, ...common },
+            component: "integrationCenter",
+          },
+          {
+            title: "最新公告",
+            url: require("../component/img/cloud3.png"),
+            config: { ...LatestAnnouncement, ...common },
+            component: "LatestAnnouncement",
+          },
+
+        ],
+      },
+    ],
+  },
+  {
+    icon: "data",
+    key: "data",
+    title: "数据",
+    children: [
+      {
+        component: "poi",
+        title: "POI数据",
+        key: "poi",
+        image: require("./img/line.png"),
+        example: [
+          {
+            title: "点位",
+            url: require("@/assets/image/line-simple.png"),
+            config: { ...common, ...billBoard },
+            component: "billBoard",
+          },
+          {
+            title: "区域",
+            url: require("@/assets/image/area-basic.png"),
+            config: { ...common, ...polygonArea },
+            component: "polygonArea",
+          },
+          {
+            title: "自定义区域",
+            url: require("@/assets/image/area-basic.png"),
+            config: { ...common, ...customPolygonArea },
+            component: "customPolygonArea",
+          },
         ],
       },
     ],

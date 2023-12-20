@@ -32,6 +32,9 @@ export default {
     },
     callBack: {
       type: Function,
+      default: () => {
+        return () => {};
+      },
     },
   },
   data() {
@@ -60,7 +63,7 @@ export default {
   },
   methods: {
     changeDatePicker(value) {
-      console.log("value:::::::::::::::", value);
+      console.log("value:::::::::::::::", value, this.callBack);
       this.callBack && this.callBack(value);
     },
     showPopper() {

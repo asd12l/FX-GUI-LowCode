@@ -81,6 +81,9 @@
             type1="box"
             :isShowLetterSpacing="false"
             :isShowFontStyle="false"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
           ></commonTab>
         </el-collapse-item>
       </el-collapse>
@@ -133,6 +136,12 @@
               v-model="config.tree.isExpandOneLevel"
             ></el-switch>
           </el-form-item>
+          <el-form-item label="是否显示收藏：">
+            <el-switch
+              style="margin-top: 7px;"
+              v-model="config.tree.isShowColletButton"
+            ></el-switch>
+          </el-form-item>
         </el-collapse-item>
       </el-collapse>
       <el-collapse>
@@ -181,42 +190,42 @@
               size="mini"
             ></el-color-picker>
           </el-form-item>
-          <el-form-item label="按钮背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="splitVideo"
-              imgType="anbjt"
-              type="anbjt"
-            />
-          </el-form-item>
-          <el-form-item label="按钮选中背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="splitVideo"
-              imgType="anxzbj"
-              type="anxzbj"
-            />
-          </el-form-item>
-          <el-form-item label="未选中背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="splitVideo"
-              imgType="wxzsxtmrtp"
-              type="wxzsxtmrtp"
-            />
-          </el-form-item>
-          <el-form-item label="无画面背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="splitVideo"
-              imgType="whmtp"
-              type="whmtp"
-            />
-          </el-form-item>
+          <ImageSelector
+            label="按钮背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'splitVideo', 'anbjt', val)
+            "
+            worksheetId="splitCamera"
+            imageField="anbjt"
+            :src="config.splitVideo.anbjt"
+          ></ImageSelector>
+          <ImageSelector
+            label="按钮选中背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'splitVideo', 'anxzbj', val)
+            "
+            worksheetId="splitCamera"
+            imageField="anxzbj"
+            :src="config.splitVideo.anxzbj"
+          ></ImageSelector>
+          <ImageSelector
+            label="未选中背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'splitVideo', 'wxzsxtmrtp', val)
+            "
+            worksheetId="splitCamera"
+            imageField="wxzsxtmrtp"
+            :src="config.splitVideo.wxzsxtmrtp"
+          ></ImageSelector>
+          <ImageSelector
+            label="无画面背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'splitVideo', 'whmtp', val)
+            "
+            worksheetId="splitCamera"
+            imageField="whmtp"
+            :src="config.splitVideo.whmtp"
+          ></ImageSelector>
           <el-form-item label="分页离底部间距：">
             <div class="flex align-center">
               <el-input
@@ -232,6 +241,10 @@
 
       <el-collapse>
         <el-collapse-item title="视频配置" name="camera">
+          <div class="txt-box">
+            <div class="txt">获取视频流地址：</div>
+            <el-input v-model="config.camera.svs_url" size="mini"></el-input>
+          </div>
           <div class="txt-box">
             <div class="txt">播放地址：</div>
             <el-input
@@ -253,12 +266,12 @@
 </template>
 
 <script>
-import imgSelect from "../imgSelect";
 import commonTab from "../componments/commonTab";
+import ImageSelector from "../componments/ImageSelector";
 import { getImgData } from "@/utils/index.js";
 export default {
   name: "setting",
-  components: { imgSelect, commonTab },
+  components: { commonTab, ImageSelector },
   data() {
     return {
       backgroundData: "",

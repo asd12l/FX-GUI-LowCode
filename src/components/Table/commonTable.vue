@@ -1,15 +1,20 @@
-
 <template>
-  <div class="table-box" :style="sassStyle" v-show="isShowModuleFunc(config)">
+  <div
+    class="table-box"
+    :style="sassStyle"
+    v-show="isShowModuleFunc(config)"
+  >
     <Common-table
       v-if="config.showDataType === 'table'"
-      v-bind="option"
-      :option="option"
       :config="config"
+      :tableHead="config.data.tableHead"
       :offsetHeight="offsetHeight"
       @handleRowClick="handleRowClick"
     ></Common-table>
-    <div v-else :style="{ height: config.table.height + 'px' }">
+    <div
+      v-else
+      :style="{ height: config.table.height + 'px' }"
+    >
       <el-scrollbar style="height: 100%">
         <div class="list-box">
           <div
@@ -18,6 +23,7 @@
             :style="styleObj7"
             class="box"
             ref="eventDom"
+            @click="handleRowClick(item)"
           >
             <div
               class="data-box"
@@ -25,11 +31,22 @@
               :key="i"
               :style="styleObj9(v)"
             >
-              <div class="img-box" v-if="v.value.includes('img')">
+              <div
+                class="img-box"
+                v-if="v.value.includes('img')"
+              >
                 <el-image
                   style="width: 100%; height: 100%"
-                  :src="imgUrl + item[v.value]"
-                  :preview-src-list="[imgUrl + item[v.value]]"
+                  :src="
+                    item[v.value].includes('http')
+                      ? item[v.value]
+                      : imgUrl + item[v.value]
+                  "
+                  :preview-src-list="
+                    item[v.value].includes('http')
+                      ? [item[v.value]]
+                      : [imgUrl + item[v.value]]
+                  "
                   @click.native.stop
                 >
                   <div
@@ -45,7 +62,10 @@
                   </div>
                 </el-image>
               </div>
-              <div class="title txt-ellipsis" v-else>
+              <div
+                class="title txt-ellipsis"
+                v-else
+              >
                 <span v-if="v.label">{{ v.label }}:</span>
                 {{ item[v.value] }}
               </div>
@@ -55,7 +75,7 @@
                 v-for="(v, i) in config.data.buttonData"
                 :key="i"
                 class="txt-box"
-                :style="styleObj8(v)"
+                :style="styleObj8(v, i, item)"
               >
                 {{ item[v.value] }}
               </div>
@@ -68,7 +88,7 @@
       ref="pagination"
       v-if="config.pagination.show && config.data.tableData.length > 0"
       layout="prev, pager, next, total,jumper"
-      :page-size="config.table.tbody.pageSize"
+      :page-size="config.requestParams.pageSize * 1"
       :total="config.data.total"
       :current-page="config.requestParams.page"
       @current-change="getMoreEnventList"
@@ -78,60 +98,77 @@
 </template>
 
 <script>
-import CommonTable from "../CommonTable/index.vue";
-import { setStyleObj, toLoadData } from "@/utils/index.js";
-import { loadCustomApiData } from "@/utils/api";
-import apiDataProcessing from "../../views/componments/apiDataProcessing.js";
+import CommonTable from '../commonTable/index.vue';
+import { setStyleObj, toLoadData, hexToRgba } from '@/utils/index.js';
+import { loadCustomApiData } from '@/utils/api';
+import apiDataProcessing from '../../views/componments/apiDataProcessing.js';
 export default {
   props: {
     config: {
-      type: Object,
+      type: Object
     },
     callBack: {
       type: Function,
-    },
+      default: () => {
+        return () => {};
+      }
+    }
   },
   components: { CommonTable },
   data() {
     return {
-      imgUrl: "https://www.sjxks.com",
-      option: {},
-      timevalue: "",
+      imgUrl: 'https://www.sjxks.com',
+      timevalue: '',
       filter: {},
       eventSourceData: [
-        { name: "选项一", rowid: 1 },
-        { name: "选项二", rowid: 2 },
+        { name: '选项一', rowid: 1 },
+        { name: '选项二', rowid: 2 }
       ],
       offsetHeight: 0,
       isShow: true,
-      active: 1,
+      active: 1
     };
   },
   watch: {
-    "config.requestParams.pageSize"() {
-      this.config.requestParams.page = 1;
-      this.toLoadData();
+    'config.requestParams.pageSize'(nVal) {
+      if (nVal) {
+        this.config.requestParams.page = 1;
+        this.toLoadData();
+      }
     },
-    "config.showDataType"() {
-      console.log(this.config.showDataType, "===showDataType");
+    'config.showDataType'() {
+      console.log(this.config.showDataType, '===showDataType');
     },
+    'config.data': {
+      handler(nVal) {
+        // console.log(nVal, "====nVal");
+      },
+      deep: true
+    },
+    'config.isShowModule'(nVal) {
+      console.log(nVal, '====nVal');
+      if (nVal) {
+        this.config.requestParams.page = 1;
+      }
+    }
   },
   created() {
-    this.toLoadData();
+    // this.toLoadData();
     this.setTableHeadStyle();
   },
   methods: {
     handleRowClick(item) {
+      console.log('item:::::::', item);
       this.callBack && this.callBack(item);
     },
     showPopper() {
       setTimeout(() => {
-        let daterangeDom = document.getElementsByClassName("cockpit-daterange");
-        let timeDom = document.getElementsByClassName("el-time-panel");
+        let daterangeDom = document.getElementsByClassName('cockpit-daterange');
+        let timeDom = document.getElementsByClassName('el-time-panel');
         for (let item of daterangeDom) {
           item.style.background = this.config.dropdownBox.boxbackground;
           item.style.border =
-            "1px" + " solid " + this.config.dropdownBox.borderColor;
+            '1px' + ' solid ' + this.config.dropdownBox.borderColor;
         }
         for (let item of timeDom) {
           item.style.background = this.config.dropdownBox.timebackground;
@@ -140,38 +177,50 @@ export default {
     },
     // 加载接口数据
     async toLoadData() {
-      let data = await toLoadData(this.config, "commonTable");
-      // console.log(data);
-      this.$emit("changeSize", "data", data);
-      // const { data } = await loadCustomApiData({
-      //   api: this.config.api,
-      //   type: this.config.requestType,
-      //   data: {
-      //     ...this.config.requestParams,
-      //   },
-      // });
-      // let componentData;
-      // if (this.config.isShowDataFilter && this.config.datafilterFunc) {
-      //   const datafilterFunc = eval(this.config.datafilterFunc);
-      //   componentData = datafilterFunc(data);
-      // } else {
-      //   componentData = await apiDataProcessing.commonTable(data, this.config);
-      // }
-      // this.$emit("changeSize", "data", componentData);
+      this.config.data = await toLoadData(this.config, 'commonTable');
+      // this.$emit("changeValue", "data", "tableData", data.tableData);
     },
     getMoreEnventList(val) {
       this.config.requestParams.page = val;
+      // this.$emit("changeValue", "requestParams", "page", val);
       this.toLoadData();
     },
     setTableHeadStyle() {
-      this.config.data.tableHead.forEach((item) => {
-        this.config.tableHeadStyle.styleData.push({
-          width: "",
-          color: "#fff",
-          colorData: [],
-        });
+      let l = this.config.data.tableData;
+      this.config.data.tableKeyData = l[0] && Object.keys(l[0]);
+      // this.$emit(
+      //   "changeValue",
+      //   "data",
+      //   "tableKeyData",
+      //   l[0] && Object.keys(l[0])
+      // );
+      // let t = { ...this.config.tableHeadStyle };
+      let t = this.config.tableHeadStyle;
+      if (!t.styleData) {
+        this.$set(t, 'styleData', []);
+      }
+      if (!t.buttonStyleData) {
+        this.$set(t, 'buttonStyleData', []);
+      }
+      this.config.data.tableHead.forEach((item, i) => {
+        if (!t.styleData[i]) {
+          t.styleData.push({
+            width: '',
+            color: '#fff',
+            colorData: []
+          });
+        }
       });
-    },
+      this.config.data.buttonData.forEach((item, i) => {
+        if (!t.buttonStyleData[i]) {
+          t.buttonStyleData.push({
+            colorData: [],
+            isShowBorder: false
+          });
+        }
+      });
+      // this.$emit("changeSize", "tableHeadStyle", t);
+    }
   },
   computed: {
     styleObj7() {
@@ -179,31 +228,51 @@ export default {
       return d;
     },
     styleObj8() {
-      return function(v) {
+      return function (v, i, item) {
         let d = setStyleObj({ ...this.config.card.button });
         let s = setStyleObj(v);
+        let b = this.config.tableHeadStyle.buttonStyleData[i];
+        if (b.colorData.length > 0) {
+          b.colorData.forEach((val) => {
+            if (val.label == item[v.value]) {
+              s.color = val.color;
+            }
+          });
+        }
+        let r;
+        if (s.color.includes('#')) {
+          r = hexToRgba(s.color);
+        } else {
+          r = s.color.slice(0, s.color.lastIndexOf(','));
+        }
+        s.background = r + ',0.1)';
+        if (b.isShowBorder) {
+          s.borderWidth = '1px';
+          s.borderStyle = 'solid';
+          s.borderColor = r + ',.5)';
+        }
         Object.assign(d, s);
         return d;
       };
     },
     styleObj9() {
-      return function(v) {
+      return function (v) {
         let d = setStyleObj(v);
         return d;
       };
     },
     sassStyle() {
       return {
-        "--btnLine": this.config.card.button.height + "px",
-        "--paginationMarginTop": this.config.pagination.marginTop + "px",
-        "--paginationBackground": this.config.pagination.background,
-        "--paginationColor": this.config.pagination.color,
-        "--paginationActiveBackground": this.config.pagination.activeBackground,
-        "--paginationActiveColor": this.config.pagination.activeColor,
-        height: this.config.height + "px",
+        '--btnLine': this.config.card.button.height + 'px',
+        '--paginationMarginTop': this.config.pagination.marginTop + 'px',
+        '--paginationBackground': this.config.pagination.background,
+        '--paginationColor': this.config.pagination.color,
+        '--paginationActiveBackground': this.config.pagination.activeBackground,
+        '--paginationActiveColor': this.config.pagination.activeColor,
+        height: this.config.height + 'px'
       };
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -303,6 +372,10 @@ export default {
       .txt-box {
         line-height: var(--btnLine);
         margin-right: 10px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding: 0 5px;
       }
     }
   }

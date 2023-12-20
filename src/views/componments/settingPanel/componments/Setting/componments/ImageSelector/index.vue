@@ -1,11 +1,20 @@
 <template>
   <div class="imageSelector">
     <el-form-item :label="label">
-      <div class="img-item pointer" @click="openDialogVisible">
-        <img :src="imageSrc" alt="" />
+      <div
+        class="img-item pointer"
+        @click="openDialogVisible"
+      >
+        <img
+          :src="imageSrc"
+          alt=""
+        />
       </div>
     </el-form-item>
-    <el-form-item v-show="showFilter" label="开启滤镜：">
+    <el-form-item
+      v-show="showFilter"
+      label="开启滤镜："
+    >
       <el-switch
         v-model="isOpenFilter"
         @change="(val) => $emit('changeOpenFilter', val)"
@@ -85,12 +94,26 @@
     </div>
     <el-dialog
       :modal="false"
-      title="图片选择"
       :visible.sync="dialogVisible"
       width="30%"
       custom-class="image-selector"
     >
-      <el-tabs v-model="activeName">
+      <div
+        slot="title"
+        class="dialog-title"
+      >
+        <span>图片</span>
+        <el-switch
+          v-model="isStaticPic"
+          active-text="静态资源图片"
+          inactive-text="接口地址图片"
+        >
+        </el-switch>
+      </div>
+      <el-tabs
+        v-model="activeName"
+        v-if="!isStaticPic"
+      >
         <el-tab-pane
           :label="item"
           :name="item"
@@ -105,8 +128,54 @@
             v-for="img in tabImagesList"
             :key="img"
           >
-            <img :src="img" alt="" />
+            <img
+              :src="img"
+              alt=""
+            />
           </div>
+        </el-tab-pane>
+      </el-tabs>
+      <el-tabs
+        v-model="activeName"
+        v-if="isStaticPic"
+        @tab-click="imageList = []"
+      >
+        <el-tab-pane
+          :label="item.title"
+          :name="item.key"
+          v-for="item in list"
+          :key="item.key"
+        >
+          <el-tabs
+            v-model="subActiveName"
+            @tab-click="handleClick"
+          >
+            <el-tab-pane
+              :label="el.title"
+              :name="el.key"
+              v-for="el in item.children"
+              :key="el.key"
+              class="tab-image"
+            >
+              <div
+                v-if="!imageList.length"
+                class="empty-content"
+              >暂无图片</div>
+              <div
+                v-else
+                class="image-wrap"
+                @click="changeImageSrc(img)"
+                :class="{ active: img.src === imageSrc }"
+                v-for="img in imageList"
+                :key="img"
+              >
+                <img
+                  :src="img"
+                  alt=""
+                />
+              </div>
+            </el-tab-pane>
+          </el-tabs>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -114,12 +183,14 @@
 </template>
 
 <script>
-import { getFilterRows } from "@/utils/api";
-import { appKey, sign } from "@/utils/const.js";
+import { getFilterRows } from '@/utils/api';
+import { appKey, sign } from '@/utils/const.js';
+import list from '@/assets/component/list.js';
+import imageIndex from '@/assets/component/imageIndex.js';
 // opacity: opacity,
 //  filter: `saturate(${saturate}) contrast(${contrast}) hue-rotate(${hueRotate}deg) brightness(${brightness})`
 export default {
-  name: "imageSelector",
+  name: 'imageSelector',
   data() {
     return {
       opacity: 1,
@@ -128,27 +199,32 @@ export default {
       saturate: 1,
       hueRotate: 0,
       dialogVisible: false,
-      activeName: "",
-      //   imageSrc: "",
+      activeName: 'echarts',
+      subActiveName: 'lineChart',
+      isStaticPic: true,
       tabsList: [],
       imageList: [],
       imgFilterObj: {},
+      list: [],
+      imgList: []
     };
   },
   computed: {
     tabImagesList() {
-      return this.imageList.find((item) => item.name === this.activeName).src;
+      let d = this.imageList.find((item) => item.name === this.activeName);
+      let src = d ? d.src : [];
+      return src;
     },
     imageSrc() {
-      console.log(":this.src::::::::::", this.src);
+      console.log(':this.src::::::::::', this.src);
       return this.src;
     },
     isOpenFilter: {
       get() {
         return this.openFilter;
       },
-      set() {},
-    },
+      set() {}
+    }
     // imgFilterObj: {
     //   get() {
     //     console.log("this.filterObj::::::::::", this.filterObj);
@@ -160,17 +236,26 @@ export default {
     // },
   },
   methods: {
+    handleClick(tab) {
+      console.log(tab.name, imageIndex);
+      this.imageList = [];
+      if (imageIndex.filter((item) => item.name === tab.name).length) {
+        this.imageList = imageIndex.filter(
+          (item) => item.name === tab.name
+        )[0].pics;
+      }
+    },
     changeImageSrc(img) {
       //   this.imageSrc = img.src;
-      this.$emit("changefilterObj", {
+      this.$emit('changefilterObj', {
         hueRotate: 0, // 色相
         saturate: 1, // 饱和度
         contrast: 1, // 对比度
         brightness: 1, // 亮度
-        opacity: 1, // 透明度
+        opacity: 1 // 透明度
       });
-      console.log("img:::::::::::", img)
-      this.$emit("changeSrc", img);
+      console.log('img:::::::::::', img);
+      this.$emit('changeSrc', img);
       this.dialogVisible = false;
     },
     degFormatTooltip(val) {
@@ -181,41 +266,38 @@ export default {
       return `${(parseFloat(val) * 100).toFixed(0)}%`;
     },
     async openDialogVisible() {
-      const data = {
-        appKey: appKey,
-        sign: sign,
-        worksheetId: this.worksheetId,
-        rowId: sessionStorage.getItem("rowid"),
-        pageIndex: 1,
-        pageSize: 100,
-      };
-      const {
-        data: { rows },
-      } = await getFilterRows(data);
-      const enableImageList = rows.filter((item) => item.sfqy === "启用");
-      this.tabsList = enableImageList.map((item) => item.mingcheng);
-
-      this.imageList = enableImageList
-        .map((item) => {
-          if (item[this.imageField]) {
-            console.log(
-              "JSON.parse(item[this.imageField]):::::::::::::::::",
-              JSON.parse(item[this.imageField])
-            );
-            return {
-              name: item.mingcheng,
-              src: JSON.parse(item[this.imageField]).map(
-                (ele) => ele.DownloadUrl
-              ),
-            };
-          }
-          return "";
-        })
-        .filter((item) => item);
-      console.log("this.imageList::::::::::::", this.imageList);
-      this.activeName = this.tabsList[0];
       this.dialogVisible = true;
-    },
+      if (!this.isStaticPic) {
+        const data = {
+          appKey: appKey,
+          sign: sign,
+          worksheetId: this.worksheetId,
+          rowId: sessionStorage.getItem('rowid'),
+          pageIndex: 1,
+          pageSize: 100
+        };
+        const {
+          data: { rows }
+        } = await getFilterRows(data);
+        const enableImageList = rows.filter((item) => item.sfqy === '启用');
+        this.tabsList = enableImageList.map((item) => item.mingcheng);
+
+        this.imageList = enableImageList
+          .map((item) => {
+            if (item[this.imageField]) {
+              return {
+                name: item.mingcheng,
+                src: JSON.parse(item[this.imageField]).map(
+                  (ele) => ele.DownloadUrl
+                )
+              };
+            }
+            return '';
+          })
+          .filter((item) => item);
+        this.activeName = this.tabsList[0];
+      }
+    }
   },
   props: {
     // 过滤属性配置
@@ -227,74 +309,113 @@ export default {
           saturate: 1, // 饱和度
           contrast: 1, // 对比度
           brightness: 1, // 亮度
-          opacity: 1, // 透明度
+          opacity: 1 // 透明度
         };
-      },
+      }
     },
     label: {
       type: String,
-      default: "",
+      default: ''
     },
     // 表名
     worksheetId: {
       type: String,
-      default: "",
+      default: ''
     },
     // 取表里的那个字段
     imageField: {
       type: String,
-      default: "",
+      default: ''
     },
     // 预览图片展示的地址
     src: {
       type: String,
-      default: "",
+      default: ''
     },
     // 是否开启过滤
     openFilter: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showFilter: {
       type: Boolean,
-      default: false,
+      default: false
     },
     changeOpenFilter: {
       type: Function,
-      default: () => {},
+      default: () => {}
     },
     changeSrc: {
       type: Function,
-      default: () => {},
+      default: () => {}
     },
     changefilterObj: {
       type: Function,
-      default: () => {},
-    },
+      default: () => {}
+    }
   },
   mounted() {
     this.imgFilterObj = this.filterObj;
+    this.list = list;
+    console.log('list====');
+    console.log(list, 'list============');
   },
   updated(nval, oval) {
-    console.log("nval:::::::::::::::", this.filterObj);
+    console.log('nval:::::::::::::::', this.filterObj);
   },
   watch: {
     imgFilterObj: {
       handler(newVal) {
-        this.$emit("changefilterObj", newVal);
+        this.$emit('changefilterObj', newVal);
       },
-      deep: true,
+      deep: true
       //   immediate: true,
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style  lang="scss" >
+<style lang="scss">
 .image-selector {
   .tab-image {
     display: flex;
     flex-wrap: wrap;
+  }
+
+  .dialog-title {
+    display: flex;
+    align-items: center;
+
+    > span {
+      font-size: 16px;
+      margin-right: 20px;
+    }
+  }
+
+  .el-tabs__content {
+    height: calc(100% - 55px);
+
+    .el-tab-pane {
+      width: 100%;
+      height: 100%;
+
+      .empty-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+  .el-tabs {
+    width: 100%;
+    height: 100%;
+  }
+
+  .el-dialog__body {
+    height: 500px;
   }
 
   .image-wrap {
@@ -317,6 +438,10 @@ export default {
       object-fit: contain;
     }
   }
+
+  .el-tabs__item {
+    color: #303133 !important;
+  }
 }
 
 .imageSelector {
@@ -330,6 +455,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: rgba(255, 255, 255, 0.05);
 
     img {
       max-width: 100%;

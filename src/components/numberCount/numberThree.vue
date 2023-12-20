@@ -12,7 +12,7 @@
                         height: config.contain.height+'px',
                         marginBottom: config.contain.marginBottom+'px',
                         }" 
-                v-for="(item, i) in  list">
+                v-for="(item, i) in  list" :key="i">
                 <!-- <vue-seamless-scroll
                     ref="scroll"
                     :data="item"
@@ -27,6 +27,7 @@
                         }" >
                 <div
                 v-for="(it, i) in item"
+                :key='i'
                 class="main-box"
                 ref="eventDom"
                 :style="{
@@ -78,7 +79,7 @@
                     color:config.txtRowOne.color
                 }"
                   >
-                    <span>{{ it.value[0].name }}</span><span
+                    <span>{{ it.line1}}</span><span
                     :style="{
                          fontSize: config.txtRowOne.txtStyle.fontSize+'px',
                          color:config.txtRowOne.txtStyle.color
@@ -97,7 +98,7 @@
                 }"
                 >
                     <span
-                    >{{ it.value[0].value }}</span><span
+                    >{{ it.line2}}</span><span
                      :style="{
                          fontSize: config.txtRowtwo.txtStyle.fontSize+'px',
                          color:config.txtRowtwo.txtStyle.color
@@ -130,7 +131,7 @@
                     fontFamily: config.txtRowthree.fontFamily,
                     color:config.txtRowthree.color
                 }">
-                    <span>{{ it.value[1].name }}</span><span
+                    <span>{{ it.line3 }}</span><span
                     :style="{
                          fontSize: config.txtRowthree.txtStyle.fontSize+'px',
                          color:config.txtRowthree.txtStyle.color
@@ -148,7 +149,7 @@
                     color:config.txtRowfour.color
                 }">
                     <span
-                         >{{ it.value[1].value }}</span><span
+                         >{{ it.line4 }}</span><span
                      :style="{
                          fontSize: config.txtRowfour.txtStyle.fontSize+'px',
                          color:config.txtRowfour.txtStyle.color

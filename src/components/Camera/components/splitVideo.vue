@@ -2,8 +2,6 @@
   <div class="sheshanCockpit-rightBox" :style="sassStyle">
     <div v-if="!isShowPlayback" class="close" @click="close" />
     <div class="monitor">
-      <!-- 
-        :class="isMonitorFullScreen ? 'isFull' : ''" -->
       <div v-show="!isShowPlayback" class="content-box">
         <span class="back-icon" @click="closeFullScreen" />
         <div
@@ -12,16 +10,15 @@
           class="monitor-wrapper"
           :class="[
             'monitorList' + activeBtn,
-            !item.movieurls && !item.master_movieurls ? 'empty' : '',
             activeMonitorIndex === index ? 'active' : '',
             fullScreenIndex === index ? 'isFullScreen' : '',
           ]"
           @click="selectMonitor(index, item)"
         >
           <CameraPlay
-            v-if="item.movieurls || item.master_movieurls"
             :camera_data="item"
             :config="config"
+            :svs_url="config.camera.svs_url"
             :address="config.camera.videoAddress"
           />
           <div v-if="item.device_name" class="device-name">
@@ -234,7 +231,9 @@ export default {
       data.forEach((item, index) => {
         this.monitorArr[index] = data[index];
       });
-      this.handleCurrentChange(this.currentPage);
+      if (this.total <= this.currentPage * 9 && this.currentPage > 1) {
+        this.currentPage--;
+      }
     },
     handleCurrentChange(value) {
       const start = 9 * (value - 1);
@@ -500,7 +499,6 @@ export default {
 
         .device-name {
           position: absolute;
-          width: 50%;
           height: 48px;
           line-height: 48px;
           background-color: rgba(0, 0, 0, 0.5);
@@ -508,7 +506,7 @@ export default {
           top: 0;
           z-index: 1;
           font-size: var(--fs3);
-          padding-left: 10px;
+          padding: 0 10px;
           border-radius: 0px 0px 24px;
           color: var(--color);
         }

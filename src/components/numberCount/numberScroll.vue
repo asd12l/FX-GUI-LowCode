@@ -23,7 +23,7 @@
         <div>
             <NumberCount
             :id="'chanzhi'+random"
-            :total="Number(config.data)"
+            :total="Number(config.data.total)"
             :num="Number(config.dataLength)" 
             :numberStyle="numberStyle"
         />

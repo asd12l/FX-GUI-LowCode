@@ -3,11 +3,15 @@
  * @version: V1.0
  * @Author: renhailing
  * @Date: 2022-10-28 10:28:24
- * @LastEditors: ydl
- * @LastEditTime: 2023-10-16 18:00:34
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-27 09:25:58
 -->
 <template>
-  <div class="track-wrapper" :style="sassStyle" v-if="config.data">
+  <div
+    class="track-wrapper"
+    :style="sassStyle"
+    v-if="config.data"
+  >
     <Map
       ref="map"
       :config="config"
@@ -15,7 +19,11 @@
       @loadComplete="loadComplete"
     />
     <div>
-      <div class="options" v-if="isShow" :style="styleObj1">
+      <div
+        class="options"
+        v-if="isShow"
+        :style="styleObj1"
+      >
         <div style="margin-right: 10px">人员轨迹</div>
         <el-select
           v-if="isShowSelect"
@@ -49,10 +57,14 @@
           @change="timeChange"
           @focus="showPopper"
         />
-        <span class="confirm-btn btn" @click="getSoldierLocationList"
-          >确认</span
-        >
-        <span class="exit-btn btn" @click="exit">退出</span>
+        <span
+          class="confirm-btn btn"
+          @click="getSoldierLocationList"
+        >确认</span>
+        <span
+          class="exit-btn btn"
+          @click="exit"
+        >退出</span>
       </div>
       <!-- <div class="inForm">
         <div>
@@ -90,60 +102,60 @@
 </template>
 
 <script>
-import Map from "../Map/map";
-import { positionToGCJ02 } from "../Map/util.js";
-import TrackCtrl from "./components/trackCtrl.vue";
-import { loadCustomApiData } from "@/utils/api";
-import { setStyleObj } from "@/utils/index.js";
-import vueSeamlessScroll from "vue-seamless-scroll";
+import Map from '../map/map';
+import { positionToGCJ02 } from '../map/util.js';
+import TrackCtrl from './components/trackCtrl.vue';
+import { loadCustomApiData } from '@/utils/api';
+import { setStyleObj } from '@/utils/index.js';
+import vueSeamlessScroll from 'vue-seamless-scroll';
 export default {
   components: {
     Map,
     TrackCtrl,
-    vueSeamlessScroll,
+    vueSeamlessScroll
   },
   props: {
     config: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   data() {
     return {
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e6;
-        },
+        }
       },
       options: [],
-      userRowid: "",
+      userRowid: '',
       personRowid: [],
-      slectedUser: "",
-      user_rowid: "",
+      slectedUser: '',
+      user_rowid: '',
       pictureSearch: {},
       date: [],
       page: 1,
       pageSize: 15,
       total: 0,
-      startTime: "",
-      endTime: "",
-      line_id: "",
+      startTime: '',
+      endTime: '',
+      line_id: '',
       trailStopMark: null,
       duration: 0,
       trailPoints: [], // 轨迹点
       trailPointData: {},
-      timeDefaultShow: "",
+      timeDefaultShow: '',
       trackPlayback: [],
       flag: true,
-      timer2: "",
+      timer2: '',
       trackData: {},
       moveData: {},
-      rowid: "",
-      content: "",
+      rowid: '',
+      content: '',
       userData: [],
       soldierUserData: {},
       pointIData: {},
       isShow: false,
-      isShowSelect: true,
+      isShowSelect: true
     };
   },
   computed: {
@@ -156,49 +168,49 @@ export default {
         openWatch: true, // 开启数据实时监控刷新dom
         singleHeight: 0, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
         singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
-        waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
+        waitTime: 1000 // 单步运动停止的时间(默认值1000ms)
       };
     },
     sassStyle() {
       let color = this.config.box.mainColor.slice(
         0,
-        this.config.box.mainColor.lastIndexOf(",")
+        this.config.box.mainColor.lastIndexOf(',')
       );
       let bcolor = this.config.box.selectBg.slice(
         0,
-        this.config.box.selectBg.lastIndexOf(",")
+        this.config.box.selectBg.lastIndexOf(',')
       );
       return {
-        width: this.config.width + "px",
-        height: this.config.height + "px",
+        width: this.config.width + 'px',
+        height: this.config.height + 'px',
         fontFamily: this.config.box.fontFamily,
         color: this.config.box.color,
-        fontSize: this.config.box.fontSize + "px",
-        "--color": this.config.box.color,
-        "--fontSize1": this.config.box.fontSize + "px",
-        "--fontSize2": this.config.box.fontSize * 1 - 2 + "px",
-        "--height1": this.config.box.height + "px",
-        "--height2": this.config.box.height - 6 + "px",
-        "--rgbaColor1": color + ",1)",
-        "--rgbaColor2": color + ",.5)",
-        "--rgbaColor3": color + ",.1)",
-        "--rgbaBg1": bcolor + ",1)",
-        "--rgbaBg2": bcolor + ",.5)",
+        fontSize: this.config.box.fontSize + 'px',
+        '--color': this.config.box.color,
+        '--fontSize1': this.config.box.fontSize + 'px',
+        '--fontSize2': this.config.box.fontSize * 1 - 2 + 'px',
+        '--height1': this.config.box.height + 'px',
+        '--height2': this.config.box.height - 6 + 'px',
+        '--rgbaColor1': color + ',1)',
+        '--rgbaColor2': color + ',.5)',
+        '--rgbaColor3': color + ',.1)',
+        '--rgbaBg1': bcolor + ',1)',
+        '--rgbaBg2': bcolor + ',.5)'
       };
     },
     styleObj1() {
       let d = setStyleObj({ ...this.config.option });
       return d;
-    },
+    }
   },
   watch: {
-    "config.data": {
+    'config.data': {
       handler(val, oVal) {
         this.setSelectUser(val);
       },
-      deep: true,
+      deep: true
     },
-    "config.box.ismultiple"(val, oVal) {
+    'config.box.ismultiple'(val, oVal) {
       this.isShowSelect = false;
       this.setShowUser();
     },
@@ -206,8 +218,8 @@ export default {
       handler(val, oVal) {
         this.slectedUser = val[0];
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   created() {
     this.startTime = this.formatDate();
@@ -224,13 +236,13 @@ export default {
       setTimeout(() => {
         let color = this.config.box.mainColor.slice(
           0,
-          this.config.box.mainColor.lastIndexOf(",")
+          this.config.box.mainColor.lastIndexOf(',')
         );
-        let daterangeDom = document.getElementsByClassName("cockpit-daterange");
-        let timeDom = document.getElementsByClassName("el-time-panel");
+        let daterangeDom = document.getElementsByClassName('cockpit-daterange');
+        let timeDom = document.getElementsByClassName('el-time-panel');
         for (let item of daterangeDom) {
           item.style.background = this.config.box.selectBg;
-          item.style.border = "1px" + " solid " + color + ",0.5)";
+          item.style.border = '1px' + ' solid ' + color + ',0.5)';
         }
       }, 0);
     },
@@ -267,31 +279,31 @@ export default {
       const YY = date.getFullYear();
       const MM =
         date.getMonth() + 1 < 10
-          ? "0" + (date.getMonth() + 1)
+          ? '0' + (date.getMonth() + 1)
           : date.getMonth() + 1;
       const DD =
-        date.getDate() < 10 ? "0" + (date.getDate() - 1) : date.getDate() - 1;
-      const hh = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+        date.getDate() < 10 ? '0' + (date.getDate() - 1) : date.getDate() - 1;
+      const hh = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
       const mm =
-        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+        date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
       const ss =
-        date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-      return YY + "-" + MM + "-" + DD + " " + hh + ":" + mm + ":" + ss;
+        date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+      return YY + '-' + MM + '-' + DD + ' ' + hh + ':' + mm + ':' + ss;
     },
     formatDate1() {
       const date = new Date();
       const YY = date.getFullYear();
       const MM =
         date.getMonth() + 1 < 10
-          ? "0" + (date.getMonth() + 1)
+          ? '0' + (date.getMonth() + 1)
           : date.getMonth() + 1;
-      const DD = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-      const hh = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+      const DD = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+      const hh = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
       const mm =
-        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+        date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
       const ss =
-        date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-      return YY + "-" + MM + "-" + DD + " " + hh + ":" + mm + ":" + ss;
+        date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+      return YY + '-' + MM + '-' + DD + ' ' + hh + ':' + mm + ':' + ss;
     },
     timeChange() {
       if (this.date && this.date.length > 0) {
@@ -316,33 +328,33 @@ export default {
       const start = positionToGCJ02(points[0].pos); // 起始点--wgs84转高德坐标系
       const end = positionToGCJ02(points[points.length - 1].pos); // 终点
       window.AMap.DMarker.addMark({
-        id: rowid + "_start",
-        type: "trail",
+        id: rowid + '_start',
+        type: 'trail',
         image: this.config.track.startPointIcon,
-        position: start,
+        position: start
       });
       window.AMap.DMarker.addMark({
-        id: rowid + "_end",
+        id: rowid + '_end',
         image: this.config.track.endPointIcon,
-        type: "trail",
-        position: end,
+        type: 'trail',
+        position: end
       });
       window.AMap.DMarker.addMark({
-        id: rowid + "_move",
+        id: rowid + '_move',
         image: this.config.track.movePointIcon,
-        type: "trail",
+        type: 'trail',
         position: start,
         content: this.content,
         isLabel: true,
         click: (e) => {
           const opts = e.target.getExtData();
-          const id = opts.id.split("_")[0];
+          const id = opts.id.split('_')[0];
           this.getTrackData(id);
-        },
+        }
       });
       this.trailStopMark = window.AMap.DMarker.getMarkerById(
-        "trail",
-        rowid + "_move"
+        'trail',
+        rowid + '_move'
       );
       window.AMap.DMap.setZoomAndCenter(13, start); // 以起点为初始地图中心点
       let path;
@@ -356,15 +368,15 @@ export default {
         path: path,
         strokeWeight: this.config.polyline.width,
         strokeColor: this.config.polyline.color,
-        type: "Track_Line", // ----
+        type: 'Track_Line', // ----
         id: rowid,
         strokeStyle: this.config.polyline.style,
-        strokeDasharray: [15, 5],
+        strokeDasharray: [15, 5]
       }); // 画线
     },
     handleMove(percent) {
       const getGeometry = window.AMap.DGeometry.getGeometryById(
-        "Track_Line",
+        'Track_Line',
         this.rowid
       );
       const i = Math.round(percent * this.trailPoints.length);
@@ -379,7 +391,7 @@ export default {
         const p = positionToGCJ02(this.trailPoints[i].pos);
         p && this.trailStopMark.setPosition([p[0], p[1]]);
         this.moveData[this.rowid] = {
-          percent: percent,
+          percent: percent
         };
         angle = this.calcAngle(
           [this.trailPoints[i].pos[0], this.trailPoints[i].pos[1]],
@@ -398,7 +410,7 @@ export default {
       return (360 * Math.atan2(diff_y, diff_x)) / (2 * Math.PI) + 90;
     },
     exit() {
-      this.config.data = "";
+      this.config.data = '';
       // this.$store.commit("setPersonInterStatu", true);
       // this.$store.commit("setShowTrack", {
       //   name: "",
@@ -406,19 +418,19 @@ export default {
       // });
       // this.$store.commit("setExitTrack", "ExitTrack");
       this.trailStopMark = null; // 111
-      window.AMap.DMarker.removeMarkByType("trail"); // 移除的起点和终点
-      window.AMap.DGeometry.removePolygonByType("Track_Line"); // 移除线
-      window.AMap.DMarker.removeLabelMarkerByType("normal_point"); // 移除点
+      window.AMap.DMarker.removeMarkByType('trail'); // 移除的起点和终点
+      window.AMap.DGeometry.removePolygonByType('Track_Line'); // 移除线
+      window.AMap.DMarker.removeLabelMarkerByType('normal_point'); // 移除点
       Object.keys(window.AMap.DMarker.labelMarks).forEach((v) => {
-        if (v.includes("post")) {
+        if (v.includes('post')) {
           window.AMap.DMarker.toggleMarkerByType(v, true);
         }
-        if (v.includes("trail")) {
+        if (v.includes('trail')) {
           window.AMap.DMarker.removeLabelMarkerByType(v);
         }
       });
       Object.keys(window.AMap.DGeometry.geometries).forEach((item) => {
-        if (item.includes("post")) {
+        if (item.includes('post')) {
           window.AMap.DGeometry.toggleGeometryByType(item, true);
         }
       });
@@ -426,30 +438,30 @@ export default {
 
     // 获取人员轨迹
     async getSoldierLocationList() {
-      window.AMap.DMarker.removeMarkByType("trail"); // 移除的起点和终点
-      window.AMap.DGeometry.removePolygonByType("Track_Line"); // 移除线
-      window.AMap.DMarker.removeLabelMarkerByType("normal_point"); // 移除点
+      window.AMap.DMarker.removeMarkByType('trail'); // 移除的起点和终点
+      window.AMap.DGeometry.removePolygonByType('Track_Line'); // 移除线
+      window.AMap.DMarker.removeLabelMarkerByType('normal_point'); // 移除点
       this.duration = 0;
-      this.$store.commit("setPersonInterStatu", false);
+      this.$store.commit('setPersonInterStatu', false);
       Object.keys(window.AMap.DMarker.labelMarks).forEach((v) => {
-        if (v.includes("post")) {
+        if (v.includes('post')) {
           window.AMap.DMarker.toggleMarkerByType(v, false);
         }
-        if (v.includes("personnel")) {
+        if (v.includes('personnel')) {
           window.AMap.DMarker.removeLabelMarkerByType(v);
         }
       });
       Object.keys(window.AMap.DGeometry.geometries).forEach((item) => {
-        if (item.includes("post")) {
+        if (item.includes('post')) {
           window.AMap.DGeometry.toggleGeometryByType(item, false);
         }
       });
       // 获取单兵设备轨迹信息
-      const date1 = new Date(this.date[0].replace(/-/g, "/"));
-      const date2 = new Date(this.date[1].replace(/-/g, "/"));
+      const date1 = new Date(this.date[0].replace(/-/g, '/'));
+      const date2 = new Date(this.date[1].replace(/-/g, '/'));
       const time = this.getDiff(date1, date2);
       if (time[0] > 2) {
-        this.$message.error("提示：仅可查看48小时内的足迹");
+        this.$message.error('提示：仅可查看48小时内的足迹');
         return;
       }
       if (this.personRowid.length === 1) {
@@ -457,9 +469,9 @@ export default {
       } else {
         this.addLabelsLayer(this.userData, {
           icon: this.config.track.movePointIcon,
-          type: "trail_default",
+          type: 'trail_default',
           isLabel: true,
-          isClick: true,
+          isClick: true
         });
       }
     },
@@ -477,7 +489,7 @@ export default {
             this.content = opts.data.name;
             this.getTrackData(opts.data.rowid);
           }
-        },
+        }
       });
       // setTimeout(() => {
       //   window.AMap.DMap.setZoomAndCenter(18, [
@@ -499,40 +511,40 @@ export default {
         // });
         let result = await loadCustomApiData({
           api: this.config.track.trackRecordApi,
-          type: "get",
+          type: 'get',
           data: {
             rowid: rowid,
             end_time:
               this.date && this.date.length > 0 ? this.date[1] : this.endTime,
             start_time:
               this.date && this.date.length > 0 ? this.date[0] : this.startTime,
-            pageSize: "1000",
-          },
+            pageSize: '1000'
+          }
         });
-        if (result.msg !== "success") {
+        if (result.msg !== 'success') {
           this.$message.error(
-            "未查询到此人员到单兵设备信息，请检查设备绑定关系！"
+            '未查询到此人员到单兵设备信息，请检查设备绑定关系！'
           );
         } else {
           if (result.data.total == 0) {
-            this.$message.error("未查询到人员轨迹");
+            this.$message.error('未查询到人员轨迹');
             return;
           }
           const pos = [];
           result.data.list.forEach((item) => {
             pos.unshift({
               time: item.create_time,
-              pos: [...item.postion],
+              pos: [...item.postion]
             });
           });
-          window.AMap.DMarker.removeLabelMarkerById("trail_default", rowid);
+          window.AMap.DMarker.removeLabelMarkerById('trail_default', rowid);
           this.trackData[rowid] = pos;
           this.confirm(pos, rowid);
         }
       } else {
         this.trailStopMark = window.AMap.DMarker.getMarkerById(
-          "trail",
-          rowid + "_move"
+          'trail',
+          rowid + '_move'
         );
         this.trailPoints = this.trailPointData[rowid];
         const percent =
@@ -550,7 +562,7 @@ export default {
       // const res = await this.$ssapi.getSoldierUserList({});
       let res = await loadCustomApiData({
         api: this.config.track.trackPersonApi,
-        type: "get",
+        type: 'get'
       });
       res.data.list.forEach((item) => {
         item.title = item.user_name;
@@ -583,8 +595,8 @@ export default {
       //   this.flag = true;
       // }
       // this.trackPlayback = result.data.list;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

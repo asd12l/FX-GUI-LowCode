@@ -1,5 +1,9 @@
 <template>
-  <div class="dataTable" :key="number" :style="sassStyle">
+  <div
+    class="dataTable"
+    :key="number"
+    :style="sassStyle"
+  >
     <!-- 
       @selection-change="(item) => $emit('handleSelectionChange', item)" -->
     <el-table
@@ -18,7 +22,7 @@
         align="center"
         v-if="config.table.indexShow"
       >
-        <template scope="scope">
+        <template slot-scope="scope">
           <span v-if="pageObj">{{
             (pageObj.currentPage - 1) * pageObj.size + scope.$index + 1
           }}</span>
@@ -26,22 +30,45 @@
         </template>
       </el-table-column>
 
-      <template v-for="(item, i) in config.data.tableHead">
+      <template v-for="(item, i) in tableHead">
         <el-table-column
           :key="item.value"
           :align="config.table.align"
           :label="item.label"
           :prop="item.value"
-          :width="config.tableHeadStyle.styleData[i].width"
+          :width="
+            config.tableHeadStyle &&
+            config.tableHeadStyle.styleData &&
+            config.tableHeadStyle.styleData.length > 0
+              ? config.tableHeadStyle.styleData[i].width
+              : item.width
+          "
           :formatter="item.formatter"
           :show-overflow-tooltip="item.showOverflow"
           :min-width="fixWidth(item.label)"
           :fixed="item.fixed"
         >
-          <template scope="scope">
-            <div class="img-box"  v-if="item.value.includes('img')">
-              <el-image :src="imgUrl + scope.row[item.value]">
-                <div slot="error" class="image-slot">
+          <template slot-scope="scope">
+            <div
+              class="img-box"
+              v-if="item.value.includes('img')"
+            >
+              <!-- 
+                :preview-src-list="
+                  scope.row[item.value].includes('http')
+                    ? [scope.row[item.value]]
+                    : [imgUrl + scope.row[item.value]]
+                "
+                @click.native.stop -->
+              <el-image :src="
+                  scope.row[item.value].includes('http')
+                    ? scope.row[item.value]
+                    : imgUrl + scope.row[item.value]
+                ">
+                <div
+                  slot="error"
+                  class="image-slot"
+                >
                   <span class="img">
                     <img
                       src="@/assets/image/xiaokunshan/default-img1.png"
@@ -51,7 +78,10 @@
                 </div>
               </el-image>
             </div>
-            <span v-else :style="cellStyle(item, i, scope.row[item.value])">{{
+            <span
+              v-else
+              :style="cellStyle(item, i, scope.row[item.value])"
+            >{{
               scope.row[item.value]
             }}</span>
           </template>
@@ -65,31 +95,36 @@
 </template>
 
 <script>
-import { setStyleObj } from "@/utils/index.js";
-import Empty from "../Empty/index";
+import { setStyleObj } from '@/utils/index.js';
+import Empty from '../Empty/index';
 export default {
   props: {
     config: {
-      type: Object,
+      type: Object
     },
     offsetHeight: {
-      type: Number,
+      type: Number
     },
+    tableHead: {
+      type: Array
+    }
   },
   components: { Empty },
   data() {
     return {
-      imgUrl: "https://www.sjxks.com",
-      number: Math.random() * 1000,
+      imgUrl: 'https://www.sjxks.com',
+      number: Math.random() * 1000
+      // tableHead: [],
     };
   },
+  mounted() {},
   computed: {
     headerStyle() {
       let d = setStyleObj({ ...this.config.table.theader });
       return d;
     },
     cellStyle() {
-      return function(item, i, label) {
+      return function (item, i, label) {
         let d = setStyleObj({ ...this.config.table.tbody });
         delete d.height;
         let c = this.getColor(i, label);
@@ -107,18 +142,18 @@ export default {
       let border;
       if (this.config.table.borderShow) {
         let b = setStyleObj({ ...this.config.table });
-        border = b.borderWidth + " " + b.borderStyle + " " + b.borderColor;
+        border = b.borderWidth + ' ' + b.borderStyle + ' ' + b.borderColor;
       }
       return {
-        "--border": this.config.table.borderShow ? border : 0,
-        "--badyheight": this.config.table.tbody.height + "px",
-        "--headerheight": this.config.table.theader.height + "px",
-        "--background1": this.config.table.tbody.background1,
-        "--background2": this.config.table.tbody.background2,
-        "--background3": this.config.table.tbody.background3,
-        "--rowColor": this.config.table.tbody.color,
+        '--border': this.config.table.borderShow ? border : 0,
+        '--badyheight': this.config.table.tbody.height + 'px',
+        '--headerheight': this.config.table.theader.height + 'px',
+        '--background1': this.config.table.tbody.background1,
+        '--background2': this.config.table.tbody.background2,
+        '--background3': this.config.table.tbody.background3,
+        '--rowColor': this.config.table.tbody.color
       };
-    },
+    }
   },
 
   methods: {
@@ -131,28 +166,38 @@ export default {
       return length;
     },
     getColor(i, label) {
-      let styleData = this.config.tableHeadStyle.styleData[i];
-      let color;
-      if (styleData.colorData.length > 0) {
-        styleData.colorData.forEach((v) => {
-          if (v.label === label) {
-            color = v.color;
-          }
-        });
-      } else {
-        color = styleData.color;
+      let d = this.config.tableHeadStyle
+        ? this.config.tableHeadStyle.styleData
+        : this.config.otherData.tableHead;
+      if (d.length > 0) {
+        let styleData = d[i];
+        let color = styleData.color;
+        if (styleData.colorData.length > 0) {
+          styleData.colorData.some((v) => {
+            if (v.label === label) {
+              color = v.color;
+              return true;
+            }
+          });
+        }
+        return color;
       }
-      return color;
-    },
+    }
   },
   watch: {
-    "config.data.tableHead": {
-      handler(nl) {
-        this.number = Math.random() * 1000;
+    tableHead: {
+      handler(nl, ol) {
+        let n = JSON.stringify(nl.map((item) => item.value));
+        let o = JSON.stringify(ol.map((item) => item.value));
+        console.log(n, o, '====no');
+        if (n !== o) {
+          this.number = Math.random() * 1000;
+        }
+        //
       },
-      deep: true,
-    },
-  },
+      deep: true
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

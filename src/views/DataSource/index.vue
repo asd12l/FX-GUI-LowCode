@@ -7,11 +7,17 @@
           size="small"
           v-model="filterText"
         >
-          <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-button
+            slot="append"
+            icon="el-icon-search"
+          ></el-button>
         </el-input>
       </div>
       <div class="data-main">
-        <div v-if="data.length > 0" class="data-tree">
+        <div
+          v-if="data.length > 0"
+          class="data-tree"
+        >
           <el-tree
             class="filter-tree"
             :data="data"
@@ -36,7 +42,10 @@
               </div>
 
               <!-- 批量操作按钮 -->
-              <div class="btn-group" v-if="data.level === 1">
+              <div
+                class="btn-group"
+                v-if="data.level === 1"
+              >
                 <div
                   v-show="!isEdit && editBtnId === data.id"
                   class="btn-group"
@@ -45,33 +54,35 @@
                     size="mini"
                     @click="($event) => toEditBatch($event, data)"
                     class="data-btn batch-btn"
-                    >批量编辑</el-button
-                  >
+                  >批量编辑</el-button>
                 </div>
-                <div v-show="isEdit && editBtnId === data.id" class="btn-group">
+                <div
+                  v-show="isEdit && editBtnId === data.id"
+                  class="btn-group"
+                >
                   <el-button
                     size="mini"
                     @click="($event) => toCancel($event, data)"
                     :loading="isLoading"
                     class="data-btn"
-                    >取消</el-button
-                  >
+                  >取消</el-button>
                   <el-button
                     size="mini"
                     @click="($event) => toSave($event, data, node)"
                     :loading="isLoading"
                     class="data-btn batch-btn"
-                    >批量保存</el-button
-                  >
+                  >批量保存</el-button>
                 </div>
               </div>
 
               <!-- 单体操作按钮 -->
-              <div class="btn-group" v-if="data.level === 2">
+              <div
+                class="btn-group"
+                v-if="data.level === 2"
+              >
                 <div
-                  v-show="
-                    (!isEdit && editBtnId === data.id) ||
-                    (hoverId === data.id && editBtnId !== data.id)
+                  v-show="(!isEdit && editBtnId === data.id) ||
+                  (hoverId === data.id && editBtnId !== data.id)
                   "
                   class="edit-btn"
                 >
@@ -80,30 +91,33 @@
                     class="data-btn"
                     :loading="isLoading"
                     @click="($event) => toEdit($event, data)"
-                    >编辑</el-button
-                  >
+                  >编辑</el-button>
                 </div>
-                <div v-show="isEdit && editBtnId === data.id" class="btn-group">
+                <div
+                  v-show="isEdit && editBtnId === data.id"
+                  class="btn-group"
+                >
                   <el-button
                     size="mini"
                     @click="($event) => toCancel($event, data)"
                     :loading="isLoading"
                     class="data-btn cancel-btn"
-                    >取消</el-button
-                  >
+                  >取消</el-button>
                   <el-button
                     size="mini"
                     @click="($event) => toSave($event, data, node)"
                     :loading="isLoading"
                     class="data-btn"
-                    >保存</el-button
-                  >
+                  >保存</el-button>
                 </div>
               </div>
             </div>
           </el-tree>
         </div>
-        <div v-if="data.length === 0" class="empty-wrap">
+        <div
+          v-if="data.length === 0"
+          class="empty-wrap"
+        >
           <div class="default_img">
             <img
               :src="require('../../assets/image/default_img.png')"
@@ -133,13 +147,16 @@
             alt=""
             srcset=""
           />
-          录入数据源</el-button
-        >
+          录入数据源
+        </el-button>
       </div>
     </div>
     <div class="data-main">
       <div id="main2">
-        <div class="messageDialog" id="messageDialog"></div>
+        <div
+          class="messageDialog"
+          id="messageDialog"
+        ></div>
       </div>
       <el-button
         class="choose-scene"
@@ -147,8 +164,7 @@
         size="mini"
         @click="isShowSceneSelector = true"
         type="primary"
-        >场景选择</el-button
-      >
+      >场景选择</el-button>
     </div>
     <addDataDialog
       @toClose="toClose"
@@ -169,23 +185,23 @@
 </template>
   
 <script>
-import "./index.scss";
-import addDataDialog from "./dialog.vue";
-import SceneSelector from "../componments/SceneSelector";
-import { editSceneJsonBatch, getRowDetail, getFilterRows } from "@/utils/api";
-import { appKey, sign } from "@/utils/const.js";
-import { guid } from "@/utils/index";
+import './index.scss';
+import addDataDialog from './dialog.vue';
+import SceneSelector from '../componments/SceneSelector';
+import { editSceneJsonBatch, getRowDetail, getFilterRows } from '@/utils/api';
+import { appKey, sign } from '@/utils/const.js';
+import { guid } from '@/utils/index';
 export default {
-  name: "dataSource",
+  name: 'dataSource',
   components: { addDataDialog, SceneSelector },
   data() {
     return {
       isShowSceneSelector: false,
-      filterText: "",
+      filterText: '',
       data: [],
       defaultProps: {
-        children: "children",
-        label: "label",
+        children: 'children',
+        label: 'label'
       },
       dialogFormVisible: false,
       currectClcikEditId: -1,
@@ -194,25 +210,26 @@ export default {
       isEdit: false,
       _earth: null,
       count: 0,
-      dataJson: "",
+      dataJson: '',
       isLoading: false,
       isInit: true,
       timer: null,
       treeSceneData: [],
       scenceList: [],
-      currectSceneId: "",
+      currectSceneId: ''
     };
   },
   mounted() {
     this.loadAllScene();
+    this.loadSelectedWorksheet();
     let cloneXbsjEarthUI = null;
     if (this.$store.state.XbsjEarthUI) {
       cloneXbsjEarthUI = this.$lodash.cloneDeep(this.$store.state.XbsjEarthUI);
     } else {
-      this.$store.commit("SET_XBSJEARTHUI", XbsjEarthUI);
+      this.$store.commit('SET_XBSJEARTHUI', XbsjEarthUI);
       cloneXbsjEarthUI = XbsjEarthUI;
     }
-    cloneXbsjEarthUI.create("main2").then(async (earthUI) => {
+    cloneXbsjEarthUI.create('main2').then(async (earthUI) => {
       // earthUI.controls.mainBar.show = false;
       //隐藏图层管理
       // earthUI.tools.sceneTree.show = false;
@@ -228,14 +245,14 @@ export default {
         // "view",
         // "imagery",
         // "model",
-        "terrain",
-        "analysis",
-        "effect",
-        "entity",
+        'terrain',
+        'analysis',
+        'effect',
+        'entity',
         // "other",
-        "extend",
+        'extend'
       ];
-      this._earth._mainbar.page = "terrain";
+      this._earth._mainbar.page = 'terrain';
 
       // 获取配置信息
       setTimeout(() => {
@@ -250,18 +267,35 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.tree2.filter(val);
-    },
+    }
   },
   methods: {
+    async loadSelectedWorksheet() {
+      const {
+        data: { selected_worksheet }
+      } = await getRowDetail({
+        appKey: appKey,
+        worksheetId: 'cockpit',
+        sign: sign,
+        rowId: sessionStorage.getItem('rowid'),
+        getSystemControl: true
+      });
+      if (selected_worksheet) {
+        this.data = JSON.parse(selected_worksheet);
+        this.isLoading = false;
+      }
+      console.log('result:::::', result);
+    },
     onSure(data) {
+      console.log(data, 'onsure======================');
       const sceneData = data.scene_json && JSON.parse(data.scene_json);
       this.dataJson = sceneData;
       this._earth._earth.sceneTree.root.children = [
         {
-          title: "场景",
-          type: "scene",
-          children: sceneData.sceneTree.root.children,
-        },
+          title: '场景',
+          type: 'scene',
+          children: sceneData.sceneTree.root.children
+        }
       ];
       this.isShowSceneSelector = false;
     },
@@ -272,17 +306,17 @@ export default {
     async loadAllScene() {
       try {
         const {
-          data: { rows },
+          data: { rows }
         } = await getFilterRows({
           appKey: appKey,
           sign: sign,
           // worksheetId: "cockpit",
-          worksheetId: "scene",
+          worksheetId: 'scene',
           pageSize: 100,
           pageIndex: 1,
-          notGetTotal: true,
+          notGetTotal: true
         });
-        console.log("rows:::::::::::::::::", rows);
+        console.log('rows:::::::::::::::::', rows);
         this.scenceList = rows;
       } catch (error) {}
     },
@@ -311,10 +345,10 @@ export default {
     resetScene() {
       this._earth.earth.sceneTree.root.children = [
         {
-          title: "场景",
-          type: "scene",
-          children: this.dataJson.sceneTree.root.children,
-        },
+          title: '场景',
+          type: 'scene',
+          children: this.dataJson.sceneTree.root.children
+        }
       ];
     },
     // 保存场景数据
@@ -330,13 +364,13 @@ export default {
         // const initIds = this.dataJson.sceneTree.root.children
         //   .map((item) => item.czmObject && item.czmObject.xbsjGuid)
         //   .filter((item) => item);
-        console.log("sceneJson:::::::::::::::", sceneJson);
+        console.log('sceneJson:::::::::::::::', sceneJson);
         // return;
         // const senceJsonParams = sceneJson.sceneTree.root.children.filter(
         //   (item) => item.czmObject && !initIds.includes(item.czmObject.xbsjGuid)
         // );
         const senceJsonParams = sceneJson.sceneTree.root.children.filter(
-          (item) => item.title !== "场景"
+          (item) => item.title !== '场景'
         );
         const senceJsonParamsNew = senceJsonParams.map((item) => {
           const tmp = item;
@@ -344,7 +378,7 @@ export default {
           return tmp;
         });
         console.log(
-          "senceJsonParamsNew:::::::::::::",
+          'senceJsonParamsNew:::::::::::::',
           senceJsonParamsNew,
           allCheckedNode
         );
@@ -354,16 +388,16 @@ export default {
           worksheetId: allCheckedNode[0].worksheetId,
           rowIds: rowIds,
           control: {
-            controlId: "json",
-            value: JSON.stringify(senceJsonParamsNew),
-          },
+            controlId: 'json',
+            value: JSON.stringify(senceJsonParamsNew)
+          }
         };
         this.isLoading = true;
 
         const result = await editSceneJsonBatch(params);
         // this._earth.earth.sceneTree.root.children.splice(-1, 1);
         if (result.success) {
-          this.$message.success("保存成功");
+          this.$message.success('保存成功');
           this.isLoading = false;
           this.isEdit = false;
           this.editBtnId = -1;
@@ -372,15 +406,15 @@ export default {
           this._earth._earth.czm.viewer.entities.removeAll();
           return;
         }
-        this.$message.error("保存失败");
+        this.$message.error('保存失败');
         this.isLoading = false;
         this.editBtnId = -1;
         this.clearCheckedNode();
         this.isEdit = false;
         // this.resetScene()
       } catch (error) {
-        console.log("error::::::::::", error);
-        this.$message.error("保存失败");
+        console.log('error::::::::::', error);
+        this.$message.error('保存失败');
         this.isLoading = false;
       }
     },
@@ -392,7 +426,7 @@ export default {
       this.resetScene();
       this.isInit = false;
       console.log(
-        "this._earth.earth.sceneTree.root.children::::::::::",
+        'this._earth.earth.sceneTree.root.children::::::::::',
         this._earth.earth.sceneTree.root.children,
         data
       );
@@ -400,7 +434,7 @@ export default {
       // 场景添加数据并非行到当前节点位置
       for (let index = 0; index < data.length; index++) {
         this._earth.earth.sceneTree.root.children.push({
-          czmObject: data[index].czmObject,
+          czmObject: data[index].czmObject
         });
       }
 
@@ -428,10 +462,10 @@ export default {
           appId,
           id,
           wsid,
-          viewId = "",
+          viewId = '',
           parentId,
           rowid,
-          worksheetId,
+          worksheetId
         } = data;
         let result;
         let czmObject;
@@ -442,11 +476,11 @@ export default {
             worksheetId: worksheetId,
             sign: sign,
             rowId: rowid,
-            getSystemControl: true,
+            getSystemControl: true
           });
           this.isLoading = false;
           czmObject = result.data.json && JSON.parse(result.data.json);
-          console.log("czmObject:::::::::::", czmObject);
+          console.log('czmObject:::::::::::', czmObject);
         }
         if (data.level === 1) {
           getAllcheckedNode = getAllcheckedNode.filter(
@@ -460,10 +494,10 @@ export default {
           getAllcheckedNode.length > 1
           // data.level !== 1
         ) {
-          this.$confirm("已有选中数据，是否取消勾选?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
+          this.$confirm('已有选中数据，是否取消勾选?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
             .then(() => {
               this.clearCheckedNode();
@@ -477,8 +511,8 @@ export default {
             })
             .catch(() => {
               this.$message({
-                type: "info",
-                message: "已取消删除",
+                type: 'info',
+                message: '已取消删除'
               });
             });
         } else {
@@ -493,8 +527,8 @@ export default {
           data.level !== 1 && czmObject && this.addSceneElement(czmObject);
         }
       } catch (error) {
-        console.log("error::::::::::::", error);
-        this.$message.error("场景数据加载失败");
+        console.log('error::::::::::::', error);
+        this.$message.error('场景数据加载失败');
       }
     },
     // 获取当前元素的父id
@@ -538,7 +572,7 @@ export default {
       }, 200);
     },
     // 点击tree节点
-    handleNodeClick1(data, { checked, type = "" }, e) {
+    handleNodeClick1(data, { checked, type = '' }, e) {
       data.level === 1 && e.stopPropagation();
       clearTimeout(this.timer); //清除未执行的定时器
 
@@ -553,10 +587,10 @@ export default {
 
           // 已经选中其他工作表
           if (!allParentIds.includes(currectParentId)) {
-            this.$confirm("已有选中数据，是否取消勾选?", "提示", {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              type: "warning",
+            this.$confirm('已有选中数据，是否取消勾选?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
             })
               .then(() => {
                 this.clearCheckedNode(
@@ -569,15 +603,15 @@ export default {
               })
               .catch(() => {
                 this.$message({
-                  type: "info",
-                  message: "已取消删除",
+                  type: 'info',
+                  message: '已取消删除'
                 });
               });
           } else {
             const allCheckedNode = getAllcheckedNode.filter(
               (item) => item.id !== data.id
             );
-            console.log("getAllcheckedNode:::::::::::::", allCheckedNode);
+            console.log('getAllcheckedNode:::::::::::::', allCheckedNode);
             // 获取当前节点下的子节点
             if (allCheckedNode.length <= 1 && checked) {
               this.editBtnId =
@@ -613,27 +647,27 @@ export default {
 
         // 已经选中其他工作表
         if (currectParentId && allParentIds.length > 1) {
-          this.$confirm("已有选中数据，是否取消勾选?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
+          this.$confirm('已有选中数据，是否取消勾选?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
             .then(() => {
-              console.log("currectParentId::::::::::::", currectParentId, data);
+              console.log('currectParentId::::::::::::', currectParentId, data);
               this.clearCheckedNode(currectParentId, data.level);
               this.editBtnId = data.id;
               this.$refs.tree2.setChecked(data, true);
             })
             .catch(() => {
               console.log(
-                "currectParentId::::::::::::++",
+                'currectParentId::::::::::::++',
                 currectParentId,
                 data
               );
               this.$refs.tree2.setChecked(data, false);
               this.$message({
-                type: "info",
-                message: "已取消删除",
+                type: 'info',
+                message: '已取消删除'
               });
             });
         } else {
@@ -648,13 +682,28 @@ export default {
     },
     importData(data) {
       this.data = [...this.data, data];
-      this.dialogFormVisible = false;
+
+      this.$nextTick(async () => {
+        const params = {
+          appKey: appKey,
+          sign: sign,
+          worksheetId: 'cockpit',
+          rowIds: [sessionStorage.getItem('rowid')],
+          control: {
+            controlId: 'selected_worksheet',
+            value: JSON.stringify(this.data)
+          }
+        };
+        // this.isLoading = true;
+        const result = await editSceneJsonBatch(params);
+        this.dialogFormVisible = false;
+      });
     },
     openDialog() {
       if (!this.dataJson) {
         this.$message({
-          message: "请先选择场景",
-          type: "warning",
+          message: '请先选择场景',
+          type: 'warning'
         });
         return;
       }
@@ -663,11 +712,11 @@ export default {
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
-    },
-  },
+    }
+  }
 };
 </script>
-  <style lang="scss" >
+<style lang="scss" >
 #main2 {
   position: relative;
 }

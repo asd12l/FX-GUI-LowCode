@@ -3,8 +3,8 @@
  * @version:
  * @Author: ydl
  * @Date: 2023-07-21 09:10:13
- * @LastEditors: ydl
- * @LastEditTime: 2023-10-10 10:20:09
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-09 11:20:13
  */
 import Vue from "vue";
 import App from "./App.vue";
@@ -14,7 +14,7 @@ import md5 from "js-md5";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import directive from "./utils/directives";
-import { isShowModuleFunc } from "./utils/index";
+import { isShowModuleFunc, setModal, removeModal } from "./utils/index";
 
 Vue.use(directive);
 Vue.use(ElementUI);
@@ -28,6 +28,8 @@ Vue.use(SvgIcon, {
 
 import lodash from "lodash";
 Vue.prototype.$lodash = lodash;
+Vue.prototype.$setModal = setModal;
+Vue.prototype.$removeModal = removeModal;
 Vue.prototype.isShowModuleFunc = isShowModuleFunc;
 Vue.prototype.$md5 = md5;
 window.$lodash = lodash;
@@ -39,19 +41,19 @@ import "@/icons/index";
 // import CodeEditor from "bin-code-editor";
 // Vue.use(CodeEditor);
 try {
-  const rowid =
-    sessionStorage.getItem("rowid") ||
-    window.location.href.split("#")[1].split("/")[2] ||
-    "051d669c-e83e-40db-abcf-0921120c6f23";
-  sessionStorage.setItem("rowid", rowid);
-  const systemInfo = localStorage.getItem("systemInfo");
-  !systemInfo &&
-    localStorage.setItem("systemInfo", {
-      app_key: "4381923389e27cd4",
-      sign:
-        "Yzg1NDU3MWJhZjUwOTQ1NTY0OThmZjM0NjAzOGZkNGY3MWEzOWJiMjQ4NmZhNmMyMDlhZTk1N2QwYTI5NzM5ZQ==",
-    });
-} catch (error) {}
+  // const rowid =
+  //   sessionStorage.getItem("rowid") ||
+  //   window.location.href.split("#")[1].split("/")[2] ||
+  //   "051d669c-e83e-40db-abcf-0921120c6f23";
+  // sessionStorage.setItem("rowid", rowid);
+  // const systemInfo = localStorage.getItem("systemInfo");
+  // !systemInfo &&
+  // localStorage.setItem("systemInfo", {
+  //   app_key: "4381923389e27cd4",
+  //   sign:
+  //     "Yzg1NDU3MWJhZjUwOTQ1NTY0OThmZjM0NjAzOGZkNGY3MWEzOWJiMjQ4NmZhNmMyMDlhZTk1N2QwYTI5NzM5ZQ==",
+  // });
+} catch (error) { }
 
 // Vue.config.productionTip = false;
 new Vue({

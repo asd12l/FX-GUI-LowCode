@@ -1,24 +1,31 @@
 <template>
   <div class="relative">
-    <div class="return" v-if="parentInfo.length > 1" @click="handleReturn">
+    <div
+      class="return"
+      v-if="parentInfo.length > 1"
+      @click="handleReturn"
+    >
       返回
     </div>
-    <div class="chart-wrapper" ref="seriesMap"></div>
+    <div
+      class="chart-wrapper"
+      ref="seriesMap"
+    ></div>
   </div>
 </template>
 
 <script>
-import resize from "@/mixins/resize";
-import echarts from "echarts";
-import { getGeoJson } from "@/utils/index";
-import defaultSetting from "@/components/Map/common";
-import { deepClone } from "@/utils/index";
+import resize from '@/mixins/resize';
+import echarts from 'echarts';
+import { getGeoJson } from '@/utils/index';
+import defaultSetting from '@/components/map/common';
+import { deepClone } from '@/utils/index';
 export default {
-  name: "seriesMap",
+  name: 'seriesMap',
   props: {
     config: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   mixins: [resize],
   data() {
@@ -26,10 +33,10 @@ export default {
       geoJson: {},
       parentInfo: [
         {
-          cityName: "全国",
-          code: 100000,
-        },
-      ],
+          cityName: '全国',
+          code: 100000
+        }
+      ]
     };
   },
   mounted() {
@@ -52,7 +59,7 @@ export default {
       this.myChart = echarts.init(this.$refs.seriesMap);
       //设置为 china 则显示南海诸岛 ，不需要可以去掉
       echarts.registerMap(
-        this.parentInfo.length === 1 ? "china" : "map",
+        this.parentInfo.length === 1 ? 'china' : 'map',
         this.geoJson
       ); //注册
       let max = 0,
@@ -74,52 +81,52 @@ export default {
             show: data.length > 0,
             min: min,
             max: max,
-            left: "3%",
-            bottom: "2%",
+            left: '3%',
+            bottom: '2%',
             calculable: true,
             inRange: {
-              color: ["#24CFF4", "#2E98CA", "#1E62AC"],
+              color: ['#24CFF4', '#2E98CA', '#1E62AC']
             },
             textStyle: {
-              color: "#24CFF4",
-            },
+              color: '#24CFF4'
+            }
           },
           series: [
             {
-              name: "地图",
-              type: "map",
-              map: this.parentInfo.length === 1 ? "china" : "map",
+              name: '地图',
+              type: 'map',
+              map: this.parentInfo.length === 1 ? 'china' : 'map',
               roam: false, //是否可缩放
               zoom: 1.22, //缩放比例
               data: data,
               label: series.label,
               itemStyle: {
                 normal: {
-                  areaColor: "#24CFF4",
-                  borderColor: "#53D9FF",
+                  areaColor: '#24CFF4',
+                  borderColor: '#53D9FF',
                   borderWidth: 1.3,
                   shadowBlur: 15,
-                  shadowColor: "rgb(58,115,192)",
+                  shadowColor: 'rgb(58,115,192)',
                   shadowOffsetX: 7,
-                  shadowOffsetY: 6,
+                  shadowOffsetY: 6
                 },
                 emphasis: {
-                  areaColor: "#8dd7fc",
+                  areaColor: '#8dd7fc',
                   borderWidth: 1.6,
-                  shadowBlur: 25,
-                },
-              },
-            },
-          ],
+                  shadowBlur: 25
+                }
+              }
+            }
+          ]
         },
         true
       );
 
-      this.myChart.off("click");
-      this.myChart.on("click", (params) => {
+      this.myChart.off('click');
+      this.myChart.on('click', (params) => {
         if (this.geoJson.features.length <= 1) return;
         const name = params.name;
-        let code = "";
+        let code = '';
         this.geoJson.features.forEach((item) => {
           if (item.properties.name == name) {
             code = item.properties.adcode;
@@ -128,7 +135,7 @@ export default {
         if (!code) return;
         this.parentInfo.push({
           cityName: name,
-          code: code,
+          code: code
         });
         this.getMapJson();
       });
@@ -140,16 +147,16 @@ export default {
       }
       this.parentInfo.pop();
       this.getMapJson();
-    },
+    }
   },
   watch: {
     config: {
       handler() {
         this.initEchart();
       },
-      deep: true,
-    },
-  },
+      deep: true
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

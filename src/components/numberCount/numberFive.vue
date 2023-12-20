@@ -115,12 +115,12 @@
                       :style="{
                         color: config.txtRowtwo.colorLeft,
                       }"
-                      >{{ item.camera_info.online }}</span
+                      >{{ item.camera_info.online}}</span
                     >/<span class="camera-line-all-total"
                     :style="{
                         color: config.txtRowtwo.colorRight,
                       }">{{
-                      item.camera_info.total
+                      item.camera_info.total 
                     }}</span>
                   </div>
                 </div>

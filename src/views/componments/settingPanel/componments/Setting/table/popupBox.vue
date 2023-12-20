@@ -19,7 +19,15 @@
               @change="(val) => $emit('changeSize', 'isShowBackgroundImg', val)"
             ></el-switch>
           </el-form-item>
-          <el-form-item label="背景图：" v-if="config.isShowBackgroundImg">
+          <ImageSelector
+            v-if="config.isShowBackgroundImg"
+            label="背景图："
+            @changeSrc="(val) => $emit('changeSize', 'background', val)"
+            worksheetId="cockpit_dialog"
+            imageField="beijingtu"
+            :src="config.background"
+          ></ImageSelector>
+          <!-- <el-form-item label="背景图：" v-if="config.isShowBackgroundImg">
             <el-select
               popper-class="setting-select"
               v-model="config.background"
@@ -37,7 +45,7 @@
                 </div>
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <span v-else>
             <el-form-item label="背景色：">
               <el-color-picker
@@ -77,6 +85,10 @@
               type="box"
               gradientType="border"
               txt="边框是否渐变："
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             />
           </span>
         </el-collapse-item>
@@ -91,7 +103,16 @@
               placeholder="请输入高度"
             ></el-input>
           </el-form-item>
-          <el-form-item label="背景图：">
+          <ImageSelector
+            label="背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'header', 'background', val)
+            "
+            worksheetId="cockpit_dialog"
+            imageField="tbbjt"
+            :src="config.header.background"
+          ></ImageSelector>
+          <!-- <el-form-item label="背景图：">
             <el-select
               popper-class="setting-select"
               v-model="config.header.background"
@@ -108,7 +129,7 @@
                 </div>
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-collapse-item title="标题">
             <el-form-item label="标题：">
               <el-input
@@ -121,13 +142,20 @@
               :config="config"
               type1="header"
               :isShowFontStyle="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             />
             <txtGradient
               :config="config"
               type="headerTxt"
               parentType="header"
               txt="标题是否渐变："
-              @changeSize="(type, val) => $emit('changeSize', type, val)"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             />
             <ImageSelector
               label="图标："

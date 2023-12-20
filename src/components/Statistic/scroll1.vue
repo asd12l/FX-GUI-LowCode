@@ -1,5 +1,5 @@
 <template>
-  <div class="scroll1" >
+  <div class="scroll1">
     <vueSeamlessScroll
       ref="scroll"
       :data="list"
@@ -29,6 +29,7 @@
             </div>
             <div
               class="text"
+              :title="item.name"
               :style="{
                 display: config.title.display,
                 fontFamily: config.title.fontFamily,

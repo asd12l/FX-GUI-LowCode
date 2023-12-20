@@ -6,62 +6,10 @@
       class="border-box"
       style="padding: 8px 16px"
     >
-      <el-form-item label="名称：">
-        <div class="componentName" style="display:flex;align-items:center">
-          <el-input
-            v-model="config.name"
-            size="mini"
-            placeholder=""
-            @change="(val) => $emit('changeSize', 'name', val)"
-          ></el-input>
-          <span
-            :class="config.isLock ? 'active' : ''"
-            @click="(val) => $emit('changeSize', 'isLock', !config.isLock)"
-          ></span>
-          <span
-            :class="config.isShow ? 'active' : ''"
-            @click="(val) => $emit('changeSize', 'isShow', !config.isShow)"
-          ></span>
-        </div>
-      </el-form-item>
-
-      <el-form-item label="组件宽度：">
-        <el-input
-          v-model="config.width"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'width', val)"
-          placeholder="请输入组件宽度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="组件高度：">
-        <el-input
-          v-model="config.height"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'height', val)"
-          placeholder="请输入组件高度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="X距离：">
-        <el-input
-          v-model="config.left"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'left', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="Y距离：">
-        <el-input
-          v-model="config.top"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'top', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="默认展示隐藏：">
-        <el-switch
-          style="margin-top: 7px;"
-          v-model="config.isShowModule"
-          @change="(val) => $emit('changeSize', 'isShowModule', val)"
-        ></el-switch>
-      </el-form-item>
+    <commonSetTitle
+        :config="config"
+        @changeSize="(type, val) => $emit('changeSize', type, val)"
+      />
       <el-form-item label="单个容器宽度：">
         <el-input
           v-model="config.text.width"
@@ -90,22 +38,20 @@
         ></el-switch>
       </el-form-item>
       <div v-if="config.text.isBacagroundImg">
-        <el-form-item label="图片：">
-          <imgSelect
-            :backgroundData="backgroundData"
-            :config="config"
-            datatype1="backgroundImg"
-            type="img"
-          />
-        </el-form-item>
-        <el-form-item label="选中时图片：">
-          <imgSelect
-            :backgroundData="backgroundData"
-            :config="config"
-            datatype1="backgroundActive"
-            type="img_active"
-          />
-        </el-form-item>
+        <ImageSelector
+        label="图片："
+        @changeSrc="(val) => $emit('changeValue', 'backgroundImg','background', val)"
+        worksheetId="anzzj"
+        imageField="img"
+        :src="config.backgroundImg.background"
+      ></ImageSelector>
+      <ImageSelector
+        label="选中时图片："
+        @changeSrc="(val) => $emit('changeValue', 'backgroundActive','background', val)"
+        worksheetId="anzzj"
+        imageField="img_active"
+        :src="config.backgroundActive.background"
+      ></ImageSelector>
       </div>
       <div v-else>
         <el-form-item label="背景：">
@@ -164,6 +110,10 @@
               :config="config"
               type1="txtFamily"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
 
             <el-form-item label="颜色：">
@@ -234,10 +184,12 @@
 <script>
 import commonTab from "../componments/commonTab";
 import { getImgData } from "@/utils/index.js";
-import imgSelect from "../imgSelect";
+import commonSetTitle from "../componments/commonSetTitle";
+import ImageSelector from "../componments/ImageSelector";
 export default {
   name: "setting",
-  components: { commonTab, imgSelect },
+  components: { commonTab, commonSetTitle,
+    ImageSelector },
   data() {
     return {
       directionOption: [
@@ -296,7 +248,7 @@ export default {
           value: "outside",
         },
       ],
-      fontList: ["Microsoft YaHei", "YouSheBiaoTiHei"],
+     fontList: ["YouSheBiaoTiHei", "Microsoft YaHei", "Helvetica"],
       backgroundData: "",
     };
   },

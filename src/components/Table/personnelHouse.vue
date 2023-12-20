@@ -1,126 +1,112 @@
 <template>
   <div
     class="house"
-    :style="{
-      width: config.width + 'px',
-      height: config.height + 'px',
-      background: `url(${
-        config.box.backgroundImg
-      }) 100% 100%/100% 100% no-repeat`,
-    }"
+    v-show="isShowModuleFunc(config)"
+    :style="[
+      {
+        width: config.width + 'px',
+        height: config.height + 'px',
+        background: `url(${
+          config.box.backgroundImg
+        }) 100% 100%/100% 100% no-repeat`,
+      },
+      sassStyle,
+    ]"
   >
     <div class="title" :style="[styleTitle]">
-      <span>{{ data.name }}</span
+      <span>{{ config.data[config.box.name] }}</span
       ><span
         :style="{
-          background: styleTitle.backgroundClose
+          background: styleTitle.backgroundClose,
         }"
+        @click="config.isShowModule = false"
       ></span>
     </div>
     <div class="box">
       <div class="box_top">
         <div class="box_title" :style="[styleTitle2]">
-         {{ data.name }}
+          {{ config.data.name }}
         </div>
         <div class="box_top_table">
-          <div class="row">
-            <div>
-              <span>房屋性质：</span
-              ><span
-                :style="{
-                  color: data.rental_type == '自住' ? '#FFDB6B' : '#308DFF',
-                }"
-                >{{ data.rental_type }}</span
+          <div
+            class="row"
+            v-if="config.houseData && config.houseData.tableHead"
+            :style="{ fontSize: config.houseData.fontSize + 'px' }"
+          >
+            <div v-for="(item, i) in config.houseData.tableHead" :key="i">
+              <span :style="styleHouseData.left">{{ item.label }}</span>
+              <span
+                :style="[
+                  styleHouseData.right,
+                  {
+                    color:
+                      (styleColor[i] &&
+                        styleColor[i][config.data[item.value]] &&
+                        styleColor[i][config.data[item.value]].color) ||
+                      config.houseData.tableRight.color,
+                  },
+                ]"
+                :title="config.data[item.value]"
               >
-            </div>
-            <div>
-              <span>居住人数：</span><span>{{ data.people_num }}</span>
-            </div>
-          </div>
-          <div class="row">
-            <div>
-              <span>户主姓名：</span><span>{{ data.household_name }}</span>
-            </div>
-            <div>
-              <span>详细地址：</span><span>{{ data.address }}</span>
+                {{ config.data[item.value] }}
+              </span>
             </div>
           </div>
-          <div class="row">
-            <div>
-              <span>权利人：</span><span>{{ data.obligee }}</span>
-            </div>
-            <div>
-              <span>权利人电话：</span
-              ><span>{{
-                data.mobile &&
-                  data.mobile.replace(/(\d{5})\d{4}(\d{4})/, "$1****$2")
-              }}</span>
-            </div>
-          </div>
-        </div> 
+        </div>
       </div>
       <div class="box_bottom">
         <div class="box_title" :style="[styleTitle2]">
-          住户信息
-          <!-- <div class="tag">
-            <span>党员</span>
-            <span>达人</span>
-            <span>村民代表</span>
-          </div> -->
+          {{ config.personnelData && config.personnelData.titleName }}
         </div>
         <div class="table community">
-          <el-table :data="data.people" height="370">
-            <!-- <el-table-column
-              label="住户姓名"
-              prop="name"
-              align="center"
-              width="180"
-            >
-            </el-table-column>
+          <el-table :data="config.data.people" height="370">
             <el-table-column
-              label="手机号码"
-              prop="mobile"
+              v-for="(item, i) in config.personnelData &&
+                config.personnelData.tableHead"
+              :key="item.id"
+              :label="item.label"
               align="center"
-              width="160"
-              show-overflow-tooltip
             >
               <template slot-scope="scope">
-                <span>
-                  {{
-                    scope.row.mobile &&
-                      scope.row.mobile.replace(
-                        /(\d{5})\d{4}(\d{4})/,
-                        "$1****$2"
-                      )
-                  }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="类型"
-              prop="attr"
-              align="center"
-              width="100"
-              show-overflow-tooltip
-            >
-              <template slot-scope="scope">
-                <span>
-                  {{ scope.row.attr }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column label="特殊人员标签" prop="skill" align="center">
-              <template slot-scope="scope">
-                <div style="display: flex; justify-content: center">
-                  <div
-                    style="display: flex; justify-content: center"
-                    v-for="(it, i) in scope.row.tags"
-                    :key="i"
-                  >
+                <span v-if="Array.isArray(scope.row[item.value])">
+                  <div style="display: flex; justify-content: center">
+                    <span
+                      class="tag"
+                      v-for="(x, y) in scope.row[item.value].slice(
+                        0,
+                        config.personnelData.dataNumber
+                      )"
+                      :key="y"
+                      :style="{
+                        color:
+                          (styleColorTable[i] &&
+                            styleColorTable[i][x] &&
+                            styleColorTable[i][x].color) ||
+                          config.personnelData.tbody.color,
+                        backgroundColor: changeColor(
+                          (styleColorTable[i] &&
+                            styleColorTable[i][x] &&
+                            styleColorTable[i][x].color) ||
+                            config.personnelData.tbody.color
+                        ),
+                      }"
+                      >{{ x }}
+                    </span>
                   </div>
-                </div>
+                </span>
+                <span
+                  v-else
+                  :style="{
+                    color:
+                      (styleColorTable[i] &&
+                        styleColorTable[i][scope.row[item.value]] &&
+                        styleColorTable[i][scope.row[item.value]].color) ||
+                      config.personnelData.tbody.color,
+                  }"
+                  >{{ scope.row[item.value] }}</span
+                >
               </template>
-            </el-table-column> -->
+            </el-table-column>
           </el-table>
         </div>
       </div>
@@ -129,10 +115,9 @@
 </template>
 
 <script>
-//   const dangyuan = require('@/assets/img/common/popup/dangyuan.png');
-//   const daren = require('@/assets/img/common/popup/daren.png');
-//   const cunmin = require('@/assets/img/common/popup/cunmin.png');
 import { setStyleObj, toLoadData } from "@/utils/index.js";
+import { getRowDetail, getRowRelation } from "@/utils/api";
+import { appKey, sign } from "@/utils/const.js";
 export default {
   props: {
     config: {
@@ -141,100 +126,166 @@ export default {
   },
   data() {
     return {
-      //     dangyuan,
-      //     daren,
-      //     cunmin,
-      data: {
-        position: "121.3645029677861,28.3980352906802,19.5873489077149",
-        district: "[]",
-        type: "大套",
-        is_rental: "否",
-        obligee: "陈正荣",
-        mobile: "+8613605862677",
-        address: "三区45幢3",
-        people: [
-          {
-            household_name: "陈正荣",
-            name: "陈宇扬",
-            mobile: "+8613989638099",
-            attr: "子",
-            type: [],
-            skill: [],
-            tags: [],
-            rowid: "c4f730ca-21b2-4a82-a7b0-b19014a643d9",
-          },
-          {
-            household_name: "陈正荣",
-            name: "杨恩萍",
-            mobile: "+8613989638099",
-            attr: "妻",
-            type: ["村民代表"],
-            skill: [],
-            tags: ["村民代表"],
-            rowid: "2b3fea9d-bf5d-4e91-bfde-892128a4409d",
-          },
-          {
-            household_name: "陈正荣",
-            name: "陈正荣",
-            mobile: "+8613605862677",
-            attr: "户主",
-            type: [],
-            skill: [],
-            tags: [],
-            rowid: "d0bcdb91-5e29-4823-a13a-8b1f7bdc7478",
-          },
-          {
-            household_name: "陈米云",
-            name: "陈米云",
-            mobile: "+8618205862782",
-            attr: "户主",
-            type: [],
-            skill: [],
-            tags: [],
-            rowid: "987c46e2-2446-4da2-8363-4f3faed2febd",
-          },
-        ],
-        name: "C7-3",
-        rowid: "24346621-fb24-48d4-9976-fa703381b667",
-        rental_type: "自住",
-        people_num: 4,
-        household_name: "陈正荣,陈米云",
-      },
+      houseDetailPeople: [],
+      data: {},
+
+      // color1:[],
     };
   },
-  computed: {
-    styleTitle(){
-        let d = setStyleObj({ ...this.config.box });
-        d.background =`url(${this.config.box.headImg}) 100% 100%/100% 100% no-repeat`;
-        d.backgroundClose =`url(${this.config.box.closeImg}) 100% 100%/100% 100% no-repeat`;
-        return d
+  watch: {
+    "config.box": {
+      handler(n, v) {
+        let data = this.config.data;
+        if (n.desensitization && n.input.length) {
+          Object.keys(data).forEach((key) => {
+            n.input.forEach((item) => {
+              this.config.data[key] =
+                item == key
+                  ? this.config.data[key] &&
+                    this.config.data[key].replace(
+                      /(\d{5})\d{4}(\d{4})/,
+                      "$1****$2"
+                    )
+                  : this.config.data[key];
+            });
+          });
+          data.people &&
+            data.people.length &&
+            data.people.forEach((item) => {
+              n.input.forEach((it) => {
+                if (it in item) {
+                  item[it] = item[it]
+                    ? item[it].replace(/(\d{5})\d{4}(\d{4})/, "$1****$2")
+                    : item[it];
+                }
+              });
+            });
+        } else {
+          this.config.data = JSON.parse(JSON.stringify(this.data));
+        }
+      },
+      deep: true,
     },
-    styleTitle2(){
-        let d = setStyleObj({ ...this.config.box.smallTitle });
-        d.background=` url(${this.config.box.smallImg}) no-repeat`;
-        return d
-    }
+  },
+  computed: {
+    changeColor() {
+      return function(a) {
+        let opacity = this.config.personnelData.opacity;
+        if (a.includes("#")) {
+          var rgx = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+          var hex = a.replace(rgx, function(m, r, g, b) {
+            return r + r + g + g + b + b;
+          });
+          var rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          if (!rgb) {
+            return a;
+          }
+          var r = parseInt(rgb[1], 16);
+          var g = parseInt(rgb[2], 16);
+          var b = parseInt(rgb[3], 16);
+          return "rgba(" + r + "," + g + "," + b + "," + opacity + ")";
+        } else {
+          let x = a.split(",")[0];
+          let b = a.split(",")[1];
+          let c = a.split(",")[2];
+          return x + "," + b + "," + c + "," + `${opacity})`;
+        }
+      };
+    },
+    styleColor() {
+      let color = [];
+      let arr = this.config.houseData.colorData;
+      arr.length &&
+        arr.forEach((item, index) => {
+          color.push({});
+          item.length &&
+            item.forEach((x) => {
+              color[index][x.label] = x;
+            });
+        });
+      return color;
+    },
+    styleColorTable() {
+      let color = [];
+      let arr = this.config.personnelData.colorData;
+      arr.length &&
+        arr.forEach((item, index) => {
+          color.push({});
+          item.length &&
+            item.forEach((x) => {
+              color[index][x.label] = x;
+            });
+        });
+      return color;
+    },
+    styleTitle() {
+      let d = setStyleObj({ ...this.config.box });
+      d.background = `url(${
+        this.config.box.headImg
+      }) 100% 100%/100% 100% no-repeat`;
+      d.backgroundClose = `url(${
+        this.config.box.closeImg
+      }) 100% 100%/100% 100% no-repeat`;
+      return d;
+    },
+    styleTitle2() {
+      let d = setStyleObj({ ...this.config.box.smallTitle });
+      d.background = ` url(${this.config.box.smallImg}) no-repeat`;
+      return d;
+    },
+    styleHouseData() {
+      let left = setStyleObj({ ...this.config.houseData.tableLeft });
+      let right = setStyleObj({ ...this.config.houseData.tableRight });
+      return { left, right };
+    },
+    sassStyle() {
+      let style = this.config.personnelData;
+      let headerBoder = "1px" + " " + "solid" + " " + style.theader.borderColor;
+      return {
+        "--border": headerBoder,
+        "--headerColor": style.theader.color,
+        "--headerheight": style.theader.height + "px",
+        "--backgroundHeader": style.theader.background,
+        "--backgroundTbody": style.tbody.background,
+        "--bodyColor": style.tbody.color,
+        "--tableFontsize": style.theader.fontSize + "px",
+      };
+    },
   },
   mounted() {
-    this.houseDetail(this.data.people)
+    this.data = JSON.parse(JSON.stringify(this.config.data));
+    // this.updateComponentData({rowid:'96cd1a13-48cc-43d4-9bf0-272bb4053a24'})
   },
   methods: {
-    houseDetail(data){
-        if(data&&data.length){
-            let houseDetail=[];
-            let id = 0;
-            Object.keys(data[0]).forEach((key) => {
-                
-               let obj={}
-                obj.label=key
-                // obj.id=id
-                // obj.value=data[0][key]
-                // houseDetail.push(obj)
-                id++
+    dataFilter() {
+      let data = this.config.data;
+      if (this.config.box.desensitization && this.config.box.input.length) {
+        Object.keys(data).forEach((key) => {
+          this.config.box.input.forEach((item) => {
+            this.config.data[key] =
+              item == key
+                ? this.config.data[key] &&
+                  this.config.data[key].replace(
+                    /(\d{5})\d{4}(\d{4})/,
+                    "$1****$2"
+                  )
+                : this.config.data[key];
+          });
         });
-        console.log("==========key",houseDetail);
-        }
-   
+        data.people &&
+          data.people.length &&
+          data.people.forEach((item) => {
+            this.config.box.input.forEach((it) => {
+              if (it in item) {
+                item[it] = item[it]
+                  ? item[it].replace(/(\d{5})\d{4}(\d{4})/, "$1****$2")
+                  : item[it];
+              }
+            });
+          });
+      } else {
+        this.config.data = JSON.parse(JSON.stringify(this.data));
+      }
     },
     async updateComponentData({ rowid }) {
       this.id = rowid;
@@ -242,12 +293,22 @@ export default {
       const data = {
         appKey: appKey,
         sign: sign,
-        worksheetId: 'AI_alarm',
-        rowId: rowid
+        worksheetId: "building",
+        rowId: rowid,
+        controlId: "people", //需要字段名获取相关关联表
       };
       const result = await getRowDetail(data);
-      this.eventDetail = result.data;
-    }
+      const people = await getRowRelation(data);
+      this.config.data = JSON.parse(JSON.stringify(result.data));
+      this.config.data.people = people.data.rows;
+
+      this.config.houseData.tableKeyData =
+        result.data && Object.keys(result.data);
+      this.config.personnelData.tableKeyData =
+        people.data.rows[0] && Object.keys(people.data.rows[0]);
+      this.data = JSON.parse(JSON.stringify(this.config.data));
+      this.dataFilter();
+    },
   },
 };
 </script>
@@ -256,6 +317,8 @@ export default {
 .house {
   color: #ffffff;
   pointer-events: all;
+  z-index: 3;
+
   .title {
     width: 100%;
     // height: 44px;
@@ -265,19 +328,23 @@ export default {
     padding: 0 20px;
     display: flex;
     align-items: center;
+
     > span:nth-child(1) {
       flex: 1;
     }
+
     > span:nth-child(2) {
       width: 24px;
       height: 24px;
       // background-image: url("../../assets/image/xiaokunshan/bg11.png");
     }
   }
+
   .box {
     height: calc(100% - 44px);
     width: 100%;
     padding: 20px;
+
     .box_title {
       width: 100%;
       //   height: 40px;
@@ -286,17 +353,21 @@ export default {
       align-items: center;
       margin-bottom: 10px;
       justify-content: space-between;
+
       .name {
         // font-size: 20px;
-        flex:1;
+        flex: 1;
       }
+
       .tag {
         display: flex;
         font-size: 16px;
+
         > span {
           margin-left: 20px;
           text-indent: 24px;
         }
+
         //   > span:nth-child(1) {
         //     background: url("../../../assets/img/common/popup/dangyuan.png")
         //       no-repeat;
@@ -314,36 +385,43 @@ export default {
         //   }
       }
     }
+
     &_top {
       width: 100%;
       height: 196px;
+
       &_table {
         width: 100%;
+
         .row {
           width: 100%;
           display: flex;
-          justify-content: space-between;
           flex-wrap: wrap;
-          margin-bottom: 2px;
+
           > div {
-            width: 372px;
-            height: 34px;
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
             line-height: 34px;
-            font-size: 16px;
+            margin-bottom: 2px;
+            margin-right: 2px;
+
+            > span {
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+
             > span:nth-child(1) {
-              width: 120px;
-              background: rgba(48, 141, 255, 0.05);
-              border: 1px solid rgba(48, 141, 255, 0.2);
+              margin-right: 2px;
+              border-width: 1px;
+              border-style: solid;
               box-sizing: border-box;
-              color: #64beff;
               text-indent: 10px;
             }
+
             > span:nth-child(2) {
-              width: 250px;
-              background: rgba(48, 141, 255, 0.15);
-              border: 1px solid rgba(48, 141, 255, 0.3);
+              border-width: 1px;
+              border-style: solid;
               box-sizing: border-box;
               padding: 0 10px;
             }
@@ -351,39 +429,126 @@ export default {
         }
       }
     }
+
     &_bottom {
       .table {
         margin-top: 10px;
-        // 穿透
-        .table {
-          img {
-            width: 16px;
-            height: 16px;
-            align-self: center;
-            margin-right: 10px;
+      }
+    }
+
+    ::v-deep {
+      .el-table {
+        background: transparent;
+        font-size: var(--tableFontsize);
+
+        .tag {
+          height: 26px;
+          line-height: 26px;
+          font-size: 14px;
+          border-radius: 4px;
+          padding: 0 6px;
+          margin-right: 5px;
+        }
+
+        th,
+        tr {
+          background: transparent;
+        }
+
+        .empty-description {
+          color: #fff;
+        }
+
+        .el-table__body {
+          .image-slot {
+            width: 100%;
+            height: 100%;
+            display: table;
+
+            .img {
+              width: 100%;
+              height: 100%;
+              display: table-cell;
+              vertical-align: middle;
+
+              img {
+                max-width: 100%;
+                max-height: 100%;
+              }
+            }
           }
 
-          .default {
-            height: 26px;
-            line-height: 26px;
-            font-size: 14px;
-            border-radius: 4px;
-            padding: 0 6px;
-            margin-right: 5px;
-          }
-          .old {
-            background: rgba(255, 196, 108, 0.1);
-            color: #ffc46c;
-          }
-          .move {
-            color: #00dbcc;
-            background: rgba(0, 219, 204, 0.1);
-          }
-          .military {
-            color: #308dff;
-            background: rgba(48, 141, 255, 0.1);
+          tr {
+            // height: 40px;
+            height: var(--headerheight);
+
+            .img-box {
+              width: 100%;
+              // height: var(--badyheight);
+              padding: 5px 0;
+
+              .el-image {
+                box-sizing: border-box;
+                width: 100%;
+                height: 100%;
+
+                // display: flex;
+                // align-items: center;
+                .el-image__inner {
+                  max-width: 100%;
+                  max-height: 100%;
+                  width: auto !important;
+                  height: auto !important;
+                }
+              }
+            }
           }
         }
+
+        .el-table__header {
+          border: var(--border);
+
+          tr {
+            // height: 40px;
+            // color: #acdaff;
+            // background: rgba(69, 162, 255, 0.15);
+            height: var(--headerheight);
+            color: var(--headerColor);
+            background: var(--backgroundHeader);
+          }
+        }
+
+        th,
+        td {
+          padding: 0;
+        }
+
+        .el-table__body {
+          color: var(--bodyColor);
+
+          .el-table__row:nth-child(2n-1) {
+            //   background: var(--background1);
+          }
+
+          .el-table__row:nth-child(2n) {
+            //   background: var(--background2);
+          }
+
+          tr:hover > td {
+            // background: rgba(48, 141, 255, 0.3);
+            background: var(--backgroundTbody);
+          }
+        }
+      }
+
+      .el-table::before {
+        height: 0 !important;
+      }
+
+      .el-table td,
+      .el-table th.is-leaf {
+        border-bottom: none;
+        //   border-bottom: var(--border);
       }
     }
   }

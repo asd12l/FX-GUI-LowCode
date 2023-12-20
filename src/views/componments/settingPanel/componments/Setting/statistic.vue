@@ -197,22 +197,13 @@
               size="mini"
             ></el-input>
           </el-form-item>
-          <el-form-item label="icon：">
-            <el-select v-model="config.title.iconUrl">
-              <el-option
-                v-for="item,index in titlePiclist"
-                :key="index"
-                :label="`图片${index + 1}`"
-                :value="item"
-              >
-                <img
-                  :src="item"
-                  alt=""
-                  style="max-width: 100px;max-height: 100px"
-                >
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <ImageSelector
+            label="背景图片："
+            @changeSrc="(val) => $emit('changeValue', 'title', 'iconUrl', val)"
+            worksheetId="tjslzj"
+            imageField="titleIcon"
+            :src="config.title.iconUrl"
+          ></ImageSelector>
           <el-form-item label="icon宽：">
             <el-input
               v-model="config.title.iconWidth"
@@ -443,22 +434,13 @@
               size="mini"
             ></el-input>
           </el-form-item>
-          <el-form-item label="icon：">
-            <el-select v-model="config.num.iconUrl">
-              <el-option
-                v-for="item,index in numPiclist"
-                :key="index"
-                :label="`图片${index + 1}`"
-                :value="item"
-              >
-                <img
-                  :src="item"
-                  alt=""
-                  style="max-width: 100px;max-height: 100px"
-                >
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <ImageSelector
+            label="icon："
+            @changeSrc="(val) => $emit('changeValue', 'num', 'iconUrl', val)"
+            worksheetId="tjslzj"
+            imageField="numIcon"
+            :src="config.num.iconUrl"
+          ></ImageSelector>
           <el-form-item label="icon宽：">
             <el-input
               v-model="config.num.iconWidth"
@@ -478,58 +460,17 @@
 </template>
   
 <script>
-import { getFilterRows } from '@/utils/api';
-import { appKey, sign } from '@/utils/const.js';
+import ImageSelector from './componments/ImageSelector';
 export default {
   name: 'statistic',
-  data() {
-    return {
-      titlePiclist: [],
-      numPiclist: []
-    };
+  components: {
+    ImageSelector
   },
   props: {
     config: {
       type: Object,
       default: () => {
         return {};
-      }
-    }
-  },
-  mounted() {
-    this.getPicData();
-  },
-  methods: {
-    async getPicData() {
-      try {
-        const data = {
-          appKey: appKey,
-          sign: sign,
-          worksheetId: 'tjslzj',
-          rowId: sessionStorage.getItem('rowid'),
-          pageIndex: 1,
-          pageSize: 100
-        };
-        const result = await getFilterRows(data);
-        this.titlePiclist = result.data.rows.map(
-          (item) => JSON.parse(item.titleIcon)[0].DownloadUrl
-        );
-        this.numPiclist = result.data.rows.map(
-          (item) => JSON.parse(item.numIcon)[0].DownloadUrl
-        );
-        if (this.titlePiclist.length) {
-          this.$emit('changeValue', 'title', 'iconUrl', this.titlePiclist[0]);
-        }
-        if (this.numPiclist.length) {
-          this.$emit('changeValue', 'num', 'iconUrl', this.numPiclist[0]);
-        }
-        if (result.success) {
-          // this.$message.success('获取成功');
-        } else {
-          this.$message.error('获取失败');
-        }
-      } catch (error) {
-        this.$message.error('获取失败');
       }
     }
   }

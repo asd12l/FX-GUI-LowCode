@@ -89,7 +89,7 @@ import {
 } from '@/components/Charts';
 import tabPanel from '@/components/title/tabPanel';
 import vueDragResize from '../../views/componments/vueDragResize/vue-drag-resize.vue';
-import DateComponent from '@/components/Date';
+import DateComponent from '@/components/date';
 import NumberComponent from '@/components/Number';
 import dateMap from '@/components/date';
 import smallTitle from '@/components/title/smallTitle';
@@ -102,35 +102,37 @@ import BasicText from '@/components/Text/text.vue';
 import RichEditor from '@/components/Text/richEditor.vue';
 import navigation from '@/components/Navigation';
 import background from '@/components/Background';
-import numberCount from '@/components/NumberCount';
 import importCamera from '@/components/Camera/importCamera';
 import splitCameraScreen from '@/components/Camera/splitCameraScreen';
-import numberScroll from '@/components/NumberCount/numberScroll';
 import eventList from '@/components/List/eventList.vue';
-import buttonGroup from '@/components/NumberCount/buttonGroup';
-import numberThree from '@/components/NumberCount/numberThree';
 import CarouselPic from '@/components/CarouselPic/index.vue';
 import AppraisingCard from '@/components/List/appraisingCard/appraisingCard.vue';
-import NumberSteering from '@/components/NumberCount/numberSteering.vue';
 import SwitchList from '@/components/List/switchList/index';
 import eventDetail from '@/components/eventDetail';
 import singleCamera from '@/components/SingleCamera/index';
 import {
   commonTable,
+  commonTable1,
+  commonTable2,
   scrollTable,
   selectBox,
   dateTimePicker,
   searchBox,
   popupBox
-} from '@/components/Table';
+} from '@/components/table';
 import stackedLine from '@/components/Charts/lineChart/stackedLine';
 import groupBar from '@/components/Charts/barChart/groupBar.vue';
 import Track from '@/components/Track/track';
 import mixedLineandBar from '@/components/Charts/mixedLineandBar/index.vue';
 import weather from '@/components/Weather';
+import eventDetailParticular from '@/components/eventDetail/eventDetailParticular';
+import numberCount from '@/components/numberCount/index.js';
+import privateCloud from '@/components/privateCloud/index.js';
+
 export default {
   name: 'contenter',
   components: {
+    eventDetailParticular,
     mixedLineandBar,
     stackedLine,
     groupBar,
@@ -144,7 +146,6 @@ export default {
     radarChart,
     treeChart,
     vueDragResize,
-    DateComponent,
     NumberComponent,
     dateMap,
     smallTitle,
@@ -155,16 +156,14 @@ export default {
     RichEditor,
     navigation,
     background,
-    numberCount,
     importCamera,
     splitCameraScreen,
-    numberScroll,
     eventList,
-    buttonGroup,
-    numberThree,
     CarouselPic,
     AppraisingCard,
     commonTable,
+    commonTable1,
+    commonTable2,
     scrollTable,
     selectBox,
     dateTimePicker,
@@ -172,12 +171,14 @@ export default {
     popupBox,
     PowerBarChart,
     CheckboxGroup,
-    NumberSteering,
     SwitchList,
     Track,
     eventDetail,
     weather,
-    singleCamera
+    singleCamera,
+    DateComponent,
+    ...numberCount, //按钮及数值组件
+    ...privateCloud
   },
   props: {
     scale: {
@@ -390,6 +391,7 @@ export default {
     right: 0;
     z-index: 9999;
   }
+
   .message-wrap {
     width: 100%;
     height: 100%;
@@ -418,8 +420,10 @@ export default {
       height: 100%;
       // background-color: #1f3a6e;
     }
+
     .mask {
     }
+
     .close-btn,
     .delete-btn {
       position: absolute;

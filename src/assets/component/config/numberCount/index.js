@@ -3,38 +3,38 @@ export default {
   height: 275,
   left: 0,
   top: 0,
-  name:'数值一',
+  name: '数值一',
   show: true,
   lock: true,
   isShowModule: true,
-  worksheetId:'szyzj',
+  worksheetId: 'szyzj',
   series: {
     type: "",
   },
-  contain:{
-    width:125,
-    height:110,
-    marginRight:20,
-    marginBottom:20,
-    arrangeNum:2,
-},
+  contain: {
+    width: 125,
+    height: 110,
+    marginRight: 20,
+    marginBottom: 20,
+    arrangeNum: 2,
+  },
   sourceType: "静态",
   data: [
     {
-      name: "自查发现率",
+      name: "发生率",
       per: "79.14%",
       txt: "1",
     },
     {
-      name: "立案率",
+      name: "处理率",
       per: "99.4%",
     },
     {
-      name: "结案率",
+      name: "完成率",
       per: "100%",
     },
     {
-      name: "及时结案率",
+      name: "评价率",
       per: "100%",
     },
   ],
@@ -74,8 +74,8 @@ export default {
     bgImg: {
       width: "110",
       height: "80",
-      left:'5',
-      top:'0',
+      left: '5',
+      top: '0',
       txt: "图片1",
       background: require("@/assets/component/img/img1.png"),
     },
@@ -114,10 +114,11 @@ export default {
     bgImg: {
       width: "120",
       height: "30",
-      background: require("@/assets/component/img/img3.png"),
       top: "110",
-      left:'0'
+      left: '0',
+      background: require("@/assets/component/img/img3.png"),
     },
+    // background: require("@/assets/component/img/img3.png"),
   },
   title3: {
     show: false,
@@ -152,5 +153,18 @@ export default {
   eventList: [{ eventType: "click" }],
   hoverEventList: [],
   clickEventList: [],
-  txtRowImgs:[],
+  txtRowImgs: [
+    {
+      background: require("@/assets/component/img/img1.png"),
+    },
+    {
+      background: require("@/assets/component/img/img1.png"),
+    },
+    {
+      background: require("@/assets/component/img/img1.png"),
+    },
+    {
+      background: require("@/assets/component/img/img1.png"),
+    }
+  ],
 };

@@ -1,12 +1,6 @@
 <template>
-  <div
-    class="setting-panel_wrap"
-    @click="clickSetting"
-  >
-    <div
-      class="setting-panel"
-      :class="isExpand ? '' : 'hiddenSetting'"
-    >
+  <div class="setting-panel_wrap" @click="clickSetting">
+    <div class="setting-panel" :class="isExpand ? '' : 'hiddenSetting'">
       <div class="panel-bar">
         <div
           v-for="item in siderList"
@@ -37,21 +31,19 @@
         v-show="currectBar === 'dataSource'"
         :config="config"
         @changeSize="(type, val) => $emit('changeSize', type, val)"
+        @changeValue="
+          (param1, param2, val) => $emit('changeValue', param1, param2, val)
+        "
       ></DataSource>
       <EventManagement
         :switchPage="switchPage"
         v-show="
           currectBar === 'interaction'
-          // &&
-          // ['numberCount', 'basicText'].includes(config.component)
         "
         @changeSize="(type, val) => $emit('changeSize', type, val)"
       ></EventManagement>
     </div>
-    <div
-      class="setting_panel-img"
-      @click="changeSettingStatus"
-    >
+    <div class="setting_panel-img" @click="changeSettingStatus">
       <img
         :src="
           isExpand
@@ -61,10 +53,7 @@
         alt=""
       />
     </div>
-    <div
-      class="layer_management-img"
-      @click="changeLayerManagement"
-    >
+    <div class="layer_management-img" @click="changeLayerManagement">
       <img
         :src="
           isShowLayerManagement
@@ -82,13 +71,13 @@
 </template>
 
 <script>
-import './index.scss';
-import lineChart from './componments/Setting/chart';
-import DataSource from './componments/DataSource';
-import smallTitle from './componments/Setting/title/smallTitlePeizhi';
-import dateMap from './componments/Setting/date';
-import progressBar from './componments/Setting/progressBar.vue';
-import statistic from './componments/Setting/statistic.vue';
+import "./index.scss";
+import lineChart from "./componments/Setting/chart";
+import DataSource from "./componments/DataSource";
+import smallTitle from "./componments/Setting/title/smallTitlePeiZhi";
+import dateMap from "./componments/Setting/date";
+import progressBar from "./componments/Setting/progressBar.vue";
+import statistic from "./componments/Setting/statistic.vue";
 const barChart = lineChart;
 const pieChart = lineChart;
 const radarChart = lineChart;
@@ -99,11 +88,9 @@ import mixedLineandBar from "./componments/Setting/chart/mixedLineandBar/index";
 import customLegendPie from "./componments/Setting/chart/pie/customLegendPie";
 import navigation from "./componments/Setting/navigation";
 import background from "./componments/Setting/background";
-import numberCount from "./componments/Setting/numberCount";
 import importCamera from "./componments/Setting/camera/importCamera";
 import splitCameraScreen from "./componments/Setting/camera/splitCameraScreen";
 import layerControl from "./componments/Setting/layerControl.vue";
-import numberScroll from "./componments/Setting/numberCount/numberScroll";
 import eventList from "./componments/Setting/list/eventList";
 import BasicText from "./componments/Setting/text/text.vue";
 import RichEditor from "./componments/Setting/text/richEditor.vue";
@@ -111,32 +98,37 @@ import LayerManagement from "./componments/LayerManagement";
 import EventManagement from "./componments/EventManagement";
 import carouselPic from "./componments/Setting/carouselPic/carouselPic.vue";
 import appraisingCard from "./componments/Setting/list/appraisingCard.vue";
-import buttonGroup from "./componments/Setting/numberCount/buttonGroup";
-import numberThree from "./componments/Setting/numberCount/numberThree";
 import commonTable from "./componments/Setting/table/commonTable";
+import commonTable1 from "./componments/Setting/table/commonTable1";
+import commonTable2 from "./componments/Setting/table/commonTable2";
 import scrollTable from "./componments/Setting/table/scrollTable";
 import container from "./componments/Setting/container";
 import selectBox from "./componments/Setting/table/select";
 import dateTimePicker from "./componments/Setting/table/dateTimePicker";
 import searchBox from "./componments/Setting/table/search";
 import popupBox from "./componments/Setting/table/popupBox";
-import numberSteering from "./componments/Setting/numberCount/numberSteering.vue";
 import tabPanel from "./componments/Setting/title/tabPanel";
 import checkboxGroup from "./componments/Setting/layerControl/checkboxGroup.vue";
 import SwitchList from "./componments/Setting/list/switchList.vue";
-import numberFive from "./componments/Setting/numberCount/numberFive";
-import numberSix from "./componments/Setting/numberCount/numberSix";
 import canvasConfig from "./componments/Setting/canvas";
 import Track from "./componments/Setting/track";
 import eventDetail from "./componments/Setting/eventDetail/index.vue";
-import buttonOne from "./componments/Setting/numberCount/buttonOne";
 import danbing from "./componments/Setting/camera/danbing";
 import weather from "./componments/Setting/weather";
-import singleCamera from './componments/Setting/singleCamera/index.vue';
-import personnelHouse from './componments/Setting/table/personnelHouse.vue'
+import singleCamera from "./componments/Setting/singleCamera/index.vue";
+import personnelHouse from "./componments/Setting/table/personnelHouse.vue";
+import eventDetailParticular from "./componments/Setting/eventDetail/eventDetailParticular.vue";
+import billBoard from "./componments/Setting/billBoard";
+import polygonArea from "./componments/Setting/polygonArea";
+import customPolygonArea from "./componments/Setting/customPolygonArea";
+import privateCloud from  "./componments/Setting/privateCloud" ;
+import numberCount from "./componments/Setting/numberCount/index.js";
 export default {
-  name: 'siderBar',
+  name: "siderBar",
   components: {
+    customPolygonArea,
+    billBoard,
+    polygonArea,
     customLegendPie,
     mixedLineandBar,
     canvasConfig,
@@ -156,16 +148,12 @@ export default {
     statistic,
     navigation,
     background,
-    numberCount,
     importCamera,
     splitCameraScreen,
     layerControl,
-    numberScroll,
     eventList,
     BasicText,
     RichEditor,
-    buttonGroup,
-    numberThree,
     LayerManagement,
     carouselPic,
     appraisingCard,
@@ -177,30 +165,31 @@ export default {
     dateTimePicker,
     searchBox,
     popupBox,
-    numberFive,
-    numberSix,
-    numberSteering,
     checkboxGroup,
     SwitchList,
     Track,
     eventDetail,
-    buttonOne,
     danbing,
     weather,
     singleCamera,
     personnelHouse,
+    eventDetailParticular,
+    commonTable1,
+    commonTable2,
+    ...privateCloud,//私有云组件
+    ...numberCount,//数值组件及按钮组件
   },
   data() {
     return {
-      dataSourceDisableList: ['container', 'popupBox', 'canvasConfig'],
-      eventDisableList: ['canvasConfig'],
+      dataSourceDisableList: ["container", "popupBox", "canvasConfig"],
+      eventDisableList: ["canvasConfig"],
       siderList: [
-        { key: 'setting', title: '配置' },
-        { key: 'dataSource', title: '数据' },
-        { key: 'interaction', title: '交互' }
+        { key: "setting", title: "配置" },
+        { key: "dataSource", title: "数据" },
+        { key: "interaction", title: "交互" },
       ],
-      currectBar: 'setting',
-      isExpand: true
+      currectBar: "setting",
+      isExpand: true,
       // isShowLayerManagement: true
     };
   },
@@ -209,7 +198,7 @@ export default {
       type: Array,
       default: () => {
         return [];
-      }
+      },
     },
     // config: {
     //   type: Object,
@@ -221,8 +210,8 @@ export default {
       type: Array,
       default: () => {
         return [];
-      }
-    }
+      },
+    },
   },
   computed: {
     // SET_LAYER_MANAGEMENT
@@ -234,25 +223,25 @@ export default {
         return this.$store.state.currentConfig;
       },
       set(newvalue) {
-        console.log('newvalue::::::::::::::::::::', newvalue);
-        this.$store.commit('SET_CURRENT_CONFIG', newvalue);
-      }
-    }
+        console.log("newvalue::::::::::::::::::::", newvalue);
+        this.$store.commit("SET_CURRENT_CONFIG", newvalue);
+      },
+    },
   },
   // watch: {
 
   // },
   mounted() {
-    console.log('config:::::::::', this.config);
+    console.log("config:::::::::", this.config);
     console.log(this.config);
     this.setSiderList();
   },
   methods: {
     isDisabled(item) {
-      if (item.key === 'dataSource') {
+      if (item.key === "dataSource") {
         return this.dataSourceDisableList.includes(this.config.component);
       }
-      if (item.key === 'interaction') {
+      if (item.key === "interaction") {
         return this.eventDisableList.includes(this.config.component);
       }
       return false;
@@ -261,30 +250,30 @@ export default {
       e.stopPropagation();
     },
     setSiderList() {
-      if (this.config && this.config.component == 'dateMap') {
+      if (this.config && this.config.component == "dateMap") {
         this.siderList = [
-          { key: 'setting', title: '配置' },
-          { key: 'interaction', title: '交互' }
+          { key: "setting", title: "配置" },
+          { key: "interaction", title: "交互" },
         ];
       } else {
         this.siderList = [
-          { key: 'setting', title: '配置' },
-          { key: 'dataSource', title: '数据' },
-          { key: 'interaction', title: '交互' }
+          { key: "setting", title: "配置" },
+          { key: "dataSource", title: "数据" },
+          { key: "interaction", title: "交互" },
         ];
       }
-      this.currectBar = 'setting';
+      this.currectBar = "setting";
     },
     changeSettingStatus() {
       this.isExpand = !this.isExpand;
     },
     changeLayerManagement() {
       // this.isShowLayerManagement = !this.isShowLayerManagement;
-      this.$store.commit('SET_LAYER_MANAGEMENT', !this.isShowLayerManagement);
+      this.$store.commit("SET_LAYER_MANAGEMENT", !this.isShowLayerManagement);
     },
     changeBar(data) {
       console.log(
-        'this.isDisabled(data):::::::::::::::',
+        "this.isDisabled(data):::::::::::::::",
         this.isDisabled(data)
       );
       if (this.isDisabled(data)) {
@@ -294,8 +283,8 @@ export default {
     },
     handleClick(tab, event) {
       console.log(tab, event);
-    }
-  }
+    },
+  },
 };
 </script>
 

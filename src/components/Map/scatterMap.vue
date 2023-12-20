@@ -1,23 +1,30 @@
 <template>
   <div class="relative">
-    <div class="return" v-if="parentInfo.length > 1" @click="handleReturn">
+    <div
+      class="return"
+      v-if="parentInfo.length > 1"
+      @click="handleReturn"
+    >
       返回
     </div>
-    <div class="chart-wrapper" ref="scatterMap"></div>
+    <div
+      class="chart-wrapper"
+      ref="scatterMap"
+    ></div>
   </div>
 </template>
 
 <script>
-import resize from "@/mixins/resize";
-import echarts from "echarts";
-import { getGeoJson } from "@/utils/index";
-import defaultSetting from "@/components/Map/common";
+import resize from '@/mixins/resize';
+import echarts from 'echarts';
+import { getGeoJson } from '@/utils/index';
+import defaultSetting from '@/components/map/common';
 export default {
-  name: "scatterMap",
+  name: 'scatterMap',
   props: {
     config: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   mixins: [resize],
   data() {
@@ -25,11 +32,11 @@ export default {
       geoJson: {},
       parentInfo: [
         {
-          cityName: "全国",
-          code: 100000,
-        },
+          cityName: '全国',
+          code: 100000
+        }
       ],
-      mapData: [],
+      mapData: []
     };
   },
   mounted() {
@@ -59,10 +66,10 @@ export default {
               value: [
                 item.properties.center[0],
                 item.properties.center[1],
-                parseFloat((Math.random(0.1, 1) * 1000).toFixed(2)),
+                parseFloat((Math.random(0.1, 1) * 1000).toFixed(2))
               ],
               adcode: item.properties.adcode,
-              level: item.properties.level,
+              level: item.properties.level
             };
           });
           this.initEchart();
@@ -75,7 +82,7 @@ export default {
       this.myChart = echarts.init(this.$refs.scatterMap);
       //设置为 china 则显示南海诸岛 ，不需要可以去掉
       echarts.registerMap(
-        this.parentInfo.length === 1 ? "china" : "map",
+        this.parentInfo.length === 1 ? 'china' : 'map',
         this.geoJson
       ); //注册
       const mapData = this.mapData.sort((a, b) => {
@@ -93,214 +100,214 @@ export default {
           title,
           tooltip: {},
           visualMap: {
-            type: "piecewise",
+            type: 'piecewise',
             seriesIndex: [1],
             pieces: [
               {
                 max: centerValue,
-                label: "类型一",
-                color: "#fc5f81",
+                label: '类型一',
+                color: '#fc5f81'
               },
               {
                 min: centerValue,
                 max: mapData[mapData.length - 1].value[2],
-                label: "类型二",
-                color: "#f4e925",
-              },
+                label: '类型二',
+                color: '#f4e925'
+              }
             ],
-            color: "#fff",
+            color: '#fff',
             textStyle: {
-              color: "#fff",
+              color: '#fff'
             },
-            visibility: "off",
+            visibility: 'off'
           },
           geo: {
-            map: this.parentInfo.length === 1 ? "china" : "map",
+            map: this.parentInfo.length === 1 ? 'china' : 'map',
             roam: false,
             itemStyle: {
               normal: {
-                areaColor: "#1E62AC",
-                borderColor: "#53D9FF",
+                areaColor: '#1E62AC',
+                borderColor: '#53D9FF',
                 borderWidth: 1.3,
                 shadowBlur: 15,
-                shadowColor: "rgb(58,115,192)",
+                shadowColor: 'rgb(58,115,192)',
                 shadowOffsetX: 7,
-                shadowOffsetY: 6,
+                shadowOffsetY: 6
               },
               emphasis: {
-                areaColor: "#8dd7fc",
-                borderWidth: 1.6,
-              },
+                areaColor: '#8dd7fc',
+                borderWidth: 1.6
+              }
             },
             label: {
               normal: {
                 show: true,
-                color: "rgb(249, 249, 249)", //省份标签字体颜色
+                color: 'rgb(249, 249, 249)', //省份标签字体颜色
                 formatter: (p) => {
                   switch (p.name) {
-                    case "内蒙古自治区":
-                      p.name = "内蒙古";
+                    case '内蒙古自治区':
+                      p.name = '内蒙古';
                       break;
-                    case "西藏自治区":
-                      p.name = "西藏";
+                    case '西藏自治区':
+                      p.name = '西藏';
                       break;
-                    case "新疆维吾尔自治区":
-                      p.name = "新疆";
+                    case '新疆维吾尔自治区':
+                      p.name = '新疆';
                       break;
-                    case "宁夏回族自治区":
-                      p.name = "宁夏";
+                    case '宁夏回族自治区':
+                      p.name = '宁夏';
                       break;
-                    case "广西壮族自治区":
-                      p.name = "广西";
+                    case '广西壮族自治区':
+                      p.name = '广西';
                       break;
-                    case "香港特别行政区":
-                      p.name = "香港";
+                    case '香港特别行政区':
+                      p.name = '香港';
                       break;
-                    case "澳门特别行政区":
-                      p.name = "澳门";
+                    case '澳门特别行政区':
+                      p.name = '澳门';
                       break;
                     default:
                       break;
                   }
                   return p.name;
-                },
+                }
               },
               emphasis: {
                 show: true,
-                color: "rgb(249, 249, 249)", //省份标签字体颜色
-              },
+                color: 'rgb(249, 249, 249)' //省份标签字体颜色
+              }
             },
-            zoom: 1.22,
+            zoom: 1.22
           },
           series: [
             {
-              name: "散点",
-              type: "scatter",
+              name: '散点',
+              type: 'scatter',
               data: this.mapData.slice(5),
-              coordinateSystem: "geo",
+              coordinateSystem: 'geo',
               symbolSize: 12,
               label: {
                 normal: {
-                  show: false,
+                  show: false
                 },
                 emphasis: {
-                  show: false,
-                },
+                  show: false
+                }
               },
               itemStyle: {
                 normal: {
-                  color: "#fc5f81", //地图点的颜色
+                  color: '#fc5f81', //地图点的颜色
                   shadowBlur: 10,
-                  shadowColor: "rgb(58,115,192)",
-                },
+                  shadowColor: 'rgb(58,115,192)'
+                }
               },
-              layoutCenter: ["50%", "50%"],
-              layoutSize: 430,
+              layoutCenter: ['50%', '50%'],
+              layoutSize: 430
             },
             {
-              name: "散点Top5",
-              type: "effectScatter",
+              name: '散点Top5',
+              type: 'effectScatter',
               data: this.mapData.slice(0, 5),
-              coordinateSystem: "geo",
+              coordinateSystem: 'geo',
               symbolSize: 12,
               label: {
                 normal: {
-                  show: false,
+                  show: false
                 },
                 emphasis: {
-                  show: false,
-                },
+                  show: false
+                }
               },
-              showEffectOn: "render",
+              showEffectOn: 'render',
               rippleEffect: {
-                brushType: "stroke",
+                brushType: 'stroke'
               },
               itemStyle: {
                 normal: {
-                  color: "#f4e925", //地图点的颜色
+                  color: '#f4e925', //地图点的颜色
                   shadowBlur: 10,
-                  shadowColor: "rgb(58,115,192)",
-                },
+                  shadowColor: 'rgb(58,115,192)'
+                }
               },
-              layoutCenter: ["50%", "50%"],
-              layoutSize: 430,
+              layoutCenter: ['50%', '50%'],
+              layoutSize: 430
             },
             {
-              name: "气泡",
-              type: "scatter",
+              name: '气泡',
+              type: 'scatter',
               data: this.mapData.slice(5),
-              symbol: "pin", //气泡
-              coordinateSystem: "geo",
+              symbol: 'pin', //气泡
+              coordinateSystem: 'geo',
               symbolSize: 45,
               label: {
                 normal: {
                   show: true,
                   textStyle: {
-                    color: "#fff",
-                    fontSize: 10,
+                    color: '#fff',
+                    fontSize: 10
                   },
                   formatter: (params) => {
                     return parseInt(params.value[2]);
-                  },
+                  }
                 },
                 emphasis: {
-                  show: false,
-                },
+                  show: false
+                }
               },
               itemStyle: {
                 normal: {
-                  color: "#fc5f81", //地图点的颜色
+                  color: '#fc5f81', //地图点的颜色
                   shadowBlur: 10,
-                  shadowColor: "rgb(58,115,192)",
-                },
+                  shadowColor: 'rgb(58,115,192)'
+                }
               },
-              zlevel: 6,
+              zlevel: 6
             },
             {
-              name: "气泡Top5",
-              type: "effectScatter",
+              name: '气泡Top5',
+              type: 'effectScatter',
               data: this.mapData.slice(0, 5),
-              symbol: "pin", //气泡
-              coordinateSystem: "geo",
+              symbol: 'pin', //气泡
+              coordinateSystem: 'geo',
               symbolSize: 60,
               label: {
                 normal: {
                   show: true,
                   textStyle: {
-                    color: "#fff",
-                    fontSize: 12,
+                    color: '#fff',
+                    fontSize: 12
                   },
                   formatter: (params) => {
                     return parseInt(params.value[2]);
-                  },
+                  }
                 },
                 emphasis: {
-                  show: false,
-                },
+                  show: false
+                }
               },
               itemStyle: {
                 normal: {
-                  color: "#f4e925", //地图点的颜色
+                  color: '#f4e925', //地图点的颜色
                   shadowBlur: 10,
-                  shadowColor: "rgb(58,115,192)",
-                },
+                  shadowColor: 'rgb(58,115,192)'
+                }
               },
-              showEffectOn: "render",
+              showEffectOn: 'render',
               rippleEffect: {
-                brushType: "stroke",
+                brushType: 'stroke'
               },
-              zlevel: 6,
-            },
-          ],
+              zlevel: 6
+            }
+          ]
         },
         true
       );
 
-      this.myChart.off("click");
-      this.myChart.on("click", (params) => {
+      this.myChart.off('click');
+      this.myChart.on('click', (params) => {
         if (this.geoJson.features.length <= 1) return;
         const name = params.name;
-        let code = "";
+        let code = '';
         this.geoJson.features.forEach((item) => {
           if (item.properties.name == name) {
             code = item.properties.adcode;
@@ -309,7 +316,7 @@ export default {
         if (!code) return;
         this.parentInfo.push({
           cityName: name,
-          code: code,
+          code: code
         });
         this.getMapJson();
       });
@@ -321,16 +328,16 @@ export default {
       }
       this.parentInfo.pop();
       this.getMapJson();
-    },
+    }
   },
   watch: {
     config: {
       handler() {
         this.initEchart();
       },
-      deep: true,
-    },
-  },
+      deep: true
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

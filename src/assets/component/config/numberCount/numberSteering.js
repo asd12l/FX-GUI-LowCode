@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-18 16:51:58
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-10-18 17:23:23
+ * @LastEditTime: 2023-11-02 10:38:52
  */
 export default {
   width: 410,
@@ -72,8 +72,9 @@ export default {
   pic: {
     width: 100,
     height: 100,
-    url:
-      "http://192.168.6.92/file/mdpic/83fe09b5-2baf-4994-b431-6c8182202344/f73dfad1-a2b8-4a3c-8507-09596a031f9a/64e42cc39b709d2406d712e5/20230822/fFd6fZ2n3C9RaH2C906Uep4ebnaW6Ofh54bDemdh83ap7n1l8Y1x1SdabEcu7ge0.png",
+    url: "",
+    xPos: 0,
+    yPos: 0
   },
   data: [
     {

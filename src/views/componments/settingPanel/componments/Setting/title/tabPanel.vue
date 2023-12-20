@@ -1,5 +1,5 @@
 <template>
-  <el-scrollbar class="right-setting scrollbar-wrapper">
+  <el-scrollbar class="right-setting scrollbar-wrapper imageSelector">
     <el-form
       label-width="110px"
       size="small"
@@ -64,7 +64,13 @@
       </el-form-item>
       <el-collapse>
         <el-collapse-item title="tab标签" name="title">
-          <commonTab :config="config" type1="defaultTxt"></commonTab>
+          <commonTab
+            :config="config"
+            type1="defaultTxt"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
+          ></commonTab>
           <el-form-item label="标签宽度：">
             <el-input
               v-model="config.contain.width"
@@ -120,19 +126,19 @@
             </div>
           </el-form-item>
           <el-form-item label="选中字体：">
-        <el-select
-          popper-class="setting-select"
-          v-model="config.ActiveTxt.fontFamily"
-          placeholder="请选择字体"
-        >
-          <el-option
-            v-for="(item, i) in fontList"
-            :label="item"
-            :key="i"
-            :value="item"
-          ></el-option>
-        </el-select>
-      </el-form-item>
+            <el-select
+              popper-class="setting-select"
+              v-model="config.ActiveTxt.fontFamily"
+              placeholder="请选择字体"
+            >
+              <el-option
+                v-for="(item, i) in fontList"
+                :label="item"
+                :key="i"
+                :value="item"
+              ></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="选中字体颜色：">
             <div class="flex align-center">
               <el-color-picker
@@ -197,41 +203,29 @@
               ></el-switch>
             </el-form-item>
             <span v-if="config.dataStyle[i].isShowImg">
-              <el-form-item label="图片：">
-                <el-select
-                  v-model="config.dataStyle[i].img"
-                  placeholder="请选择图片"
-                >
-                  <el-option
-                    v-for="(item, i) in imgList[0]"
-                    :key="i"
-                    :label="item"
-                    :value="item"
-                  >
-                    <img class="img" :src="item" alt="" />
-                  </el-option>
-                </el-select>
+              <el-form-item
+                label="图片："
+              >
+                <div class="img-item pointer" @click="openDialogVisible('default_img',i)">
+                  <img :src="config.dataStyle[i].img" alt="" />
+                </div>
               </el-form-item>
               <el-form-item label="选中图片：">
-                <el-select
-                  v-model="config.dataStyle[i].activeImg"
-                  placeholder="请选择选中图片"
-                >
-                  <el-option
-                    v-for="(item, i) in imgList[1]"
-                    :key="i"
-                    :label="item"
-                    :value="item"
-                  >
-                    <img class="img" :src="item" alt="" />
-                  </el-option>
-                </el-select>
+                <div class="img-item pointer" @click="openDialogVisible('active_img',i)">
+                  <img :src="config.dataStyle[i].activeImg" alt="" />
+                </div>
               </el-form-item>
               <el-form-item label="图片宽度：">
-                <el-input v-model="config.dataStyle[i].width" size="mini"></el-input>
+                <el-input
+                  v-model="config.dataStyle[i].width"
+                  size="mini"
+                ></el-input>
               </el-form-item>
               <el-form-item label="图片高度：">
-                <el-input v-model="config.dataStyle[i].height" size="mini"></el-input>
+                <el-input
+                  v-model="config.dataStyle[i].height"
+                  size="mini"
+                ></el-input>
               </el-form-item>
             </span>
             <el-form-item label="文本：">
@@ -258,16 +252,47 @@
         </el-collapse-item>
       </el-collapse>
     </el-form>
+    <el-dialog
+      :modal="false"
+      title="图片选择"
+      :visible.sync="dialogVisible"
+      width="30%"
+      custom-class="image-selector"
+    >
+      <el-tabs v-model="activeName">
+        <el-tab-pane
+          :label="item"
+          :name="item"
+          v-for="item in tabsList"
+          :key="item"
+          class="tab-image"
+        >
+        <!-- 
+            :class="{ active: img.src === config.dataStyle[indexImg][type] }" -->
+          <div
+            class="image-wrap"
+            @click="changeImageSrc(img)"
+            v-for="img in tabImagesList"
+            :key="img"
+          >
+            <img :src="img" alt="" />
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </el-dialog>
   </el-scrollbar>
+
 </template>
 
 <script>
 import commonTab from "../componments/commonTab";
 import { appKey, sign } from "@/utils/const.js";
 import { getFilterRows } from "@/utils/api";
+
+import ImageSelector from "../componments/ImageSelector";
 export default {
   name: "setting",
-  components: { commonTab },
+  components: { commonTab ,ImageSelector},
   data() {
     return {
       directionOption: [
@@ -327,12 +352,12 @@ export default {
         },
       ],
       fontList: ["YouSheBiaoTiHei", "Microsoft YaHei", "Helvetica"],
-      imgList: [[],[]
-        // { src: require("@/assets/image/xiaokunshan/icon1.png") },
-        // { src: require("@/assets/image/xiaokunshan/icon2.png") },
-        // { src: require("@/assets/image/xiaokunshan/aicon1.png") },
-        // { src: require("@/assets/image/xiaokunshan/aicon2.png") },
-      ],
+      imgList: [],
+      tabsList:[],
+      activeName:'',
+      dialogVisible:false,
+      indexImg:"",
+      type:'',
     };
   },
   props: {
@@ -346,52 +371,61 @@ export default {
       type: Function,
     },
   },
+  computed: {
+    tabImagesList() {
+      let d = this.imgList.find((item) => item.name === this.activeName);
+      let src = d ? d.src : [];
+      return src;
+    },
+  },
   created() {
-    this.getImgData()
   },
   methods: {
-    async getImgData() {
-      let { data } = await getFilterRows({
+    async openDialogVisible(imageField,i) {
+      this.indexImg = i ;
+      this.type = imageField;
+      let {  data: { rows }, } = await getFilterRows({
         appKey: appKey,
         sign: sign,
-        worksheetId: this.config.worksheetId,
+        worksheetId: 'tabmbzj',
         pageSize: 500,
         pageIndex: 1,
       });
-      let dataImg = data
-      this.imgList=[[],[]]
-      dataImg.rows.forEach((item) => {
-        if (item.sfqy === "启用") {
-          let d = item.default_img ? JSON.parse(item.default_img) : [];
-          let b = item.active_img ? JSON.parse(item.active_img) : [];
-          if (d.length > 0) {
-            d.forEach((v) => {
-              this.imgList[0].push(v.DownloadUrl);
-            });
+      const enableImageList = rows.filter((item) => item.sfqy === "启用");
+      this.tabsList = enableImageList.map((item) => item.mingcheng);
+      this.imgList = enableImageList
+        .map((item) => {
+          if (item[imageField]) {
+            return {
+              name: item.mingcheng,
+              src: JSON.parse(item[imageField]).map(
+                (ele) => ele.DownloadUrl
+              ),
+            };
           }
-          if (b.length > 0) {
-            b.forEach((v) => {
-              this.imgList[1].push(v.DownloadUrl);
-            });
-          }
-        }
-      });
+          return "";
+        })
+        .filter((item) => item);
+      this.activeName = this.tabsList[0];
+      this.dialogVisible = true;
     },
-    changeBar(data) {
-      this.currectBar = data.key;
-    },
-    handleClick(tab, event) {
-      console.log(tab, event);
+    changeImageSrc(img) {
+      if(this.type=='default_img'){
+        this.config.dataStyle[this.indexImg].img = img
+      }else{
+        this.config.dataStyle[this.indexImg].activeImg = img
+      }
+      this.dialogVisible = false;
     },
     addShowTab() {
       this.config.data.push({});
       this.config.dataStyle.push({
         isShowImg: false,
-        isShowTxt:true,
-        img: "",
-        activeImg: "",
-        width:24,
-        height:24,
+        isShowTxt: true,
+        img: require("@/assets/component/img/icon2.png"),
+        activeImg: require("@/assets/component/img/icon2.png"),
+        width: 24,
+        height: 24,
       });
     },
     delData(i) {
@@ -403,6 +437,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.imageSelector {
+  .el-slider {
+    width: 200px;
+  }
+
+  .img-item {
+    width: 95px;
+    height: 95px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    &.pointer {
+      cursor: pointer;
+    }
+  }
+}
 .right-setting {
   .el-form-item__label {
     font-family: MicrosoftYaHei;

@@ -3,8 +3,8 @@
  * @version:
  * @Author: ydl
  * @Date: 2023-10-08 09:26:51
- * @LastEditors: ydl
- * @LastEditTime: 2023-10-25 13:34:22
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-21 13:42:51
  */
 //
 export default {
@@ -17,7 +17,7 @@ export default {
   sourceType: "api",
   requestType: "post",
   cameraType: "splitCamera",
-  api: "https://www.sjxks.com/v1/xiaokunshan/index/get_camera_group_tree",
+  api: "",
   requestParams: {
     account_id: "eb71dac7-a4dc-4cbb-9022-251c93acca1e",
   },
@@ -35,9 +35,10 @@ export default {
     marginTop: 50,
     marginLeft: 0,
     noDataBg: require("@/assets/image/common/nodata.png"),
-    api: "https://www.sjxks.com/v1/xiaokunshan/monitor/saveCollectCamera",
+    api: "",
     requestType: "post",
     isExpandOneLevel: true,
+    isShowColletButton: false,
   },
   splitVideo: {
     width: 1410,
@@ -53,14 +54,11 @@ export default {
     bottom: 80,
   },
   camera: {
+    svs_url: `${document.location.protocol}//${window.location.host}`,
     videoAddress:
-      "https://www.sjxks.com/v1/api/video/stream_start?account_id=eb71dac7-a4dc-4cbb-9022-251c93acca1e",
+      "",
     playAddress:
-      "https://www.sjxks.com/v1/api/video/playback_start?account_id=eb71dac7-a4dc-4cbb-9022-251c93acca1e",
+      "",
   },
-  data: {
-    treeData: [],
-    collectData: {},
-    expandRowid: [],
-  },
+  data: [],
 };

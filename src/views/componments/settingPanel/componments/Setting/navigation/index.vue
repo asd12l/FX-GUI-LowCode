@@ -10,16 +10,19 @@
         :config="config"
         @changeSize="(type, val) => $emit('changeSize', type, val)"
       />
-      <el-form-item label="背景图：">
-        <imgSelect
-          :backgroundData="backgroundData"
-          :config="config"
-          datatype1="box"
-        />
-      </el-form-item>
+      <ImageSelector
+        label="背景图："
+        @changeSrc="(val) => $emit('changeValue', 'box', 'background', val)"
+        worksheetId="cockpit_navbar"
+        imageField="beijingtu"
+        :src="config.box.background"
+      ></ImageSelector>
 
       <el-collapse>
-        <el-collapse-item title="中间标题" name="centertitle">
+        <el-collapse-item
+          title="中间标题"
+          name="centertitle"
+        >
           <el-form-item label="文本：">
             <el-input
               v-model="config.title.txt"
@@ -52,8 +55,18 @@
             :config="config"
             type1="title"
             :isShowColor="false"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
           ></commonTab>
-          <txtGradient :config="config" type="titleTxt" parentType="title" />
+          <txtGradient
+            :config="config"
+            type="titleTxt"
+            parentType="title"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
+          />
           <!-- <el-form-item label="外间距(上右下左)：">
             <div class="flex align-center">
               <el-input
@@ -64,16 +77,20 @@
               ></el-input>
             </div>
           </el-form-item> -->
-          <el-form-item label="背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="title"
-              type="zjbtbjt"
-            />
-          </el-form-item>
+          <ImageSelector
+            label="背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'title', 'background', val)
+            "
+            worksheetId="cockpit_navbar"
+            imageField="zjbtbjt"
+            :src="config.title.background"
+          ></ImageSelector>
         </el-collapse-item>
-        <el-collapse-item title="两侧标题" name="title">
+        <el-collapse-item
+          title="两侧标题"
+          name="title"
+        >
           <el-form-item label="宽度：">
             <el-input
               v-model="config.menu.width"
@@ -96,16 +113,25 @@
                 size="mini"
                 placeholder="请输入行高"
                 style="margin-right:12px"
-              ></el-input
-              >px
+              ></el-input>px
             </div>
           </el-form-item>
           <commonTab
             :config="config"
             type1="menu"
             :isShowColor="false"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
           ></commonTab>
-          <txtGradient :config="config" type="menuTxt" parentType="menu" />
+          <txtGradient
+            :config="config"
+            type="menuTxt"
+            parentType="menu"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
+          />
           <el-form-item label="左侧外间距：">
             <div class="flex align-center">
               <el-input
@@ -117,14 +143,15 @@
               <div style="width: 80px;">(上右下左)</div>
             </div>
           </el-form-item>
-          <el-form-item label="左侧背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="leftMenu"
-              type="zcbjt"
-            />
-          </el-form-item>
+          <ImageSelector
+            label="左侧背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'leftMenu', 'background', val)
+            "
+            worksheetId="cockpit_navbar"
+            imageField="zcbjt"
+            :src="config.leftMenu.background"
+          ></ImageSelector>
           <el-form-item label="右侧外间距：">
             <div class="flex align-center">
               <el-input
@@ -136,50 +163,63 @@
               <div style="width: 80px;">(上右下左)</div>
             </div>
           </el-form-item>
-          <el-form-item label="右侧背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="rightMenu"
-              type="ycbjt"
-            />
-          </el-form-item>
+          <ImageSelector
+            label="右侧背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'rightMenu', 'background', val)
+            "
+            worksheetId="cockpit_navbar"
+            imageField="ycbjt"
+            :src="config.rightMenu.background"
+          ></ImageSelector>
         </el-collapse-item>
-        <el-collapse-item title="两侧标题选中效果" name="activetitle">
+        <el-collapse-item
+          title="两侧标题选中效果"
+          name="activetitle"
+        >
           <txtGradient
             :config="config"
             type="menuActiveTxt"
             parentType="menu"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
           />
-          <el-form-item label="左侧背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="leftActiveMenu"
-              type="zcxzbjt"
-            />
-          </el-form-item>
-          <el-form-item label="右侧背景图：">
-            <imgSelect
-              :backgroundData="backgroundData"
-              :config="config"
-              datatype1="rightActiveMenu"
-              type="ycxzbjt"
-            />
-          </el-form-item>
+          <ImageSelector
+            label="左侧背景图："
+            @changeSrc="
+              (val) => $emit('changeValue', 'leftActiveMenu', 'background', val)
+            "
+            worksheetId="cockpit_navbar"
+            imageField="zcxzbjt"
+            :src="config.leftActiveMenu.background"
+          ></ImageSelector>
+          <ImageSelector
+            label="右侧背景图："
+            @changeSrc="
+              (val) =>
+                $emit('changeValue', 'rightActiveMenu', 'background', val)
+            "
+            worksheetId="cockpit_navbar"
+            imageField="ycxzbjt"
+            :src="config.rightActiveMenu.background"
+          ></ImageSelector>
         </el-collapse-item>
-        <el-collapse-item title="按钮" name="button">
+        <el-collapse-item
+          title="按钮"
+          name="button"
+        >
           <div class="button-box">
             <el-button
               type="primary"
               size="mini"
               icon="el-icon-plus"
               @click="addMenu"
-              >添加选项</el-button
-            >
+            >添加选项</el-button>
           </div>
           <el-form-item
             v-for="(item, i) in config.data"
+            :key="i"
             v-if="
               item.route != 'camera' &&
                 item.route != 'operation' &&
@@ -199,9 +239,11 @@
               placeholder="请输入路由"
               style="margin-right:5px;"
             ></el-input>
-            <el-button type="danger" size="mini" @click="delMenu(i)"
-              >删除选项</el-button
-            >
+            <el-button
+              type="danger"
+              size="mini"
+              @click="delMenu(i)"
+            >删除选项</el-button>
             <!-- <i style="color: red" class="el-icon-delete" @click="delMenu(i)" /> -->
           </el-form-item>
         </el-collapse-item>
@@ -211,46 +253,48 @@
 </template>
 
 <script>
-import commonTab from "../componments/commonTab";
-import txtGradient from "../componments/txtGradient";
-import commonSetTitle from "../componments/commonSetTitle";
-import imgSelect from "../imgSelect";
-import { getImgData } from "@/utils/index.js";
+import commonTab from '../componments/commonTab';
+import txtGradient from '../componments/txtGradient';
+import commonSetTitle from '../componments/commonSetTitle';
+import ImageSelector from '../componments/ImageSelector';
+import { getImgData } from '@/utils/index.js';
 export default {
-  name: "setting",
-  components: { commonTab, txtGradient, imgSelect, commonSetTitle },
+  name: 'setting',
+  components: {
+    commonTab,
+    txtGradient,
+    ImageSelector,
+    commonSetTitle
+  },
   data() {
-    return {
-      backgroundData: "",
-    };
+    return {};
   },
   props: {
     config: {
       type: Object,
       default: () => {
         return {};
-      },
+      }
     },
     changeSize: {
-      type: Function,
-    },
+      type: Function
+    }
   },
   watch: {},
-  mounted() {
-    this.getBackgroundData();
-  },
+  mounted() {},
   methods: {
-    async getBackgroundData() {
-      this.backgroundData = await getImgData(this.config);
-    },
     addMenu() {
-      let length = this.config.data.length;
-      this.config.data.push({ name: "", route: length + 1 });
+      let d = [...this.config.data];
+      let length = d.length;
+      d.push({ name: '', route: length + 1 });
+      this.$emit('changeSize', 'data', d);
     },
     delMenu(i) {
-      this.config.data.splice(i, 1);
-    },
-  },
+      let d = [...this.config.data];
+      d.splice(i, 1);
+      this.$emit('changeSize', 'data', d);
+    }
+  }
 };
 </script>
 

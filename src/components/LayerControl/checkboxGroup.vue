@@ -4,13 +4,13 @@
  * @Author: 卜倩倩
  * @Date: 2023-07-25 16:40:17
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-09-01 11:14:10
+ * @LastEditTime: 2023-11-22 12:52:32
 -->
 <template>
   <div
     class="checkboxGroup-wrapper"
     v-show="isShowModuleFunc(config)"
-    :style="{ width: config.width + 'px', height: config.height + 'px' }"
+    :style="{ width: config.width + 'px', height: config.height + 'px', backgroundImage: 'url('+config.icon.backgroundUrl+')' }"
   >
     <div class="top">
       <el-checkbox
@@ -19,8 +19,7 @@
         v-model="checkAll"
         @change="handleCheckAllChange"
       ></el-checkbox>
-      <span
-        :style="{
+      <span :style="{
           width: config.label.width + 'px',
           color: config.label.color,
           fontSize: config.label.fontSize + 'px',
@@ -29,30 +28,40 @@
           textAlign: config.label.textAlign,
           fontWeight: config.label.fontWeight,
           letterSpacing: config.label.letterSpacing + 'px',
-        }"
-        >{{ checkAll ? "取消全选" : "全选" }}</span
-      >
+        }">{{ checkAll ? "取消全选" : "全选" }}</span>
     </div>
     <div class="bottom">
-      <div class="rows" v-for="(splitArr, index) in list" :key="index">
+      <div
+        class="rows"
+        v-for="(splitArr, index) in list"
+        :key="index"
+      >
         <div
           class="block"
           :style="{
             width: config.box.width + 'px',
             height: config.box.height + 'px',
           }"
-          v-for="item in splitArr"
+          v-for="(item, inx) in splitArr"
           :key="item.rowid"
         >
-          <el-checkbox
-            :key="item.rowid"
-            label=""
-            :true-label="1"
-            :false-label="0"
-            v-model="item.is_selected"
-            @change="handleCheckSingleChange(item)"
-          ></el-checkbox>
+          <div
+            ref="eventDom"
+            class="radio-wrap"
+            style="display: inline-block ;"
+          >
+            <el-checkbox
+              :key="item.rowid"
+              label=""
+              :true-label="1"
+              :false-label="0"
+              v-model="item.is_selected"
+              @change="handleCheckSingleChange(item, index, inx)"
+            ></el-checkbox>
+          </div>
+          <!-- {{item.default_icon}} -->
           <img
+            v-if="item.default_icon"
             :style="{
               width: config.icon.width + 'px',
               height: config.icon.height + 'px',
@@ -60,8 +69,7 @@
             :src="item.default_icon"
             alt=""
           />
-          <span
-            :style="{
+          <span :style="{
               width: config.label.width + 'px',
               color: config.label.color,
               fontSize: config.label.fontSize + 'px',
@@ -71,9 +79,8 @@
               fontWeight: config.label.fontWeight,
               letterSpacing: config.label.letterSpacing + 'px',
               marginRight: config.label.marginRight,
-            }"
-            >{{ item.name }}</span
-          >
+              pointerEvents: 'none!important'
+            }">{{ item.name }}</span>
         </div>
       </div>
     </div>
@@ -84,14 +91,12 @@
 export default {
   props: {
     config: {
-      type: Object,
+      type: Object
     },
     callBack: {
       type: Function,
       default: () => {
-        return () => {
-
-        }
+        return () => {};
       }
     }
   },
@@ -102,37 +107,52 @@ export default {
       checkedItems: [],
       isIndeterminate: false,
       IMG_URL:
-        window.location.host.includes("localhost") ||
-        window.location.host.includes("192.168") ||
-        window.location.host.includes("127.0.0.1")
-          ? "https://www.sjxks.com"
-          : window.location.protocol + "//" + window.location.host,
+        window.location.host.includes('localhost') ||
+        window.location.host.includes('192.168') ||
+        window.location.host.includes('127.0.0.1')
+          ? 'https://www.sjxks.com'
+          : window.location.protocol + '//' + window.location.host
     };
   },
   watch: {
     config: {
       handler(nl) {
-        if (nl.data.length && nl.label.columns) {
-          this.splitArray(this.config.data, nl.label.columns);
-        }
-        this.checkedItems = nl.data.filter((item) => item.is_selected );
-        if (this.checkedItems.length === nl.data.length) {
-          this.isIndeterminate = false;
-          this.checkAll = true;
-        } else if (!this.checkedItems.length) {
-          this.isIndeterminate = false;
-          this.checkAll = false;
-        } else {
-          this.isIndeterminate = true;
-          this.checkAll = false;
+        if (nl.data.length && this.config.label.columns) {
+          let data;
+          if (this.config.box.page_name) {
+            let page_name =
+              this.config.box.page_name || window.location.hash.slice(2);
+            data = nl.data.filter((item) => item.page_name === page_name);
+          } else {
+            data = nl.data;
+          }
+          data = data.map((item) => {
+            return {
+              ...item,
+              is_selected:
+                item.is_selected === '是' || item.is_selected === 1 ? 1 : 0
+            };
+          });
+          this.splitArray(data, this.config.label.columns);
+          this.checkedItems = data.filter((item) => item.is_selected);
+          if (this.checkedItems.length === data.length) {
+            this.isIndeterminate = false;
+            this.checkAll = true;
+          } else if (!this.checkedItems.length) {
+            this.isIndeterminate = false;
+            this.checkAll = false;
+          } else {
+            this.isIndeterminate = true;
+            this.checkAll = false;
+          }
         }
       },
       deep: true,
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   mounted() {
-    this.splitArray(this.config.data, this.config.label.columns);
+    // this.splitArray(this.config.data, this.config.label.columns);
     // this.callBack && this.callBack(this.checkedItems)
   },
   methods: {
@@ -140,7 +160,7 @@ export default {
       let list = [];
       const arr = data.map((item) => {
         return {
-          ...item,
+          ...item
         };
       });
       for (let i = 0; i < arr.length; ) {
@@ -150,32 +170,44 @@ export default {
     },
     handleCheckAllChange(val) {
       this.checkedItems = val ? this.config.data : [];
-      this.callBack && this.callBack(val)
+      // this.callBack && this.callBack(val);
+      this.callBack &&
+        this.callBack({ data: this.config.data, isAllSelected: val });
       let data = this.config.data;
       this.isIndeterminate = false;
-      this.list.forEach((item) => {
-        item.forEach((el) => {
-          el.is_selected = val;
+      this.list.forEach((item, index) => {
+        item.forEach((el, inx) => {
+          console.log(val, el.is_selected);
+          if (Boolean(el.is_selected) !== val) {
+            el.is_selected = val;
+            this.handleCheckSingleChange(el, index, inx);
+            // this.$refs[item.id][0].$children[0].$refs.eventDom
+            // console.log("this.$refs['eventDom']:::::::::::",    this.$refs['eventDom'][index].click)
+          }
 
           data.forEach((v) => {
-            if (v.rowid === el.rowid) {
+            if (v.rowid === el.rowid && v.is_selected !== val) {
               v.is_selected = val;
             }
           });
         });
       });
-      this.$emit("changeSize", "data", data);
+      this.$emit('changeSize', 'data', data);
     },
-    handleCheckSingleChange(item) {
+    handleCheckSingleChange(item, rowIndex, colIndex) {
       let data = this.config.data;
-      console.log("item:::::::::::::", item)
-      this.callBack && this.callBack(item)
+
+      this.$refs['eventDom'][
+        rowIndex * this.config.label.columns + colIndex
+      ].click();
+      this.callBack && this.callBack(item);
       data.forEach((v) => {
         if (v.rowid === item.rowid) {
           v.is_selected = item.is_selected;
         }
       });
-      this.$emit("changeSize", "data", data);
+      console.log(data);
+      this.$emit('changeSize', 'data', data);
       // this.callBack && this.callBack(item)
       let arr = [].concat.apply([], this.list);
       if (
@@ -190,8 +222,8 @@ export default {
         this.isIndeterminate = false;
         this.checkAll = false;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -199,12 +231,17 @@ export default {
 .checkboxGroup-wrapper {
   padding: 20px;
   pointer-events: none;
+  background-size: 100% 100%;
 
   .el-checkbox__label {
     width: 100px;
     font-weight: var(--fontWeight);
     font-style: italic;
     text-align: left;
+  }
+
+  .el-checkbox__inner {
+    z-index: 0;
   }
 
   .el-checkbox__input.is-checked .el-checkbox__inner {
@@ -246,15 +283,19 @@ export default {
       width: 100%;
       display: flex;
 
-      .el-checkbox {
-        flex: 1;
-        display: flex;
-        align-items: center;
+      .radio-wrap {
         margin-right: 20px;
-        pointer-events: all;
 
-        .el-checkbox__label {
+        .el-checkbox {
           flex: 1;
+          display: flex;
+          align-items: center;
+
+          pointer-events: all;
+
+          .el-checkbox__label {
+            flex: 1;
+          }
         }
       }
     }

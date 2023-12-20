@@ -6,97 +6,63 @@
       class="border-box"
       style="padding: 8px 16px"
     >
-      <el-form-item label="名称：">
-        <div class="componentName" style="display:flex;align-items:center">
-          <el-input
-            v-model="config.name"
-            size="mini"
-            placeholder=""
-            @change="(val) => $emit('changeSize', 'name', val)"
-          ></el-input>
-          <span
-            :class="config.isLock ? 'active' : ''"
-            @click="(val) => $emit('changeSize', 'isLock', !config.isLock)"
-          ></span>
-          <span
-            :class="config.isShow ? 'active' : ''"
-            @click="(val) => $emit('changeSize', 'isShow', !config.isShow)"
-          ></span>
-        </div>
-      </el-form-item>
-
-      <el-form-item label="组件宽度：">
-        <el-input
-          v-model="config.width"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'width', val)"
-          placeholder="请输入组件宽度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="组件高度：">
-        <el-input
-          v-model="config.height"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'height', val)"
-          placeholder="请输入组件高度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="X距离：">
-        <el-input
-          v-model="config.left"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'left', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="Y距离：">
-        <el-input
-          v-model="config.top"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'top', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="默认展示隐藏：">
-        <el-switch
-          style="margin-top: 7px;"
-          v-model="config.isShowModule"
-          @change="(val) => $emit('changeSize', 'isShowModule', val)"
-        ></el-switch>
-      </el-form-item>
+    <commonSetTitle
+        :config="config"
+        @changeSize="(type, val) => $emit('changeSize', type, val)"
+      />
       <el-collapse>
         <el-collapse-item title="按钮图片" name="titleNumber">
-          <div>
-            <el-form-item label="默认图片：">
-              <imgSelect
-          :backgroundData="backgroundData"
-                :config="config"
-                datatype1="backgroundImg"
-                type="default_img"
-              />
-            </el-form-item>
-            <!-- <el-form-item label="选中图片：">
-              <imgSelect
-                :config="config"
-                datatype1="backgroundActive"
-                type="active_img"
-              />
-            </el-form-item> -->
+    
+            <ImageSelector
+              label="默认图片："
+              @changeSrc="
+                (val) =>
+                  $emit('changeValue', 'backgroundImg', 'background', val)
+              "
+              worksheetId="buttonView"
+              imageField="default_img"
+              :src="config.backgroundImg.background"
+            ></ImageSelector>
 
-            <div v-if="config.buttonStyle.imgShow">
               <el-form-item label="图片宽度：">
                 <el-input
-                  v-model="config.buttonStyle.width"
+                  v-model="config.backgroundImg.width"
                   size="mini"
                   placeholder="请输入图片宽度"
                 ></el-input>
               </el-form-item>
               <el-form-item label="图片高度：">
                 <el-input
-                  v-model="config.buttonStyle.height"
+                  v-model="config.backgroundImg.height"
                   size="mini"
                   placeholder="请输入图片高度"
                 ></el-input>
               </el-form-item>
-            </div>
+            <ImageSelector
+              label="选中图片："
+              @changeSrc="
+                (val) =>
+                  $emit('changeValue', 'backgroundActive', 'background', val)
+              "
+              worksheetId="buttonView"
+              imageField="active_img"
+              :src="config.backgroundActive.background"
+            ></ImageSelector>
+            <div v-if="config.buttonStyle.imgShow">
+              <el-form-item label="图片宽度：">
+                <el-input
+                  v-model="config.backgroundActive.width"
+                  size="mini"
+                  placeholder="请输入图片宽度"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="图片高度：">
+                <el-input
+                  v-model="config.backgroundActive.height"
+                  size="mini"
+                  placeholder="请输入图片高度"
+                ></el-input>
+              </el-form-item>
             <el-form-item label="按钮是否显示文字：" label-width="140px">
               <el-switch
                 style="margin-top: 7px;"
@@ -124,6 +90,20 @@
                   ></el-color-picker>
                 </div>
               </el-form-item>
+              <el-form-item label="字体：">
+              <el-select
+                v-model="config.buttonStyle.fontFamily"
+                placeholder="请选择字体"
+                @change="(val) => $emit('changeValue', 'buttonStyle','fontFamily' ,val)"
+              >
+                <el-option
+                  v-for="(item, i) in fontList"
+                  :label="item"
+                  :key="i"
+                  :value="item"
+                ></el-option>
+              </el-select>
+            </el-form-item>
               <el-form-item label="字体大小：">
                 <div class="flex align-center">
                   <el-input
@@ -159,14 +139,13 @@
             </el-form-item>
 
             <div v-if="config.buttonStyle.hoverShow">
-              <el-form-item label="边框图片：">
-                <imgSelect
-          :backgroundData="backgroundData"
-                  :config="config"
-                  datatype1="hoverStyle"
-                  type="hover_img"
-                />
-              </el-form-item>
+              <ImageSelector
+                label="边框图片："
+                @changeSrc="(val) => $emit('changeValue', 'hoverStyle','background', val)"
+                worksheetId="buttonView"
+                imageField="hover_img"
+                :src="config.hoverStyle.background"
+              ></ImageSelector>
               <el-form-item label="图片宽度：">
                 <el-input
                   v-model="config.hoverStyle.width"
@@ -191,6 +170,20 @@
                   >px
                 </div>
               </el-form-item>
+              <el-form-item label="字体：">
+              <el-select
+                v-model="config.hoverStyle.fontFamily"
+                placeholder="请选择字体"
+                @change="(val) => $emit('changeValue', 'hoverStyle','fontFamily' ,val)"
+              >
+                <el-option
+                  v-for="(item, i) in fontList"
+                  :label="item"
+                  :key="i"
+                  :value="item"
+                ></el-option>
+              </el-select>
+            </el-form-item>
               <el-form-item label="文字颜色：">
                 <div class="flex align-center" style="color: aliceblue;">
                   <el-color-picker
@@ -215,6 +208,16 @@
                 <div class="flex align-center">
                   <el-input
                     v-model="config.hoverStyle.lineHeight"
+                    size="mini"
+                    style="margin: 0 8px 0 0px"
+                  ></el-input
+                  >px
+                </div>
+              </el-form-item>
+              <el-form-item label="y距离：">
+                <div class="flex align-center">
+                  <el-input
+                    v-model="config.hoverStyle.bottom"
                     size="mini"
                     style="margin: 0 8px 0 0px"
                   ></el-input
@@ -260,7 +263,14 @@
                   placeholder="请输入高度"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="边框颜色：" label-width="125px">
+              <el-form-item label="y距离：">
+                <el-input
+                  v-model="config.optionStyle.bottom"
+                  size="mini"
+                  placeholder="请输入..."
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="边框填充颜色：" label-width="125px">
                 <div class="flex align-center" style="color: aliceblue;">
                   <el-color-picker
                     v-model="config.optionStyle.borderColor"
@@ -268,10 +278,6 @@
                     size="mini"
                     style="margin-right: 5px;"
                   ></el-color-picker>
-                </div>
-              </el-form-item>
-              <el-form-item label="填充颜色：" label-width="125px">
-                <div class="flex align-center" style="color: aliceblue;">
                   <el-color-picker
                     v-model="config.optionStyle.background"
                     show-alpha
@@ -349,14 +355,16 @@
 
 <script>
 import { getImgData } from "@/utils/index.js";
-import commonTab from "../componments/commonTab";
-import imgSelect from "../imgSelect";
 import StylesFilter from "../common";
+import commonTab from "../componments/commonTab";
+import ImageSelector from "../componments/ImageSelector";
+import commonSetTitle from "../componments/commonSetTitle";
 export default {
   name: "setting",
-  components: { commonTab, imgSelect, StylesFilter },
+  components: {  StylesFilter,commonTab ,ImageSelector,commonSetTitle},
   data() {
     return {
+      fontFamily:'Microsoft YaHei',
       directionOption: [
         {
           label: "纵向",
@@ -427,6 +435,9 @@ export default {
     changeSize: {
       type: Function,
     },
+  },
+  computed:{
+ 
   },
   mounted() {
     this.getBackgroundData();

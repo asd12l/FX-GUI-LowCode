@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-29 16:40:27
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-09-12 10:34:29
+ * @LastEditTime: 2023-11-24 16:32:35
  */
 export default {
   name: '评优卡片',
@@ -54,9 +54,8 @@ export default {
     fontWeight: 'normal',
     letterSpacing: 0,
     firstPic: true,
-    selectedPic: {
-      url: ''
-    }
+    selectedPic: require('../../../assets/image/img/map/progressBar/4.png'),
+    text: '荣誉'
   },
   third: {
     display: 'block',
@@ -70,22 +69,44 @@ export default {
   },
   data: [
     {
-      description: "区三八红旗手",
-      name: "夏丹",
-      photo: "https://www.sjxks.com/file/mdpic/b71c7eaf-91c4-4f3d-9f3b-b4a7c29f1c16/ba59c4b5-a6e6-4fba-aa6a-fa82d3046bc7/63f6f8248d724ac00ae7c85e/20230527/5AeK1a2T9V28fTc8dKbH1E3Ca39C0Zdp936B5q2f928s8W8c02dV9Dda345a5uc6.png",
-      rowid: "84ad7f0b-7316-431e-bc42-8e38bdbcfc9a"
+      description: "5亩",
+      name: "油菜",
+      text: '',
+      photo: "https://img1.baidu.com/it/u=3347154019,3451816377&fm=253&fmt=auto&app=138&f=JPEG?w=783&h=500",
+      rowid: "84ad7f0b-7316-431e-bc42-8e38bdbcfc9a",
+      tags: ['果园', '粮田']
     },
     {
-      description: "区巾帼文明岗",
-      name: "小昆山镇敬老院护理组",
-      photo: "https://www.sjxks.com/file/mdpic/b71c7eaf-91c4-4f3d-9f3b-b4a7c29f1c16/ba59c4b5-a6e6-4fba-aa6a-fa82d3046bc7/63f6f8248d724ac00ae7c85e/20230527/6WdR3D39d4bU4V8n7P4R7Ea24G89eV2z0KbifFfo4Y2qdw5t0s1w6U2pcw2P2W3t.jpg",
+      description: "3.4亩",
+      name: "蚕豆",
+      text: '',
+      photo: "https://img2.baidu.com/it/u=800378504,1094516680&fm=253&fmt=auto&app=138&f=PNG?w=749&h=498",
       rowid: "e4150075-0713-4f89-b006-3dc1fc8f07fe",
-      type: ["区巾帼文明岗"]
+      tags: '果园',
     }
   ],
-  api: 'https://www.sjxks.com/v1/xiaokunshan/construction/partyList?page=1&size=1000&account_id=eb71dac7-a4dc-4cbb-9022-251c93acca1e',
+  api: '',
   requestType: "GET",
   requestParams: {
     account_id: 'eb71dac7-a4dc-4cbb-9022-251c93acca1e',
-  }
+  },
+  tagsStyle: {
+    show: false,
+    fontSize: 14,
+    fontWeight: "normal",
+    fontStyle: "normal", //'italic' 倾斜
+    textAlign: "left",
+    marginTop: 12,
+    fontFamily: "Microsoft YaHei",
+    color: "#EBCD3D",
+    borderRadius: 2,
+    backgroundColor: "rgba(235, 205, 61, 0.102)",
+    colorArr: [
+      {
+        txt: '粮田',
+        color: 'rgba(83, 195, 255, 1)',
+        background: 'rgba(83, 195, 255, 0.102)'
+      }
+    ]
+  },
 }

@@ -27,9 +27,12 @@
           </el-form-item> -->
           <el-form-item label="每页显示条数：">
             <el-input
-              v-model="config.requestParams.pageSize"
+              v-model="pageSize"
               size="mini"
-              placeholder="请输入高度"
+              placeholder="请输入显示条数"
+              @change="
+                (val) => $emit('changeValue', 'requestParams', 'pageSize', val)
+              "
             ></el-input>
           </el-form-item>
           <div class="button-box">
@@ -38,8 +41,7 @@
               size="mini"
               icon="el-icon-plus"
               @click="addShowTxt"
-              >添加文本</el-button
-            >
+            >添加文本</el-button>
           </div>
           <el-collapse-item
             v-for="(item, i) in config.data.tableHead"
@@ -94,17 +96,18 @@
                 size="mini"
                 icon="el-icon-plus"
                 @click="addColorData(i)"
-                >添加颜色配置</el-button
-              >
+              >添加颜色配置</el-button>
             </el-form-item>
             <el-form-item
               class="no-margin"
               v-for="(v, index) in config.tableHeadStyle.styleData[i].colorData"
+              :key="index"
             >
               <el-input
                 v-model="v.label"
                 size="mini"
                 placeholder="请输入值"
+                style="width:200px"
               ></el-input>
               <el-color-picker
                 v-model="v.color"
@@ -126,25 +129,26 @@
                 type="primary"
                 size="mini"
                 @click="changeIndex('pre', 'tableHead', i, item)"
-                >上移</el-button
-              >
+              >上移</el-button>
               <el-button
                 type="primary"
                 size="mini"
                 @click="changeIndex('next', 'tableHead', i, item)"
-                >下移</el-button
-              >
+              >下移</el-button>
               <el-button
                 type="danger"
                 size="mini"
                 @click="delData('tableHead', i)"
-                >删除选项</el-button
-              >
+              >删除选项</el-button>
             </span>
           </el-collapse-item>
         </el-collapse-item>
         <el-collapse-item title="表头样式">
-          <commonTab :config="config" type1="table" type2="theader"></commonTab>
+          <commonTab
+            :config="config"
+            type1="table"
+            type2="theader"
+          ></commonTab>
           <el-form-item label="高度：">
             <el-input
               v-model="config.table.theader.height"
@@ -173,8 +177,7 @@
                   size="mini"
                   placeholder="请输入边框宽度"
                   style="margin-right:12px"
-                ></el-input
-                >px
+                ></el-input>px
               </div>
             </el-form-item>
             <el-form-item label="边框样式：">
@@ -273,10 +276,12 @@
               size="mini"
               icon="el-icon-plus"
               @click="addShowCardTxt"
-              >添加文本</el-button
-            >
+            >添加文本</el-button>
           </div>
-          <commonTab :config="config" type1="card"></commonTab>
+          <commonTab
+            :config="config"
+            type1="card"
+          ></commonTab>
           <el-form-item label="高度：">
             <el-input
               v-model="config.card.button.height"
@@ -333,20 +338,17 @@
                 type="primary"
                 size="mini"
                 @click="changeIndex('pre', 'cardData', i, item)"
-                >上移</el-button
-              >
+              >上移</el-button>
               <el-button
                 type="primary"
                 size="mini"
                 @click="changeIndex('next', 'cardData', i, item)"
-                >下移</el-button
-              >
+              >下移</el-button>
               <el-button
                 type="danger"
                 size="mini"
                 @click="delData('cardData', i)"
-                >删除选项</el-button
-              >
+              >删除选项</el-button>
             </span>
           </el-collapse-item>
           <el-collapse-item title="按钮内容">
@@ -369,8 +371,7 @@
                 size="mini"
                 icon="el-icon-plus"
                 @click="addShowButtonTxt"
-                >添加文本</el-button
-              >
+              >添加文本</el-button>
             </div>
             <el-collapse-item
               v-for="(item, i) in config.data.buttonData"
@@ -400,12 +401,18 @@
                   placeholder="请输入宽度："
                 ></el-input>
               </el-form-item>
-              <el-form-item label="背景色：">
+              <!-- <el-form-item label="背景色：">
                 <el-color-picker
                   v-model="item.background"
                   size="mini"
                   show-alpha
                 ></el-color-picker>
+              </el-form-item> -->
+              <el-form-item label="是否显示边框">
+                <el-switch v-model="
+                    config.tableHeadStyle.buttonStyleData[i].isShowBorder
+                  ">
+                </el-switch>
               </el-form-item>
               <el-form-item label="颜色：">
                 <el-color-picker
@@ -414,25 +421,54 @@
                   show-alpha
                 ></el-color-picker>
               </el-form-item>
+              <el-form-item label="枚举文本颜色：">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  icon="el-icon-plus"
+                  @click="addButtonColorData(i)"
+                >添加颜色配置</el-button>
+              </el-form-item>
+              <el-form-item
+                class="no-margin"
+                v-for="(v, index) in config.tableHeadStyle.buttonStyleData[i]
+                  .colorData"
+                :key="index"
+              >
+                <el-input
+                  v-model="v.label"
+                  size="mini"
+                  placeholder="请输入值"
+                  style="width:180px"
+                ></el-input>
+                <el-color-picker
+                  v-model="v.color"
+                  size="mini"
+                  style="margin-left: 5px;"
+                  show-alpha
+                ></el-color-picker>
+                <i
+                  style="color: red"
+                  class="el-icon-delete"
+                  @click="delButtonColor(i, index)"
+                />
+              </el-form-item>
               <span style="margin-left:20px">
                 <el-button
                   type="primary"
                   size="mini"
                   @click="changeIndex('pre', 'buttonData', i, item)"
-                  >上移</el-button
-                >
+                >上移</el-button>
                 <el-button
                   type="primary"
                   size="mini"
                   @click="changeIndex('next', 'buttonData', i, item)"
-                  >下移</el-button
-                >
+                >下移</el-button>
                 <el-button
                   type="danger"
                   size="mini"
                   @click="delData('buttonData', i)"
-                  >删除选项</el-button
-                >
+                >删除选项</el-button>
               </span>
             </el-collapse-item>
           </el-collapse-item>
@@ -483,27 +519,30 @@
 </template>
 
 <script>
-import commonTab from "../componments/commonTab";
-import commonSetTitle from "../componments/commonSetTitle";
+import commonTab from '../componments/commonTab';
+import commonSetTitle from '../componments/commonSetTitle';
 export default {
-  name: "setting",
+  name: 'setting',
   components: { commonTab, commonSetTitle },
   data() {
     return {
-      styleList: ["solid", "dashed"],
+      styleList: ['solid', 'dashed'],
       border: {
-        width: "",
-        type: "",
-        color: "",
+        width: '',
+        type: '',
+        color: ''
       },
       selectTypeData: [
-        { txt: "日期时间", type: "dateTimePicker" },
+        { txt: '日期时间', type: 'dateTimePicker' },
         // { txt: "时间", type: "timePicker" },
-        { txt: "关键字搜索", type: "search" },
-        { txt: "选择器", type: "select" },
+        { txt: '关键字搜索', type: 'search' },
+        { txt: '选择器', type: 'select' }
       ],
       optionData: [],
       selectData: [],
+      pageSize: 10,
+      s: [],
+      b: []
     };
   },
   props: {
@@ -511,96 +550,125 @@ export default {
       type: Object,
       default: () => {
         return {};
-      },
+      }
     },
     changeSize: {
-      type: Function,
-    },
+      type: Function
+    }
   },
-  watch: {},
+  watch: {
+    'config.data': {
+      handler(nl) {
+        console.log(nl, '===nl');
+      },
+      deep: true
+    }
+  },
   mounted() {
-    this.getSelectData();
+    this.pageSize = this.config.requestParams.pageSize;
+    this.s = [...this.config.tableHeadStyle.styleData]; //表格内容样式
+    this.b = [...this.config.tableHeadStyle.buttonStyleData]; //卡片内容按钮样式
   },
   methods: {
     addShowTxt() {
-      let length = this.config.data.tableHead.length;
-      this.config.data.tableHead.push({
-        label: "",
-        value: "",
+      let t = [...this.config.data.tableHead];
+      let length = t.length;
+      t.push({
+        label: '',
+        value: '',
         showOverflow: false,
-        id: length,
+        id: length
       });
-      this.config.tableHeadStyle.styleData.push({
-        width: "",
-        color: "#fff",
-        colorData: [],
+      this.s.push({
+        width: '',
+        color: '#fff',
+        colorData: []
       });
+      this.$emit('changeValue', 'data', 'tableHead', t);
+      this.$emit('changeValue', 'tableHeadStyle', 'styleData', this.s);
     },
     addColorData(i) {
-      this.config.tableHeadStyle.styleData[i].colorData.push({
-        label: "",
-        color: "",
+      this.s[i].colorData.push({
+        label: '',
+        color: ''
       });
+      this.$emit('changeValue', 'tableHeadStyle', 'styleData', this.s);
     },
     delColor(i, index) {
-      this.config.tableHeadStyle.styleData[i].colorData.splice(index, 1);
+      this.s[i].colorData.splice(index, 1);
+      this.$emit('changeValue', 'tableHeadStyle', 'styleData', this.s);
     },
     addShowCardTxt() {
-      let length = this.config.data.cardData.length;
-      this.config.data.cardData.push({
-        label: "",
-        value: "",
-        width: "",
-        height: "",
-        id: length,
+      let c = [...this.config.data.cardData];
+      let length = c.length;
+      c.push({
+        label: '',
+        value: '',
+        width: '',
+        height: '',
+        id: length
       });
+      this.$emit('changeValue', 'data', 'cardData', c);
     },
     addShowButtonTxt() {
-      let length = this.config.data.buttonData.length;
-      this.config.data.buttonData.push({
-        label: "",
-        value: "",
-        width: "",
-        background: "",
-        color: "",
-        id: length,
+      let b = [...this.config.data.buttonData];
+      let length = b.length;
+      b.push({
+        label: '',
+        value: '',
+        width: '',
+        color: '',
+        id: length
       });
+      this.$emit('changeValue', 'data', 'buttonData', b);
+      this.b.push({
+        colorData: [],
+        isShowBorder: false
+      });
+      this.$emit('changeValue', 'tableHeadStyle', 'buttonStyleData', this.b);
+    },
+    addButtonColorData(i) {
+      this.b[i].colorData.push({
+        label: '',
+        color: ''
+      });
+      this.$emit('changeValue', 'tableHeadStyle', 'buttonStyleData', this.b);
+    },
+    delButtonColor(i, index) {
+      this.b[i].colorData.splice(index, 1);
+      this.$emit('changeValue', 'tableHeadStyle', 'buttonStyleData', this.b);
     },
     delData(dataType, i) {
-      this.config.data[dataType].splice(i, 1);
-      if (dataType === "tableHead") {
-        this.getSelectData();
-      }
-    },
-    getSelectData() {
-      this.selectData = this.config.data.tableHead.filter((item) => item.type);
-      this.selectData.push({ label: "关键字", type: "search" });
+      let d = [...this.config.data[dataType]];
+      d.splice(i, 1);
+      this.$emit('changeValue', 'data', dataType, d);
     },
     changeIndex(type, dataType, i, data) {
       let index;
-      if (type === "pre") {
+      if (type === 'pre') {
         if (i === 0) {
-          this.$message.warning("当前已经是第一个，无法再上移");
+          this.$message.warning('当前已经是第一个，无法再上移');
           return;
         } else {
           index = i - 1;
         }
       } else {
         if (i === this.config.data[dataType].length - 1) {
-          this.$message.warning("当前已经是最后一个，无法再下移");
+          this.$message.warning('当前已经是最后一个，无法再下移');
           return;
         } else {
           index = i + 1;
         }
       }
-      let d = this.config.data[dataType];
+      let d = [...this.config.data[dataType]];
       d.splice(index, 1, ...d.splice(i, 1, d[index]));
-      if (dataType === "tableHead") {
-        let s = this.config.tableHeadStyle.styleData;
-        s.splice(index, 1, ...s.splice(i, 1, s[index]));
+      this.$emit('changeValue', 'data', dataType, d);
+      if (dataType === 'tableHead') {
+        this.s.splice(index, 1, ...this.s.splice(i, 1, this.s[index]));
+        this.$emit('changeValue', 'tableHeadStyle', 'styleData', this.s);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

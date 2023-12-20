@@ -2,9 +2,6 @@
  *
  * */
 import {
-  positionStringToArr,
-  positionsStringToArr,
-  positionChangeGCJ,
   positionToGCJ02,
 } from "@/components/map/util";
 // import start_point from '../../../assets/img/jinshan/vehicles/map/start_point.png';
@@ -28,7 +25,7 @@ export class Marker {
     this.textMarks = [];
   }
 
-  addInfoMark(offset = [0, 0]) {
+  addInfoMark (offset = [0, 0]) {
     if (!this.infoMark) {
       this.infoMark = new AMap.Marker({
         content: " ",
@@ -38,7 +35,7 @@ export class Marker {
     }
     return this.infoMark;
   }
-  addImgMark(offset = [0, 0]) {
+  addImgMark (offset = [0, 0]) {
     if (!this.imgMark) {
       this.imgMark = new AMap.Marker({
         content: " ",
@@ -48,7 +45,7 @@ export class Marker {
     }
     return this.imgMark;
   }
-  removeInfoMark() {
+  removeInfoMark () {
     this.infoMark.remove();
     this.infoMark = null;
   }
@@ -70,7 +67,7 @@ export class Marker {
    * @param labelOffset {Pixel} 文字标注位置偏移量
    * @return marker
    */
-  addMark({
+  addMark ({
     id,
     image,
     sImage,
@@ -134,21 +131,21 @@ export class Marker {
     return marker;
   }
 
-  getMarkerById(type, id) {
+  getMarkerById (type, id) {
     console.log(this.markers, type, id, "====mark");
     if (this.markers[type] && this.markers[type][id]) {
       return this.markers[type][id];
     }
   }
   // markers  可以是一个单独的mark，也可以是marks 数组
-  removeMarkById(type, id) {
+  removeMarkById (type, id) {
     if (this.markers[type] && this.markers[type][id]) {
       this.map.remove(this.markers[type][id]);
       delete this.markers[type][id];
     }
   }
 
-  removeMarkByType(type) {
+  removeMarkByType (type) {
     if (this.markers[type]) {
       Object.keys(this.markers[type]).forEach((id) => {
         this.map.remove(this.markers[type][id]);
@@ -158,7 +155,7 @@ export class Marker {
   }
 
   // marker 可以是marker 也可以是数组 [marker,marker]
-  removeMark(marker) {
+  removeMark (marker) {
     this.map.remove(marker);
   }
 
@@ -181,7 +178,7 @@ export class Marker {
    * @param dataId  数据的id 用于点击时获取数据的详情
    * @return {AMap.LabelMarker}
    */
-  addLabelMarker(options, data) {
+  addLabelMarker (options, data) {
     const {
       id,
       image,
@@ -288,7 +285,7 @@ export class Marker {
     return labelMarker;
   }
 
-  addLabelsLayer(data, options) {
+  addLabelsLayer (data, options) {
     this.labelsLayers[options.type] = this.labelsLayers[options.type] || [];
     const labelMarkers = [];
     const labelsLayer = new AMap.LabelsLayer({
@@ -313,13 +310,13 @@ export class Marker {
     return labelsLayer;
   }
 
-  getLabelMarkerById(type, id) {
+  getLabelMarkerById (type, id) {
     if (this.labelMarks[type] && this.labelMarks[type][id]) {
       return this.labelMarks[type][id];
     }
   }
 
-  removeLabelMarkerById(type, id) {
+  removeLabelMarkerById (type, id) {
     // /人员删除
     if (
       this.labelsLayers[type] &&
@@ -336,12 +333,12 @@ export class Marker {
       }
     }
   }
-  removeLabelMarkerByTypes(types) {
+  removeLabelMarkerByTypes (types) {
     types.forEach((type) => {
       this.removeLabelMarkerByType(type);
     });
   }
-  removeLabelMarkerByType(type) {
+  removeLabelMarkerByType (type) {
     if (this.labelsLayers[type] && this.labelMarks[type]) {
       this.labelsLayers[type].forEach((item) => {
         this.map.remove(item);
@@ -350,7 +347,7 @@ export class Marker {
       delete this.labelsLayers[type];
     }
   }
-  toggleMarkerById(type, id, isShow) {
+  toggleMarkerById (type, id, isShow) {
     if (this.labelMarks[type] && this.labelMarks[type][id]) {
       let seat = -2;
       if (this.showLabelMarks[type]) {
@@ -370,7 +367,7 @@ export class Marker {
       }
     }
   }
-  toggleMarkerByType(type, isShow) {
+  toggleMarkerByType (type, isShow) {
     if (this.labelMarks[type]) {
       Object.keys(this.labelMarks[type]).forEach((id) => {
         let seat;
@@ -393,7 +390,7 @@ export class Marker {
     }
   }
 
-  showLabelMarkByIds(type, ids) {
+  showLabelMarkByIds (type, ids) {
     if (this.labelMarks[type]) {
       const labelMarks = this.labelMarks[type];
       Object.keys(labelMarks).forEach((key) => {
@@ -420,7 +417,7 @@ export class Marker {
      * @param opacity {Number} 图层叠加的顺序值，0表示最底层。默认zIndex：5
      * @param alwaysRender {Boolean} 表示是否在拖拽缩放过程中实时重绘，默认true，建议超过10000的时候设置false
      */
-  addMassMark(
+  addMassMark (
     data,
     {
       type,
@@ -469,21 +466,21 @@ export class Marker {
     return massMarks;
   }
 
-  removeMassMarksByTypes(types) {
+  removeMassMarksByTypes (types) {
     types instanceof Array &&
       types.forEach((type) => {
         this.removeMassMarksByType(type);
       });
   }
 
-  removeMassMarksByType(type) {
+  removeMassMarksByType (type) {
     if (this.massMarkses[type]) {
       this.massMarkses[type].clear();
       delete this.massMarkses[type];
     }
   }
   // 创建纯文本标记
-  addText(
+  addText (
     position,
     text,
     anchor,
@@ -520,14 +517,14 @@ export class Marker {
     this.textMarks.push(textMark);
     return textMark;
   }
-  removeAllTexts() {
+  removeAllTexts () {
     this.textMarks.length > 0 &&
       this.textMarks.forEach((text) => {
         text.remove();
       });
     this.textMarks = [];
   }
-  clearMassMarks() {
+  clearMassMarks () {
     if (Object.keys(this.massMarkses).length > 0) {
       Object.keys(this.massMarkses).forEach((key) => {
         this.massMarkses[key].clear();
@@ -540,7 +537,7 @@ export class Marker {
    * @description 根据类型移除 LabelMarks
    * @param types
    */
-  clearLabelMarks() {
+  clearLabelMarks () {
     // types.forEach((type)=>{
     //   if(this.labelsLayers[type]){
     //     this.labelsLayers[type].clear();

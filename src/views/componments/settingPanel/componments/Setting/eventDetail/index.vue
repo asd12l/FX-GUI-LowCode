@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-10-09 11:05:32
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-10-24 15:16:44
+ * @LastEditTime: 2023-11-16 15:33:46
 -->
 <template>
   <el-scrollbar class="right-setting scrollbar-wrapper">
@@ -78,38 +78,32 @@
           size="mini"
         ></el-color-picker>
       </el-form-item>
-      <el-form-item label="弹窗头部图片：">
-        <el-select v-model="config.box.headPic">
-          <el-option
-            v-for="item,index in headPiclist"
-            :key="index"
-            :label="`图片${index + 1}`"
-            :value="item.DownloadUrl"
-          >
-            <img
-              :src="item.DownloadUrl"
-              alt=""
-              style="max-width: 100px;max-height: 100px"
-            >
-          </el-option>
-        </el-select>
+      <ImageSelector
+        label="弹窗头部图片："
+        @changeSrc="(val) => $emit('changeValue', 'box', 'headPic', val)"
+        worksheetId="sjxqtc_jyb"
+        imageField="headPic"
+        :src="config.box.headPic"
+      ></ImageSelector>
+      <el-form-item label="头部宽高：">
+        <div style="display: flex">
+          <el-input
+            v-model="config.box.headWidth"
+            size="mini"
+          ></el-input>x
+          <el-input
+            v-model="config.box.headHeight"
+            size="mini"
+          ></el-input>
+        </div>
       </el-form-item>
-      <el-form-item label="关闭按钮图片：">
-        <el-select v-model="config.box.closePic">
-          <el-option
-            v-for="item,index in closePiclist"
-            :key="index"
-            :label="`图片${index + 1}`"
-            :value="item.DownloadUrl"
-          >
-            <img
-              :src="item.DownloadUrl"
-              alt=""
-              style="max-width: 100px;max-height: 100px"
-            >
-          </el-option>
-        </el-select>
-      </el-form-item>
+      <ImageSelector
+        label="关闭按钮图片："
+        @changeSrc="(val) => $emit('changeValue', 'box', 'closePic', val)"
+        worksheetId="sjxqtc_jyb"
+        imageField="closePic"
+        :src="config.box.closePic"
+      ></ImageSelector>
       <el-form-item label="标题字体大小：">
         <el-input
           v-model="config.box.headFontSize"
@@ -124,21 +118,21 @@
       </el-form-item>
       <el-form-item label="关联图层表ID：">
         <el-input
-          v-model="relationWorksheetId"
+          v-model="config.relationWorksheetId"
           size="mini"
           @blur="getLayer"
         ></el-input>
       </el-form-item>
       <el-form-item label="关联图层：">
         <el-select
-          v-model="relationLayerId"
-          @change="$emit('changeSize', 'relationLayerId', relationLayerId)"
+          v-model="config.relationLayerId"
+          @change="$emit('changeSize', 'relationLayerId', config.relationLayerId)"
           size="small"
           multiple
           class="currentPic"
         >
           <el-option
-            v-for="(item) in layerList"
+            v-for="(item) in config.layerList"
             :key="item.rowid"
             :label="item.name"
             :value="item.rowid"
@@ -171,6 +165,98 @@
               size="mini"
             ></el-input>
           </el-form-item>
+          <div style="color: #0CB8F2;font-size: 16px;display:flex;align-items:center;padding-left: 40px;margin-bottom: 10px">
+            <span style="margin-right: 20px">字段配置</span>
+            <i
+              class="el-icon-circle-plus-outline"
+              style="cursor: pointer"
+              @click="addFiledKey"
+            ></i>
+          </div>
+          <div
+            v-for="(el,index) in config.fieldConfig"
+            :key="index"
+          >
+            <el-collapse style="margin-bottom: 5px">
+              <el-collapse-item>
+                <template slot="title">
+                  <div
+                    class="custom-title"
+                    style="padding-left: 40px;color: #C23737;font-size: 16px"
+                    @click.stop
+                  >
+                    <span style="font-size: 14px">字段{{index + 1}}</span>
+                    <i
+                      class="el-icon-delete"
+                      style="cursor: pointer;"
+                      @click="delFieldConfig(index)"
+                    ></i>
+                  </div>
+                </template>
+                <el-form-item label="字段别名：">
+                  <el-select
+                    v-model="el.byname"
+                    size="small"
+                    style="width: 100px"
+                  >
+                    <el-option
+                      v-for="(item, index) in config.fields"
+                      :key="index"
+                      :label="item.key"
+                      :value="item.key"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="字段名：">
+                  <el-input
+                    v-model="el.name"
+                    size="mini"
+                  ></el-input>
+                </el-form-item>
+                <div style="padding-left: 40px">
+                  <div style="display: flex;align-items:center; padding-left: 20px;margin-bottom: 20px;color: #00DBCC;">
+                    <span>字段值颜色枚举</span>
+                    <i
+                      class="el-icon-circle-plus-outline"
+                      style="font-size: 18px;margin-left: 20px;cursor: pointer"
+                      @click="addFiledvalueColor(el, index)"
+                    ></i>
+                  </div>
+                  <div
+                    v-for="(e,ind) in el.valueSet"
+                    :key="ind"
+                    style="position: relative"
+                  >
+                    <i
+                      class="el-icon-delete"
+                      style="cursor: pointer;position:absolute;left: 0;top: 10px;font-size: 16px;color: #C23737"
+                      @click="delValueSet(index, ind)"
+                    ></i>
+                    <el-form-item label="字段值：">
+                      <el-input
+                        v-model="e.value"
+                        size="mini"
+                      ></el-input>
+                    </el-form-item>
+                    <el-form-item label="字体颜色：">
+                      <el-color-picker
+                        v-model="e.valueColor"
+                        show-alpha
+                        size="mini"
+                      ></el-color-picker>
+                    </el-form-item>
+                    <el-form-item label="背景颜色：">
+                      <el-color-picker
+                        v-model="e.valueBackground"
+                        show-alpha
+                        size="mini"
+                      ></el-color-picker>
+                    </el-form-item>
+                  </div>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
         </el-collapse-item>
       </el-collapse>
       <el-collapse>
@@ -183,41 +269,74 @@
               <span>事件操作按钮</span>
               <i
                 class="el-icon-circle-plus-outline"
+                style="font-size: 18px"
                 @click="addBtn"
               ></i>
             </div>
           </template>
           <el-form
-            label-width="90px"
+            label-width="110px"
             size="small"
             class="border-box"
             style="padding: 8px 16px"
           >
             <el-select
-              v-model="currentBtn"
+              v-model="config.box.currentBtn"
+              placeholder="请选择"
+              style="width: 100%;margin-bottom: 20px"
+              size="mini"
               @change="selectChange"
-              size="small"
-              class="currentPic"
             >
               <el-option
                 v-for="item,index in config.buttons"
                 :key="item.id"
-                :label="`图片位${index + 1}`"
+                :label="item.title"
                 :value="item.id"
-              ></el-option>
+              >
+                <div class="outer-select">
+                  <span>{{item.title}}</span>
+                  <i
+                    class="el-icon-circle-close"
+                    @click.stop="delLevel1Tab(index)"
+                  ></i>
+                </div>
+              </el-option>
             </el-select>
             <el-form-item label="标题：">
               <el-input
                 v-model="title"
-                @input="contentChange"
+                @input="valueChange('title')"
               ></el-input>
+            </el-form-item>
+            <el-form-item label="按钮填充颜色：">
+              <el-color-picker
+                v-model="fillColor"
+                show-alpha
+                size="mini"
+                @change="valueChange('fillColor')"
+              ></el-color-picker>
+            </el-form-item>
+            <el-form-item label="按钮边框颜色：">
+              <el-color-picker
+                v-model="borderColor"
+                show-alpha
+                size="mini"
+                @change="valueChange('borderColor')"
+              ></el-color-picker>
+            </el-form-item>
+            <el-form-item label="按钮文本颜色：">
+              <el-color-picker
+                v-model="textColor"
+                show-alpha
+                size="mini"
+                @change="valueChange('textColor')"
+              ></el-color-picker>
             </el-form-item>
             <el-form-item label="操作效果：">
               <el-select
                 v-model="currentEffect"
-                @change="effectChange"
+                @change="valueChange('currentEffect')"
                 size="small"
-                class="currentPic"
               >
                 <el-option
                   label="结案归档"
@@ -233,30 +352,65 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="传参：">
+              <el-input
+                v-model="param"
+                @input="valueChange('param')"
+              ></el-input>
+            </el-form-item>
+            <div style="display: flex; align-items: center">
+              <span style="width: 40px;color:#fff">隐藏</span>
+              <el-select
+                v-model="hidekey"
+                size="small"
+                style="width: 100px"
+                @change="valueChange('hidekey')"
+              >
+                <el-option
+                  v-for="(item, index) in config.fields"
+                  :key="index"
+                  :label="item.key"
+                  :value="item.key"
+                ></el-option>
+              </el-select>
+              <span style="width: 40px;margin-left: 10px;color:#fff">等于</span>
+              <el-input
+                size="small"
+                @input="valueChange('hidevalue')"
+                v-model="hidevalue"
+                style="width: 80px"
+              ></el-input>
+            </div>
           </el-form>
         </el-collapse-item>
-
       </el-collapse>
     </el-form>
   </el-scrollbar>
 </template>
 
 <script>
-import { getFilterRows } from '@/utils/api';
+import ImageSelector from '../componments/ImageSelector';
+import { getFilterRows, getRowDetail } from '@/utils/api';
 import { appKey, sign } from '@/utils/const.js';
 export default {
   name: 'eventDetail',
+  components: {
+    ImageSelector
+  },
   data() {
     return {
-      buttons: [],
-      currentBtn: null,
       currentEffect: '',
       title: '',
-      relationWorksheetId: '',
-      relationLayerId: '',
-      layerList: [],
-      headPiclist: [],
-      closePiclist: []
+      fillColor: '',
+      textColor: '',
+      borderColor: '',
+      param: '',
+      hidekey: '',
+      hidevalue: '',
+      // relationWorksheetId: '',
+      // relationLayerId: '',
+      // layerList: [],
+      id: ''
     };
   },
   props: {
@@ -270,85 +424,112 @@ export default {
   watch: {
     config: {
       handler() {
-        this.buttons = this.config.buttons;
-        this.layerList = this.config.layerList;
-        this.relationWorksheetId = this.config.relationWorksheetId;
-        this.relationLayerId = this.config.relationLayerId;
+        // this.buttons = this.config.buttons;
+        // this.layerList = this.config.layerList;
+        // this.relationWorksheetId = this.config.relationWorksheetId;
+        // this.relationLayerId = this.config.relationLayerId;
+        // this.currentBtn = this.config.box.currentBtn;
+        // this.config.box.currentBtn && this.selectChange();
       },
       immediate: true,
       deep: true
     }
   },
   mounted() {
-    this.getPicData();
+    this.config.box.currentBtn && this.selectChange();
+    // this.updateComponentData({ rowid: '99e5fd8e-37cc-45b1-ae6d-7af06375b495' });
   },
   methods: {
-    async getPicData() {
-      // try {
+    addFiledKey() {
+      this.config.fieldConfig.push({
+        name: '',
+        byname: '',
+        valueSet: []
+      });
+    },
+
+    addFiledvalueColor(el, index) {
+      this.config.fieldConfig[index].valueSet.push({
+        value: '',
+        valueColor: '',
+        valueBackground: ''
+      });
+    },
+    delFieldConfig(index) {
+      this.config.fieldConfig.splice(index, 1);
+    },
+    delValueSet(index, ind) {
+      this.config.fieldConfig[index].valueSet.splice(ind, 1);
+    },
+    async updateComponentData({ rowid }) {
+      this.id = rowid;
+      this.config.isShowModule = true;
       const data = {
         appKey: appKey,
         sign: sign,
-        worksheetId: '6528a0cb1f76aeb5855bbf73',
-        rowId: sessionStorage.getItem('rowid'),
-        pageIndex: 1,
-        pageSize: 100
+        worksheetId: 'AI_alarm',
+        rowId: rowid
       };
-      const result = await getFilterRows(data);
-      this.headPiclist = result.data.rows
-        .map((item) => {
-          if (item.headPic) {
-            return JSON.parse(item.headPic);
-          }
-        })
-        .filter((item) => item)[0];
-      this.closePiclist = result.data.rows
-        .map((item) => {
-          if (item.closePic) {
-            return JSON.parse(item.closePic);
-          }
-        })
-        .filter((item) => item)[0];
-      // } catch (error) {
-      //   this.$message.error('获取失败');
-      // }
+      const result = await getRowDetail(data);
+      for (var key in result.data) {
+        this.config.fields.push({
+          key,
+          value: result.data[key]
+        });
+      }
     },
     addBtn() {
-      this.buttons.push({
+      this.config.buttons.push({
         id: new Date().getTime(),
-        title: '',
-        effect: ''
+        title: '新增',
+        effect: '',
+        fillColor: '',
+        borderColor: 'rgba(255,255,255,0)',
+        textColor: '',
+        param: '',
+        hidekey: '',
+        hidevalue: ''
       });
-      this.$emit('changeSize', 'data', this.buttons);
+      // this.$emit('changeSize', 'data', this.buttons);
     },
     selectChange() {
-      let index = this.buttons.findIndex((item) => item.id === this.currentBtn);
-      this.title = this.buttons[index].title;
-      this.currentEffect = this.buttons[index].effect;
+      let index = this.config.buttons.findIndex(
+        (item) => item.id === this.config.box.currentBtn
+      );
+      // this.$emit('changeValue', 'box', 'currentBtn', this.config.box.currentBtn);
+      this.title = this.config.buttons[index].title;
+      this.fillColor = this.config.buttons[index].fillColor;
+      this.borderColor = this.config.buttons[index].borderColor;
+      this.textColor = this.config.buttons[index].textColor;
+      this.currentEffect = this.config.buttons[index].effect;
+      this.param = this.config.buttons[index].param;
+      this.hidekey = this.config.buttons[index].hidekey;
+      this.hidevalue = this.config.buttons[index].hidevalue;
     },
-    contentChange() {
-      let index = this.buttons.findIndex((item) => item.id === this.currentBtn);
-      this.buttons[index].title = this.title;
-      this.$emit('changeSize', 'data', this.buttons);
-      this.$forceUpdate();
-    },
-    effectChange() {
-      let index = this.buttons.findIndex((item) => item.id === this.currentBtn);
-      this.buttons[index].effect = this.currentEffect;
-      this.$emit('changeSize', 'data', this.buttons);
-      this.$forceUpdate();
+    valueChange(data) {
+      let index = this.config.buttons.findIndex(
+        (item) => item.id === this.config.box.currentBtn
+      );
+      this.config.buttons[index][data] = this[data];
     },
     async getLayer() {
-      this.$emit('changeSize', 'relationWorksheetId', this.relationWorksheetId);
+      this.$emit(
+        'changeSize',
+        'relationWorksheetId',
+        this.config.relationWorksheetId
+      );
 
       let { data } = await getFilterRows({
         appKey: appKey,
         sign: sign,
-        worksheetId: this.relationWorksheetId,
+        worksheetId: this.config.relationWorksheetId,
         pageSize: 500,
         pageIndex: 1
       });
-      this.layerList = data.rows;
-      this.$emit('changeSize', 'layerList', this.layerList);
+      this.$emit('changeSize', 'layerList', data.rows);
+    },
+    delLevel1Tab(index) {
+      this.config.buttons.splice(index, 1);
     }
   }
 };

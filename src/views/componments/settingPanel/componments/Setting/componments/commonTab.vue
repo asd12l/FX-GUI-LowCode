@@ -43,7 +43,7 @@
           @click="changeTxtAlign('right')"
         ></div>
       </span>
-      <span v-else style="display: flex;">
+      <span v-if="!isTxtAlign&&isTxtAlign2" style="display: flex;">
         <div
           :class="['tab3', 'tab', txtData.align === 'left' ? 'active3' : '']"
           @click="changeTxtAlign('left')"
@@ -112,6 +112,7 @@ export default {
     return {
       fontData: "",
       txtData: "",
+      c: "",
       // fontList: ["Microsoft YaHei", "YouSheBiaoTiHei"],
       fontList: ["YouSheBiaoTiHei", "Microsoft YaHei", "Helvetica"],
       isShowLetterSpacing: false,
@@ -131,6 +132,10 @@ export default {
       type: String,
     },
     isTxtAlign: {
+      type: Boolean,
+      default: true,
+    },
+    isTxtAlign2: {
       type: Boolean,
       default: true,
     },
@@ -156,19 +161,20 @@ export default {
     },
   },
   mounted() {
+    this.c = { ...this.config };
     this.setType();
   },
   methods: {
     setType() {
       if (this.type2) {
-        this.fontData = this.config[this.type1][this.type2];
+        this.fontData = this.c[this.type1][this.type2];
       } else {
-        this.fontData = this.config[this.type1];
+        this.fontData = this.c[this.type1];
       }
       if (this.isTxtAlign) {
         this.txtData = this.fontData;
       } else {
-        this.txtData = this.config[this.type1];
+        this.txtData = this.c[this.type1];
       }
       if (typeof this.fontData.letterSpacing == "undefined") {
         this.isShowLetterSpacing = false;
@@ -179,16 +185,31 @@ export default {
     changeFontWeight() {
       this.fontData.fontWeight =
         this.fontData.fontWeight === "normal" ? "bold" : "normal";
+      this.changeFont("fontWeight");
     },
     changeFontStyle() {
       this.fontData.fontStyle =
         this.fontData.fontStyle === "normal" ? "italic" : "normal";
+      this.changeFont("fontStyle");
+    },
+    changeFont(type) {
+      if (this.type2) {
+        this.$emit("changeValue", this.type1, this.type2, this.fontData);
+      } else {
+        this.$emit("changeValue", this.type1, type, this.fontData[type]);
+      }
     },
     changeTxtAlign(align) {
       if (this.isTxtAlign) {
         this.txtData.textAlign = align;
+        if (this.type2) {
+          this.$emit("changeValue", this.type1, this.type2, this.txtData);
+        } else {
+          this.$emit("changeValue", this.type1, "textAlign", align);
+        }
       } else {
         this.txtData.align = align;
+        this.$emit("changeValue", this.type1, "align", align);
       }
     },
   },

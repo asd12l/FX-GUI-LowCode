@@ -4,7 +4,7 @@
  * @Author: ydl
  * @Date: 2023-10-08 10:08:21
  * @LastEditors: ydl
- * @LastEditTime: 2023-10-25 14:30:44
+ * @LastEditTime: 2023-11-22 14:11:19
 -->
 <template>
   <div
@@ -16,7 +16,7 @@
       <el-tree
         v-if="isSHowTree"
         ref="tree"
-        :data="config.data.treeData"
+        :data="treeData"
         :props="defaultProps"
         node-key="rowid"
         :default-expanded-keys="expandRowid"
@@ -54,11 +54,10 @@
               >
             </div>
             <span
-              v-else
-              :class="[
-                'star',
-                config.data.collectData[data.rowid] ? 'shoucang1' : '',
-              ]"
+              v-if="
+                config.tree.isShowColletButton && node.childNodes.length === 0
+              "
+              :class="['star', collectData[data.rowid] ? 'shoucang1' : '']"
             />
           </div>
         </div>
@@ -104,13 +103,16 @@ export default {
       showSplit: true,
       expandData: {},
       expandRowid: [],
+      expandLevelRowid: [],
+      expandLevelData: {},
       isSHowTree: true,
     };
   },
   watch: {
     "config.data": {
       handler(nVal, oVal) {
-        this.setExpandData(this.config.tree.isExpandOneLevel);
+        this.getTreeData(nVal);
+        // this.setExpandData(this.config.tree.isExpandOneLevel);
       },
       deep: true,
     },
@@ -152,25 +154,102 @@ export default {
     },
   },
   mounted() {
-    // this.showSplit = true;
-    this.setExpandData(this.config.tree.isExpandOneLevel);
-    // this.getTreeData();
+    this.getTreeData(this.config.data);
   },
   methods: {
-    setExpandData(nVal) {
-      this.isSHowTree = false;
-      if (nVal) {
-        this.expandRowid = [...this.config.data.expandRowid];
+    getTreeData(d) {
+      if (this.config.sourceType === "工作表") {
+        if (!Array.isArray(d)) {
+          this.treeData = [];
+          this.dealWordTreeData([...d.rows]);
+        }
       } else {
-        this.expandRowid.splice(0, this.expandRowid.length);
+        this.treeData = [...d];
+        this.dealTreeData(this.treeData);
       }
-      setTimeout(() => {
-        this.isSHowTree = true;
-      }, 10);
+      this.setExpandData(this.config.tree.isExpandOneLevel);
     },
-    async getTreeData() {
-      toLoadData(this.config, "splitCameraScreen");
+    setExpandData(nVal) {
+      if (this.expandLevelRowid) {
+        this.isSHowTree = false;
+        if (nVal) {
+          this.expandRowid = [...this.expandLevelRowid];
+          this.expandData = { ...this.expandLevelData };
+        } else {
+          this.expandRowid.splice(0, this.expandRowid.length);
+          this.expandData = {};
+        }
+        setTimeout(() => {
+          this.isSHowTree = true;
+        }, 10);
+      }
     },
+    dealTreeData(d) {
+      d.forEach((item) => {
+        if (item.level === 1) {
+          this.expandLevelRowid.push(item.rowid);
+          this.expandLevelData[item.rowid] = item;
+        }
+        if (item.children && item.children.length > 0) {
+          this.dealTreeData(item.children);
+        } else {
+          if (item.is_emphasis == "是") {
+            this.collectData[item.rowid] = true;
+          }
+        }
+        // if (item.device_list && item.device_list.length > 0) {
+        //   if (!item.children) {
+        //     item.children = [];
+        //   }
+        //   item.children.push(...item.device_list);
+        // }
+      });
+    },
+    dealWordTreeData(d) {
+      console.log(d, "====d");
+      d.forEach((item) => {
+        const isHasFiled = this.treeData.find(
+          (ele) =>
+            ele.group_name ===
+            (item.camera_group && item.camera_group !== "[]"
+              ? JSON.parse(item.camera_group)[0].name
+              : "")
+        );
+        if (!isHasFiled) {
+          this.treeData.push({
+            children: [],
+            level: 1,
+            pid: "",
+            rowid: item.rowid,
+            group_name:
+              item.camera_group && item.camera_group !== "[]"
+                ? JSON.parse(item.camera_group)[0].name
+                : "",
+          });
+          this.expandLevelRowid.push(item.rowid);
+          this.expandLevelData[item.rowid] = item;
+        }
+        const treeIndex = this.treeData.findIndex(
+          (ele) =>
+            ele.group_name ===
+            (item.camera_group && item.camera_group !== "[]"
+              ? JSON.parse(item.camera_group)[0].name
+              : "")
+        );
+        this.treeData[treeIndex].children.push({
+          ...item,
+          pid: this.treeData[treeIndex].rowid,
+        });
+
+        if (item.is_emphasis == "是") {
+          this.collectData[item.rowid] = true;
+        }
+      });
+      console.log(this.treeData, "====treeData");
+    },
+    // async getTreeData() {
+    //   toLoadData(this.config, "splitCameraScreen");
+    // },
     getImg(data) {
       const type = data.camera_type === "球机" ? "qiu" : "qiang";
       const statu = data.device_status === "在线" ? "online" : "offline";
@@ -191,9 +270,9 @@ export default {
       } else {
         this.multSelect(data.children, data);
       }
-      if (data.device_list && data.device_list.length > 0) {
-        this.multSelect(data.device_list, data);
-      }
+      // if (data.device_list && data.device_list.length > 0) {
+      //   this.multSelect(data.device_list, data);
+      // }
     },
     multSelect(data, p) {
       data.forEach((item) => {
@@ -209,7 +288,9 @@ export default {
       let c;
       let c1;
       if (type === "nult") {
-        c = p ? (this.expandData[p.rowid] ? 1 : 0) : 0;
+        let keys = Object.keys(this.expandData);
+        let seat = keys.indexOf(p.rowid);
+        c = p ? (seat === -1 ? 0 : 1) : 0;
         c1 = this.checkStatuData[data.rowid] ? 1 : 0;
       } else {
         c = 0;

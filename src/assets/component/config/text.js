@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-01 13:58:48
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-08-07 10:15:41
+ * @LastEditTime: 2023-11-22 16:04:12
  */
 export default {
   name: "文本",
@@ -25,7 +25,7 @@ export default {
     fontFamily: "微软雅黑",
     letterSpacing: 2,
   },
-  data: "这里是文本内容",
+  data: '这里是文本内容',
   eventAssociatedComponentIds: [],
   eventType: "click",
   movement: 'showAndHidden'

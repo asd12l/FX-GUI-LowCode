@@ -246,7 +246,7 @@ export default {
           // console.log("item::::::::::::::::", item, this.currentNavBarKey);
           return item.key === this.currentNavBarKey;
         });
-        console.log(componentList, currectSilderData, "===currectSilderData");
+        // console.log(componentList, currectSilderData, "===currectSilderData");
         // console.log("currectSilderData:::::::::", currectSilderData);
         if (currectSilderData) {
           return currectSilderData.example;

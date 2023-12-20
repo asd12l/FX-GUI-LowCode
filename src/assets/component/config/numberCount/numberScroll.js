@@ -22,7 +22,9 @@ export default {
     textNum: {
 
     },
-    data: '7076',
+    data: {
+        total:'7076',
+    },
     dataLength:7,
     textNumber:{
         color:'#fff',

@@ -4,12 +4,12 @@
  * @Author: 卜倩倩
  * @Date: 2023-07-25 16:40:17
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-09-01 11:18:37
+ * @LastEditTime: 2023-11-16 15:53:05
 -->
 <template>
   <div
     class="layerControl-wrapper"
-    :style="{width: config.width + 'px', height: config.height + 'px'}"
+    :style="{width: config.width + 'px', height: config.height + 'px', backgroundImage: 'url('+config.icon.backgroundUrl+')'}"
     v-show="isShowModuleFunc(config)"
   >
     <div
@@ -84,7 +84,7 @@
              width: config.icon.width + 'px',
              height: config.icon.height + 'px'
             }"
-            :src="IMG_URL + item.default_icon"
+            :src="item.default_icon ? item.default_icon: ''"
             alt=""
           >
           <span :style="{
@@ -235,8 +235,10 @@ export default {
 
 <style lang="scss">
 .layerControl-wrapper {
+  padding: 20px;
   pointer-events: all;
   position: relative;
+  background-size: 100% 100%;
   .el-checkbox {
     pointer-events: all;
   }
@@ -247,11 +249,16 @@ export default {
     text-align: left;
   }
 
+  .el-checkbox__inner {
+    z-index: 0;
+  }
+
   .el-checkbox__input.is-checked .el-checkbox__inner {
     width: 15px;
     height: 15px;
     background-color: #1b7ef2 !important;
     border-color: #1b7ef2 !important;
+    z-index: 0;
 
     &::after {
       border-color: #143452;

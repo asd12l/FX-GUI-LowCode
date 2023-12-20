@@ -12,10 +12,10 @@ const { AMapCDN, AMapUiCDN } = require("@/assets/cdn");
  * @param {boolean} immediate
  * @return {*}
  */
-export function debounce(func, wait, immediate) {
+export function debounce (func, wait, immediate) {
   let timeout, args, context, timestamp, result;
 
-  const later = function() {
+  const later = function () {
     // 据上一次触发时间间隔
     const last = +new Date() - timestamp;
 
@@ -32,7 +32,7 @@ export function debounce(func, wait, immediate) {
     }
   };
 
-  return function(...args) {
+  return function (...args) {
     context = this;
     timestamp = +new Date();
     const callNow = immediate && !timeout;
@@ -51,7 +51,7 @@ export function debounce(func, wait, immediate) {
  * @param {Object} source
  * @return {Object}
  */
-export function deepClone(source) {
+export function deepClone (source) {
   if (typeof source !== "object" || source === null) {
     return new Error("deepClone方法:传入的不是一个对象");
   }
@@ -70,7 +70,7 @@ export function deepClone(source) {
  * 数组去重
  * @param {Array} arr
  */
-export function uniqueArr(arr) {
+export function uniqueArr (arr) {
   if (!Array.isArray(arr)) {
     console.warn("uniqueArr方法:传入的不是一个数组!");
     return arr;
@@ -81,8 +81,35 @@ export function uniqueArr(arr) {
 /**
  * 组件默认展示隐藏判断
  */
-export function isShowModuleFunc(config) {
+export function isShowModuleFunc (config) {
   return config.isShowModule || location.href.includes("#/chart");
+}
+
+/**
+ * 弹窗组件打开显示背景
+ */
+export function setModal (param) {
+  var modal = document.createElement("div");
+  // let modal = document.querySelector('.preview');
+  let dom =
+    document.querySelector(".preview") ||
+    document.querySelector(".content-container");
+  dom.appendChild(modal);
+  modal.setAttribute(
+    "style",
+    "pointer-events:all;position:absolute;top:0;left: 0;z-index: 99;display: block;width: 100%;height: 100%;background-color: " +
+    param +
+    ";"
+  );
+  modal.setAttribute("class", "dialog-modal");
+}
+
+/**
+ * 弹窗组件关闭背景
+ */
+export function removeModal () {
+  let modal = document.querySelector(".dialog-modal");
+  modal.remove();
 }
 
 /**
@@ -91,7 +118,7 @@ export function isShowModuleFunc(config) {
  * @param  {string} childAdcode 区县级行政区code
  * @return {Array}
  */
-export function getGeoJson(adcode, childAdcode = "") {
+export function getGeoJson (adcode, childAdcode = "") {
   return new Promise((resolve, reject) => {
     if (window.AMap && window.AMapUI) {
       insideFun(adcode, childAdcode);
@@ -110,11 +137,11 @@ export function getGeoJson(adcode, childAdcode = "") {
         }
       });
     }
-    function insideFun(adcode, childAdcode) {
+    function insideFun (adcode, childAdcode) {
       // eslint-disable-next-line
       AMapUI.loadUI(["geo/DistrictExplorer"], (DistrictExplorer) => {
         var districtExplorer = new DistrictExplorer();
-        districtExplorer.loadAreaNode(adcode, function(error, areaNode) {
+        districtExplorer.loadAreaNode(adcode, function (error, areaNode) {
           if (error) {
             console.error(error);
             reject(error);
@@ -146,8 +173,8 @@ export function getGeoJson(adcode, childAdcode = "") {
  * 生成随机id
  ** @param  {string} template  生成随机id的格式
  */
-export function guid(template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx") {
-  return template.replace(/[xy]/g, function(c) {
+export function guid (template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx") {
+  return template.replace(/[xy]/g, function (c) {
     let r = (Math.random() * 16) | 0,
       v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -155,7 +182,7 @@ export function guid(template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx") {
 }
 
 // 一维数组转变为二维数组
-export function changeArr(arr, num) {
+export function changeArr (arr, num) {
   // 一维数组转换为二维数组
   const iconsArr = []; // 声明数组
   arr.forEach((item, index) => {
@@ -170,12 +197,15 @@ export function changeArr(arr, num) {
 }
 
 // 处理样式
-export function setStyleObj(d) {
+export function setStyleObj (d) {
   let data = {};
   d.width && (data.width = d.width === "auto" ? "auto" : d.width + "px");
   d.height && (data.height = d.height === "auto" ? "auto" : d.height + "px");
+  d.minHeight &&
+    (data.minHeight = d.minHeight === "auto" ? "auto" : d.minHeight + "px");
   d.left && (data.left = d.left + "px");
   d.top && (data.top = d.top + "px");
+  d.bottom && (data.bottom = d.bottom + "px");
   d.fontSize && (data.fontSize = d.fontSize + "px");
   d.letterSpacing && (data.letterSpacing = d.letterSpacing + "px");
   d.lineHeight && (data.lineHeight = d.lineHeight + "px");
@@ -201,13 +231,12 @@ export function setStyleObj(d) {
     if (d.background.includes("#") || d.background.includes("rgba")) {
       data.background = d.background;
     } else {
-      data.background = `url(${d.background}) no-repeat`;
-      data.backgroundSize = "100% 100%";
+      data.background = `url(${d.background}) 0% 0% / 100% 100% no-repeat`;
+      // data.backgroundSize = "cover";
     }
   }
   if (d.backgroundImg) {
-    data.background = `url(${d.backgroundImg}) no-repeat`;
-    data.backgroundSize = "100% 100%";
+    data.background = `url(${d.backgroundImg}) 0% 0% / 100% 100% no-repeat`;
   }
   if (d.padding) {
     let padding = d.padding.split(",").map((item) => {
@@ -225,11 +254,41 @@ export function setStyleObj(d) {
   }
   return data;
 }
+// rgba转换为十六进制
+export function rgbaToHex (color) {
+  var values = color
+    .replace(/rgba?\(/, "")
+    .replace(/\)/, "")
+    .replace(/[\s+]/g, "")
+    .split(",");
+  var a = parseFloat(values[3] || 1),
+    r = Math.floor(a * parseInt(values[0]) + (1 - a) * 255),
+    g = Math.floor(a * parseInt(values[1]) + (1 - a) * 255),
+    b = Math.floor(a * parseInt(values[2]) + (1 - a) * 255);
+  return (
+    "#" +
+    ("0" + r.toString(16)).slice(-2) +
+    ("0" + g.toString(16)).slice(-2) +
+    ("0" + b.toString(16)).slice(-2)
+  );
+}
+// 十六进制转为rgba
+export function hexToRgba (hexColor) {
+  // 移除 # 号并提取颜色值
+  var hex = hexColor.replace("#", "");
+  // 将颜色值拆分成 R、G、B 三个部分
+  var r = parseInt(hex.substring(0, 2), 16);
+  var g = parseInt(hex.substring(2, 4), 16);
+  var b = parseInt(hex.substring(4, 6), 16);
+  // 转换为 RGBA 格式并添加透明度
+  var rgb = `rgba(${r}, ${g}, ${b}`;
+  return rgb;
+}
 
 import Vue from "vue";
 
 const clickDown = Vue.directive("clickDown", {
-  inserted(el, binding, vnode) {
+  inserted (el, binding, vnode) {
     let clickTimer = null;
 
     // 单击
@@ -258,27 +317,43 @@ const clickDown = Vue.directive("clickDown", {
 // 调用接口
 import { loadCustomApiData, getFilterRows } from "@/utils/api";
 import apiDataProcessing from "../views/componments/apiDataProcessing.js";
-export async function toLoadData(config, type) {
-  const { data } = await loadCustomApiData({
-    api: config.api,
-    type: config.requestType,
-    data: {
-      ...config.requestParams,
-    },
-  });
-  let componentData;
-  if (config.isShowDataFilter && config.datafilterFunc) {
-    const datafilterFunc = eval(config.datafilterFunc);
-    componentData = datafilterFunc(data);
-  } else {
-    componentData = await apiDataProcessing[type](data, config);
+export async function toLoadData (config, type) {
+  config.requestParams.pageIndex = config.requestParams.page;
+  if (config.sourceType === "api") {
+    const { data } = await loadCustomApiData({
+      api: config.api,
+      type: config.requestType,
+      data: {
+        ...config.requestParams,
+      },
+    });
+    let componentData;
+    if (config.isShowDataFilter && config.datafilterFunc) {
+      const datafilterFunc = eval(config.datafilterFunc);
+      componentData = datafilterFunc(data);
+    } else {
+      componentData = await apiDataProcessing[type](data, config);
+    }
+    return componentData;
+  } else if (config.sourceType === "工作表") {
+    console.log(config.requestParams, "===requestParams");
+    const { data } = await getFilterRows({
+      appKey,
+      sign,
+      viewId: config.viewId,
+      worksheetId: config.worksheetId,
+      pageSize: (config.requestParams && config.requestParams.pageSize) || 100,
+      pageIndex: config.requestParams.pageIndex,
+      filters: config.requestParams.filters,
+    });
+    let rows = datafilterFunc(config.fieldMap, data.rows);
+    return { rows, total: data.total };
   }
-  return componentData;
 }
 
 // 调用获取图片接口
 import { appKey, sign } from "@/utils/const.js";
-export async function getImgData(config) {
+export async function getImgData (config) {
   let { data } = await getFilterRows({
     appKey: appKey,
     sign: sign,
@@ -290,7 +365,7 @@ export async function getImgData(config) {
 }
 
 // 滤镜效果处理
-export function getFilterStyles({ filterObj, openFilter }) {
+export function getFilterStyles ({ filterObj, openFilter }) {
   if (!filterObj || !openFilter) return {};
   const { opacity, saturate, contrast, hueRotate, brightness } = filterObj;
   return {
@@ -298,27 +373,9 @@ export function getFilterStyles({ filterObj, openFilter }) {
     filter: `saturate(${saturate}) contrast(${contrast}) hue-rotate(${hueRotate}deg) brightness(${brightness})`,
   };
 }
-// rgba转换为十六进制
-export function rgbaToHex(color) {
-  var values = color
-    .replace(/rgba?\(/, "")
-    .replace(/\)/, "")
-    .replace(/[\s+]/g, "")
-    .split(",");
-  var a = parseFloat(values[3] || 1),
-    r = Math.floor(a * parseInt(values[0]) + (1 - a) * 255),
-    g = Math.floor(a * parseInt(values[1]) + (1 - a) * 255),
-    b = Math.floor(a * parseInt(values[2]) + (1 - a) * 255);
-  return (
-    "#" +
-    ("0" + r.toString(16)).slice(-2) +
-    ("0" + g.toString(16)).slice(-2) +
-    ("0" + b.toString(16)).slice(-2)
-  );
-}
 
 // 获取指定应用的 appkey和sign
-export function getAppInfo(appName) {
+export function getAppInfo (appName) {
   const appkeyList = localStorage.getItem("appkeyList");
   if (appkeyList) {
     const appInfo = JSON.parse(appkeyList).find(
@@ -331,4 +388,148 @@ export function getAppInfo(appName) {
   } else {
     return {};
   }
+}
+
+// 判断一个字符串是不是可以使用JSON.parse()转换的字符串
+export function isJSON (str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    // 转换出错，抛出异常
+    return false;
+  }
+  return true;
+}
+
+// 数据过滤
+export function datafilterFunc (fieldMap, data) {
+  const filterData = [];
+  if (typeof data === 'string') {
+    filterData.push({
+      text: data
+    })
+    return filterData
+  }
+  for (let index = 0; index < data.length; index++) {
+    let filterDataObj = data[index];
+    for (let inx = 0; inx < fieldMap.length; inx++) {
+      if (fieldMap[inx].type === "附件") {
+        let value = data[index][fieldMap[inx].targetFiled];
+        let isJson = isJSON(value);
+        let file = value;
+        if (isJson) {
+          let d = JSON.parse(value);
+          if (d.length > 1) {
+            file = file =
+              value && d.length > 0 ? d.map((item) => item.DownloadUrl) : [];
+          } else {
+            file = file =
+              value && d.length > 0 ? (d[0] ? d[0]["DownloadUrl"] : "") : "";
+          }
+        }
+        filterDataObj[fieldMap[inx].targetFiled] = file;
+        filterDataObj[fieldMap[inx].sourceFiled] = file;
+      } else {
+        filterDataObj[fieldMap[inx].sourceFiled] =
+          data[index][fieldMap[inx].targetFiled];
+      }
+    }
+    filterData.push(data[index]);
+  }
+  return filterData;
+}
+
+// 处理滚动表格和基础表格工作表字段映射数据
+export function changeTableData(targetData, config) {
+  let t;
+  if (config.component === "commonTable1") {
+    t = [...config.otherData.showData];
+    targetData.forEach((item, i) => {
+      let type = item.type;
+      let seletedType;
+      switch (type) {
+        case "日期和时间":
+          seletedType = "dateTimePicker";
+          break;
+        case "单选":
+        case "等级":
+          seletedType = "select";
+          break;
+        case "文本框":
+        case "自动编号":
+          seletedType = "search";
+          break;
+        default:
+          seletedType = "search";
+          break;
+      }
+      if (t.length === 0) {
+        t.push({
+          label: item.sourceFiled,
+          value: item.targetFiled,
+          seletedType: item.isSelected ? seletedType : "",
+          type: item.isSelected ? item.type : "",
+          location: item.location,
+          controlId: item.controlId,
+        });
+      } else {
+        t.forEach((v, j) => {
+          if (!targetData[j]) {
+            t.splice(j, 1);
+          } else if (!t[i]) {
+            t.push({
+              label: item.sourceFiled,
+              value: item.targetFiled,
+              seletedType: item.isSelected ? seletedType : "",
+              type: item.isSelected ? item.type : "",
+              location: item.location,
+              controlId: item.controlId,
+            });
+          } else {
+            if (i === j) {
+              t[j].label = targetData[i].sourceFiled;
+              t[j].value = targetData[i].targetFiled;
+              t[j].location = targetData[i].location;
+              t[j].seletedType = targetData[i].isSelected ? seletedType : "";
+              t[j].type = targetData[i].isSelected ? targetData[i].type : "";
+              t[j].controlId = targetData[i].controlId;
+            }
+          }
+        });
+      }
+    });
+  } else {
+    t = [...config.otherData.tableHead];
+    targetData.forEach((item, i) => {
+      if (t.length === 0) {
+        t.push({
+          label: item.sourceFiled,
+          value: item.targetFiled,
+          color: "#fff",
+          width: "",
+          colorData: [],
+        });
+      } else {
+        t.forEach((v, j) => {
+          if (!targetData[j]) {
+            t.splice(j, 1);
+          } else if (!t[i]) {
+            t.push({
+              label: item.sourceFiled,
+              value: item.targetFiled,
+              color: "#fff",
+              width: "",
+              colorData: [],
+            });
+          } else {
+            if (i === j) {
+              t[j].label = targetData[i].sourceFiled;
+              t[j].value = targetData[i].targetFiled;
+            }
+          }
+        });
+      }
+    });
+  }
+  return t;
 }

@@ -175,7 +175,7 @@
           <el-form-item label="文本内容：">
             <el-input
               type="textarea"
-              v-model="config.data"
+              v-model="data"
               @input="textChange"
               size="mini"
             ></el-input>
@@ -190,7 +190,9 @@
 export default {
   name: 'basicText',
   data() {
-    return {};
+    return {
+      data: ''
+    };
   },
   props: {
     config: {
@@ -198,6 +200,19 @@ export default {
       default: () => {
         return {};
       }
+    }
+  },
+  watch: {
+    'config.data': {
+      handler(nval) {
+        if (typeof nval === 'string') {
+          this.data = nval;
+        } else {
+          this.data = nval[0].text;
+        }
+      },
+      immediate: true,
+      deep: true
     }
   },
   methods: {

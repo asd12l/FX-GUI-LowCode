@@ -217,20 +217,21 @@ export default {
       this.toDraw();
     },
     toDraw() {
-      this.drawInfo.forEach((item) => {
-        this.drawRect(
-          this.getX(item.x),
-          this.getY(item.y),
-          this.getW(item.w),
-          this.getH(item.h)
-        );
-        if (item.text !== '') {
-          this.context.strokeStyle = '#0055ff';
-        } else {
-          this.context.strokeStyle = '#ff0000';
-        }
-        this.context.stroke();
-      });
+      this.drawInfo &&
+        this.drawInfo.forEach((item) => {
+          this.drawRect(
+            this.getX(item.x),
+            this.getY(item.y),
+            this.getW(item.w),
+            this.getH(item.h)
+          );
+          if (item.text !== '') {
+            this.context.strokeStyle = '#0055ff';
+          } else {
+            this.context.strokeStyle = '#ff0000';
+          }
+          this.context.stroke();
+        });
     },
     /**
      * 绘制背景
@@ -301,6 +302,7 @@ export default {
       }
     },
     areaNewInit(points) {
+      console.log(points, '====================');
       if (Array.isArray(points)) {
         this.areaInit(points);
       } else {

@@ -73,7 +73,14 @@
           size="mini"
         ></el-color-picker>
       </el-form-item>
-      <el-form-item label="弹窗头部图片：">
+      <el-form-item label="弹窗背景色：">
+        <el-color-picker
+          v-model="config.box.modalBgc"
+          show-alpha
+          size="mini"
+        ></el-color-picker>
+      </el-form-item>
+      <!-- <el-form-item label="弹窗头部图片：">
         <el-select v-model="config.box.headPic">
           <el-option
             v-for="item,index in headPicList"
@@ -88,8 +95,15 @@
             >
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="关闭按钮图片：">
+      </el-form-item> -->
+      <ImageSelector
+        label="弹窗头部图片："
+        @changeSrc="(val) => $emit('changeValue', 'box', 'headPic', val)"
+        worksheetId="jkzj"
+        imageField="headPic"
+        :src="config.box.headPic"
+      ></ImageSelector>
+      <!-- <el-form-item label="关闭按钮图片：">
         <el-select v-model="config.box.closePic">
           <el-option
             v-for="item,index in closePicList"
@@ -104,8 +118,15 @@
             >
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="暂无画面图片：">
+      </el-form-item> -->
+      <ImageSelector
+        label="关闭按钮图片："
+        @changeSrc="(val) => $emit('changeValue', 'box', 'closePic', val)"
+        worksheetId="jkzj"
+        imageField="closePic"
+        :src="config.box.closePic"
+      ></ImageSelector>
+      <!-- <el-form-item label="暂无画面图片：">
         <el-select v-model="config.box.emptyPic">
           <el-option
             v-for="item,index in emptyPicList"
@@ -120,7 +141,14 @@
             >
           </el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
+      <ImageSelector
+        label="暂无画面图片："
+        @changeSrc="(val) => $emit('changeValue', 'box', 'emptyPic', val)"
+        worksheetId="jkzj"
+        imageField="emptyPic"
+        :src="config.box.emptyPic"
+      ></ImageSelector>
       <el-form-item label="标题字体大小：">
         <el-input
           v-model="config.box.headFontSize"
@@ -145,7 +173,6 @@
           v-model="relationLayerId"
           @change="$emit('changeSize', 'relationLayerId', relationLayerId)"
           size="small"
-          class="currentPic"
           multiple=""
         >
           <el-option
@@ -155,6 +182,12 @@
             :value="item.rowid"
           ></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="视频流地址：">
+        <el-input
+          v-model="config.box.svs_url"
+          size="mini"
+        ></el-input>
       </el-form-item>
       <el-collapse>
         <el-collapse-item
@@ -191,104 +224,50 @@
             </el-option>
           </el-select>
           <div v-show="picType === '默认图片'">
-            <el-form-item label="上：">
-              <el-select v-model="config.controlBtn.upwardPic">
-                <el-option
-                  v-for="item,index in upwardPicList"
-                  :key="index"
-                  :label="`图片${index + 1}`"
-                  :value="item.DownloadUrl"
-                >
-                  <img
-                    :src="item.DownloadUrl"
-                    alt=""
-                    style="max-width: 100px;max-height: 100px"
-                  >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="放大：">
-              <el-select v-model="config.controlBtn.enlargePic">
-                <el-option
-                  v-for="item,index in enlargeList"
-                  :key="index"
-                  :label="`图片${index + 1}`"
-                  :value="item.DownloadUrl"
-                >
-                  <img
-                    :src="item.DownloadUrl"
-                    alt=""
-                    style="max-width: 100px;max-height: 100px"
-                  >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="缩小：">
-              <el-select v-model="config.controlBtn.shrinkPic">
-                <el-option
-                  v-for="item,index in shrinkList"
-                  :key="index"
-                  :label="`图片${index + 1}`"
-                  :value="item.DownloadUrl"
-                >
-                  <img
-                    :src="item.DownloadUrl"
-                    alt=""
-                    style="max-width: 100px;max-height: 100px"
-                  >
-                </el-option>
-              </el-select>
-            </el-form-item>
+            <ImageSelector
+              label="上："
+              @changeSrc="(val) => $emit('changeValue', 'controlBtn', 'upwardPic', val)"
+              worksheetId="jkzj"
+              imageField="upwardPic"
+              :src="config.controlBtn.upwardPic"
+            ></ImageSelector>
+            <ImageSelector
+              label="放大："
+              @changeSrc="(val) => $emit('changeValue', 'controlBtn', 'enlargePic', val)"
+              worksheetId="jkzj"
+              imageField="enlarge"
+              :src="config.controlBtn.enlargePic"
+            ></ImageSelector>
+            <ImageSelector
+              label="缩小："
+              @changeSrc="(val) => $emit('changeValue', 'controlBtn', 'shrinkPic', val)"
+              worksheetId="jkzj"
+              imageField="shrink"
+              :src="config.controlBtn.shrinkPic"
+            ></ImageSelector>
           </div>
           <div v-show="picType === '选中图片'">
-            <el-form-item label="上：">
-              <el-select v-model="config.controlBtn.upwardPic_hover">
-                <el-option
-                  v-for="item,index in upwardSPicList"
-                  :key="index"
-                  :label="`图片${index + 1}`"
-                  :value="item.DownloadUrl"
-                >
-                  <img
-                    :src="item.DownloadUrl"
-                    alt=""
-                    style="max-width: 100px;max-height: 100px"
-                  >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="放大：">
-              <el-select v-model="config.controlBtn.enlargePic_hover">
-                <el-option
-                  v-for="item,index in enlargeSelectList"
-                  :key="index"
-                  :label="`图片${index + 1}`"
-                  :value="item.DownloadUrl"
-                >
-                  <img
-                    :src="item.DownloadUrl"
-                    alt=""
-                    style="max-width: 100px;max-height: 100px"
-                  >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="缩小：">
-              <el-select v-model="config.controlBtn.shrinkPic_hover">
-                <el-option
-                  v-for="item,index in shrinkSelectList"
-                  :key="index"
-                  :label="`图片${index + 1}`"
-                  :value="item.DownloadUrl"
-                >
-                  <img
-                    :src="item.DownloadUrl"
-                    alt=""
-                    style="max-width: 100px;max-height: 100px"
-                  >
-                </el-option>
-              </el-select>
-            </el-form-item>
+            <ImageSelector
+              label="上："
+              @changeSrc="(val) => $emit('changeValue', 'controlBtn', 'upwardPic_hover', val)"
+              worksheetId="jkzj"
+              imageField="upwardSPic"
+              :src="config.controlBtn.upwardPic_hover"
+            ></ImageSelector>
+            <ImageSelector
+              label="放大："
+              @changeSrc="(val) => $emit('changeValue', 'controlBtn', 'enlargePic_hover', val)"
+              worksheetId="jkzj"
+              imageField="enlargeSelect"
+              :src="config.controlBtn.enlargePic_hover"
+            ></ImageSelector>
+            <ImageSelector
+              label="缩小："
+              @changeSrc="(val) => $emit('changeValue', 'controlBtn', 'shrinkPic_hover', val)"
+              worksheetId="jkzj"
+              imageField="shrinkSelect"
+              :src="config.controlBtn.shrinkPic_hover"
+            ></ImageSelector>
           </div>
         </el-collapse-item>
       </el-collapse>
@@ -311,22 +290,13 @@
             <el-switch v-model="config.offline_record.isShow">
             </el-switch>
           </template>
-          <el-form-item label="tab选项卡图片：">
-            <el-select v-model="config.offline_record.pic">
-              <el-option
-                v-for="item,index in bgPiclist"
-                :key="index"
-                :label="`图片${index + 1}`"
-                :value="item.DownloadUrl"
-              >
-                <img
-                  :src="item.DownloadUrl"
-                  alt=""
-                  style="max-width: 100px;max-height: 100px"
-                >
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <ImageSelector
+            label="tab选项卡图片："
+            @changeSrc="(val) => $emit('changeValue', 'offline_record', 'pic', val)"
+            worksheetId="jkzj"
+            imageField="tabPic"
+            :src="config.offline_record.pic"
+          ></ImageSelector>
           <el-form-item label="标题行字体大小：">
             <el-input
               v-model="config.offline_record.headFont"
@@ -360,6 +330,7 @@
 </template>
 
 <script>
+import ImageSelector from '../componments/ImageSelector';
 import { getFilterRows } from '@/utils/api';
 import { appKey, sign } from '@/utils/const.js';
 export default {
@@ -372,25 +343,15 @@ export default {
       }
     }
   },
+  components: {
+    ImageSelector
+  },
   data() {
     return {
       relationWorksheetId: '',
       relationLayerId: '',
       layerList: [],
-      bgPiclist: [],
-      picType: '默认图片',
-      upword: '',
-      enlarge: '',
-      shrink: '',
-      headPicList: [],
-      closePicList: [],
-      emptyPicList: [],
-      upwardPicList: [],
-      upwardSPicList: [],
-      enlargeList: [],
-      enlargeSelectList: [],
-      shrinkList: [],
-      shrinkSelectList: []
+      picType: '默认图片'
     };
   },
   watch: {
@@ -404,88 +365,8 @@ export default {
       deep: true
     }
   },
-  mounted() {
-    this.getPicData();
-  },
+  mounted() {},
   methods: {
-    async getPicData() {
-      // try {
-      const data = {
-        appKey: appKey,
-        sign: sign,
-        worksheetId: '6528a0cb1f76aeb5855bbf72',
-        rowId: sessionStorage.getItem('rowid'),
-        pageIndex: 1,
-        pageSize: 100
-      };
-      const result = await getFilterRows(data);
-      this.headPicList = result.data.rows
-        .map((item) => {
-          if (item.headPic) {
-            return JSON.parse(item.headPic);
-          }
-        })
-        .filter((item) => item)[0];
-      this.closePicList = result.data.rows
-        .map((item) => {
-          if (item.closePic) {
-            return JSON.parse(item.closePic);
-          }
-        })
-        .filter((item) => item)[0];
-      this.emptyPicList = result.data.rows
-        .map((item) => {
-          if (item.emptyPic) {
-            return JSON.parse(item.emptyPic);
-          }
-        })
-        .filter((item) => item)[0];
-      this.upwardPicList = result.data.rows
-        .map((item) => {
-          if (item.upwardPic) {
-            return JSON.parse(item.upwardPic);
-          }
-        })
-        .filter((item) => item)[0];
-      this.upwardSPicList = result.data.rows
-        .map((item) => {
-          if (item.upwardSPic) {
-            return JSON.parse(item.upwardSPic);
-          }
-        })
-        .filter((item) => item)[0];
-      this.enlargeList = result.data.rows
-        .map((item) => {
-          if (item.enlarge) {
-            return JSON.parse(item.enlarge);
-          }
-        })
-        .filter((item) => item)[0];
-      this.enlargeSelectList = result.data.rows
-        .map((item) => {
-          if (item.enlargeSelect) {
-            return JSON.parse(item.enlargeSelect);
-          }
-        })
-        .filter((item) => item)[0];
-      this.shrinkList = result.data.rows
-        .map((item) => {
-          if (item.shrink) {
-            return JSON.parse(item.shrink);
-          }
-        })
-        .filter((item) => item)[0];
-      this.shrinkSelectList = result.data.rows
-        .map((item) => {
-          if (item.shrinkSelect) {
-            return JSON.parse(item.shrinkSelect);
-          }
-        })
-        .filter((item) => item)[0];
-      // } catch (error) {
-      //   this.$message.error('获取失败');
-      // }
-    },
     async getLayer() {
       this.$emit('changeSize', 'relationWorksheetId', this.relationWorksheetId);
 

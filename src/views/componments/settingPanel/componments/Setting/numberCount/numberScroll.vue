@@ -6,62 +6,10 @@
       class="border-box"
       style="padding: 8px 16px"
     >
-      <el-form-item label="名称：">
-        <div class="componentName" style="display:flex;align-items:center">
-          <el-input
-            v-model="config.name"
-            size="mini"
-            placeholder=""
-            @change="(val) => $emit('changeSize', 'name', val)"
-          ></el-input>
-          <span
-            :class="config.isLock ? 'active' : ''"
-            @click="(val) => $emit('changeSize', 'isLock', !config.isLock)"
-          ></span>
-          <span
-            :class="config.isShow ? 'active' : ''"
-            @click="(val) => $emit('changeSize', 'isShow', !config.isShow)"
-          ></span>
-        </div>
-      </el-form-item>
-
-      <el-form-item label="组件宽度：">
-        <el-input
-          v-model="config.width"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'width', val)"
-          placeholder="请输入组件宽度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="组件高度：">
-        <el-input
-          v-model="config.height"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'height', val)"
-          placeholder="请输入组件高度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="X距离：">
-        <el-input
-          v-model="config.left"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'left', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="Y距离：">
-        <el-input
-          v-model="config.top"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'top', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="默认展示隐藏：" label-width="110px">
-        <el-switch
-          style="margin-top: 7px;"
-          v-model="config.isShowModule"
-          @change="(val) => $emit('changeSize', 'isShowModule', val)"
-        ></el-switch>
-      </el-form-item>
+      <commonSetTitle
+        :config="config"
+        @changeSize="(type, val) => $emit('changeSize', type, val)"
+      />
       <el-collapse>
         <el-collapse-item title="文本(数值)" name="titleNumber">
           <div style="position: relative;">
@@ -70,6 +18,10 @@
               :config="config"
               type1="textNumber"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
 
             <el-form-item label="颜色：">
@@ -105,27 +57,16 @@
                 >px
               </div>
             </el-form-item>
-            <el-form-item label="图片：">
-              <imgSelect
-                :backgroundData="backgroundData"
-                :config="config"
-                datatype1="textNumber"
-                type="img"
-              />
-              <!-- <el-select
-                v-model="config.textNumber.background"
-                placeholder="请选择图片"
-              >
-                <el-option
-                  v-for="(item, i) in imgList"
-                  :label="item.name"
-                  :key="i"
-                  :value="item.src"
-                >
-                  <img class="img" :src="item.src" alt="" />
-                </el-option>
-              </el-select> -->
-            </el-form-item>
+            <ImageSelector
+              label="图片："
+              @changeSrc="
+                (val) =>
+                  $emit('changeValue', 'textNumber', 'background', val)
+              "
+              worksheetId="number_scroll"
+              imageField="img"
+              :src="config.textNumber.background"
+            ></ImageSelector>
             <el-form-item label="宽度：">
               <div class="flex align-center">
                 <el-input
@@ -163,11 +104,6 @@
                 @change="(val) => $emit('changeSize', 'dataLength', val)"
               ></el-input>
             </el-form-item>
-            <!-- <el-form-item label="背景图：">
-              <el-switch
-              style="margin-top: 7px;"
-               v-model="config.textNumber.isBacaground"></el-switch>
-            </el-form-item> -->
           </div>
         </el-collapse-item>
         <el-collapse-item title="文本(前缀)" name="title">
@@ -182,6 +118,10 @@
               :config="config.textForword"
               type1="txtFamily"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
             <el-form-item label="宽度：">
               <el-input
@@ -237,17 +177,6 @@
                 >px
               </div>
             </el-form-item>
-
-            <!-- <el-form-item label="行间距：">
-              <div class="flex align-center">
-                <el-input
-                  v-model="config.textForword.lineHeight"
-                  size="mini"
-                  style="margin: 0 8px 0 0px"
-                ></el-input
-                >px
-              </div>
-            </el-form-item> -->
             <el-form-item label="字间距：">
               <div class="flex align-center">
                 <el-input
@@ -273,6 +202,10 @@
               :config="config.textAfter"
               type1="txtFamily"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
             <el-form-item label="宽度：">
               <el-input
@@ -328,17 +261,6 @@
                 >px
               </div>
             </el-form-item>
-
-            <!-- <el-form-item label="行间距：">
-              <div class="flex align-center">
-                <el-input
-                  v-model="config.textAfter.lineHeight"
-                  size="mini"
-                  style="margin: 0 8px 0 0px"
-                ></el-input
-                >px
-              </div>
-            </el-form-item> -->
             <el-form-item label="字间距：">
               <div class="flex align-center">
                 <el-input
@@ -359,10 +281,11 @@
 <script>
 import { getImgData } from "@/utils/index.js";
 import commonTab from "../componments/commonTab";
-import imgSelect from "../imgSelect";
+import commonSetTitle from "../componments/commonSetTitle";
+import ImageSelector from "../componments/ImageSelector";
 export default {
   name: "setting",
-  components: { commonTab, imgSelect },
+  components: { commonTab, commonSetTitle, ImageSelector},
   data() {
     return {
       directionOption: [

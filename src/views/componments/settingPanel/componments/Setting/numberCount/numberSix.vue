@@ -6,57 +6,10 @@
       class="border-box"
       style="padding: 8px 16px"
     >
-      <el-form-item label="名称：">
-        <div class="componentName" style="display:flex;align-items:center">
-          <el-input v-model="config.name" size="mini" placeholder=""></el-input>
-          <span
-            :class="config.isLock ? 'active' : ''"
-            @click="(val) => $emit('changeSize', 'isLock', !config.isLock)"
-          ></span>
-          <span
-            :class="config.isShow ? 'active' : ''"
-            @click="(val) => $emit('changeSize', 'isShow', !config.isShow)"
-          ></span>
-        </div>
-      </el-form-item>
-
-      <el-form-item label="组件宽度：">
-        <el-input
-          v-model="config.width"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'width', val)"
-          placeholder="请输入组件宽度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="组件高度：">
-        <el-input
-          v-model="config.height"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'height', val)"
-          placeholder="请输入组件高度"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="X距离：">
-        <el-input
-          v-model="config.left"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'left', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="Y距离：">
-        <el-input
-          v-model="config.top"
-          size="mini"
-          @change="(val) => $emit('changeSize', 'top', val)"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="默认展示隐藏：">
-        <el-switch
-          style="margin-top: 7px;"
-          v-model="config.isShowModule"
-          @change="(val) => $emit('changeSize', 'isShowModule', val)"
-        ></el-switch>
-      </el-form-item>
+    <commonSetTitle
+        :config="config"
+        @changeSize="(type, val) => $emit('changeSize', type, val)"
+      />
       <el-form-item label="默认展示数量：">
         <div class="flex" style="color: #fff">
           <el-input-number
@@ -96,14 +49,13 @@
           placeholder="请输入边距"
         ></el-input>
       </el-form-item>
-      <el-form-item label="背景图片：">
-        <imgSelect
-          :backgroundData="backgroundData"
-          :config="config"
-          datatype1="contain"
-          type="rqbjt"
-        />
-      </el-form-item>
+      <ImageSelector
+        label="背景图："
+        @changeSrc="(val) => $emit('changeValue', 'contain', 'background', val)"
+        worksheetId="shuzhiliu"
+        imageField="rqbjt"
+        :src="config.contain.background"
+      ></ImageSelector>
 
       <el-form-item label="显示选中背景图：">
         <el-switch
@@ -111,15 +63,23 @@
           v-model="config.contain.isShowActiveBg"
         ></el-switch>
       </el-form-item>
-      <el-form-item label="选中背景图片：" v-if="config.contain.isShowActiveBg">
-        <imgSelect
-          :backgroundData="backgroundData"
-          :config="config"
-          datatype1="contain"
-          type="rqxzbjt"
-          imgType="activeBg"
-        />
-      </el-form-item>
+      <span v-if="config.contain.isShowActiveBg">
+        <ImageSelector
+          label="选中背景图片："
+          @changeSrc="(val) => $emit('changeValue', 'contain', 'activeBg', val)"
+          worksheetId="shuzhiliu"
+          imageField="rqxzbjt"
+          :src="config.contain.activeBg"
+        ></ImageSelector>
+        <el-form-item label="选中方式：">
+          <el-radio v-model="config.contain.selectType" label="radio"
+            >单选</el-radio
+          >
+          <el-radio v-model="config.contain.selectType" label="check"
+            >多选</el-radio
+          >
+        </el-form-item>
+      </span>
       <el-collapse>
         <el-collapse-item title="图标" name="icon">
           <el-form-item label="显示：">
@@ -157,7 +117,7 @@
             </el-form-item>
           </div>
         </el-collapse-item>
-        <el-collapse-item title="文本(第一行)" name="rowone">
+        <el-collapse-item title="文本(第一行)(名称)" name="rowone">
           <el-form-item label="显示：">
             <el-switch
               style="margin-top: 7px;"
@@ -169,13 +129,31 @@
               :config="config"
               type1="rowOne"
               :isShowColor="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
             <txtGradient
               :config="config"
               type="titleTxt1"
               parentType="rowOne"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             />
           </div>
+          <el-form-item label="宽度：">
+            <div class="flex align-center">
+              <el-input
+                v-model="config.rowOne.width"
+                size="mini"
+                style="margin: 0 8px 0 0px"
+              ></el-input
+              >{{ config.rowOne.width === "auto" ? "" : "px" }}
+            </div>
+          </el-form-item>
           <el-form-item label="显示背景：">
             <el-switch
               style="margin-top: 7px;"
@@ -183,16 +161,6 @@
             ></el-switch>
           </el-form-item>
           <span v-if="config.rowOne.isShowBg">
-            <el-form-item label="宽度：">
-              <div class="flex align-center">
-                <el-input
-                  v-model="config.rowOne.width"
-                  size="mini"
-                  style="margin: 0 8px 0 0px"
-                ></el-input
-                >{{ config.rowOne.width === "auto" ? "" : "px" }}
-              </div>
-            </el-form-item>
             <el-form-item label="高度：">
               <div class="flex align-center">
                 <el-input
@@ -221,21 +189,26 @@
                 inactive-text="背景色"
               ></el-switch>
             </el-form-item>
-            <el-form-item label="背景图片：" v-if="config.rowOne.isBgImg">
-              <imgSelect
-                :backgroundData="backgroundData"
-                :config="config"
-                datatype1="rowOne"
-                type="wbybjt"
-                imgType="backgroundImg"
-              />
-            </el-form-item>
+            <ImageSelector
+              v-if="config.rowOne.isBgImg"
+              label="背景图片："
+              @changeSrc="
+                (val) => $emit('changeValue', 'rowOne', 'backgroundImg', val)
+              "
+              worksheetId="shuzhiliu"
+              imageField="wbybjt"
+              :src="config.rowOne.backgroundImg"
+            ></ImageSelector>
             <span v-else>
               <txtGradient
                 :config="config"
                 type="rowOneBgStyle"
                 gradientType="background"
                 txt="背景是否渐变："
+                @changeValue="
+                  (param1, param2, val) =>
+                    $emit('changeValue', param1, param2, val)
+                "
               />
               <el-form-item label="显示边框：">
                 <el-switch
@@ -337,21 +310,26 @@
                 inactive-text="背景色"
               ></el-switch>
             </el-form-item>
-            <el-form-item label="背景图片：" v-if="config.rowTwo.isBgImg">
-              <imgSelect
-                :backgroundData="backgroundData"
-                :config="config"
-                datatype1="rowTwo"
-                type="wbebjt"
-                imgType="backgroundImg"
-              />
-            </el-form-item>
+            <ImageSelector
+              v-if="config.rowTwo.isBgImg"
+              label="背景图片："
+              @changeSrc="
+                (val) => $emit('changeValue', 'rowTwo', 'backgroundImg', val)
+              "
+              worksheetId="shuzhiliu"
+              imageField="wbebjt"
+              :src="config.rowTwo.backgroundImg"
+            ></ImageSelector>
             <span v-else>
               <txtGradient
                 :config="config"
                 type="rowTwoBgStyle"
                 gradientType="background"
                 txt="背景是否渐变："
+                @changeValue="
+                  (param1, param2, val) =>
+                    $emit('changeValue', param1, param2, val)
+                "
               />
               <el-form-item label="显示边框：">
                 <el-switch
@@ -411,10 +389,24 @@
               ></el-switch>
             </el-form-item>
             <div v-show="config.rowTwoTxt1.show">
+              <el-form-item label="宽度：">
+                <div class="flex align-center">
+                  <el-input
+                    v-model="config.rowTwoTxt1.width"
+                    size="mini"
+                    style="margin: 0 8px 0 0px"
+                  ></el-input
+                  >{{ config.rowTwoTxt1.width === "auto" ? "" : "px" }}
+                </div>
+              </el-form-item>
               <commonTab
                 :config="config"
                 type1="rowTwoTxt1"
                 :isShowColor="false"
+                @changeValue="
+                  (param1, param2, val) =>
+                    $emit('changeValue', param1, param2, val)
+                "
               ></commonTab>
               <txtGradient
                 :config="config"
@@ -431,6 +423,16 @@
               ></el-switch>
             </el-form-item>
             <div v-show="config.rowTwoTxt2.show">
+              <el-form-item label="宽度：">
+                <div class="flex align-center">
+                  <el-input
+                    v-model="config.rowTwoTxt2.width"
+                    size="mini"
+                    style="margin: 0 8px 0 0px"
+                  ></el-input
+                  >{{ config.rowTwoTxt2.width === "auto" ? "" : "px" }}
+                </div>
+              </el-form-item>
               <el-form-item label="左边距：">
                 <div class="flex align-center">
                   <el-input
@@ -445,14 +447,119 @@
                 :config="config"
                 type1="rowTwoTxt2"
                 :isShowColor="false"
+                @changeValue="
+                  (param1, param2, val) =>
+                    $emit('changeValue', param1, param2, val)
+                "
               ></commonTab>
               <txtGradient
                 :config="config"
                 type="titleTxt3"
                 parentType="rowTwoTxt2"
+                @changeValue="
+                  (param1, param2, val) =>
+                    $emit('changeValue', param1, param2, val)
+                "
               />
             </div>
           </el-collapse-item>
+        </el-collapse-item>
+        <el-collapse-item title="文本(标签)" name="tag" v-if="config.tagsStyle&&config.tagsStyle.colorArr">
+          <el-form-item label="显示：">
+            <el-switch
+              style="margin-top: 7px;"
+              v-model="config.tagsStyle.show"
+            ></el-switch>
+          </el-form-item>
+          <div v-show="config.tagsStyle.show">
+            <commonTab
+              :config="config"
+              type1="tagsStyle"
+              :isTxtAlign2="false"
+              :isTxtAlign="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
+            <el-form-item label="上外边距：">
+            <div class="flex align-center">
+              <el-input
+                v-model="config.tagsStyle.marginTop"
+                size="mini"
+                style="margin: 0 8px 0 0px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+          <el-form-item label="圆角：">
+            <div class="flex align-center">
+              <el-input
+                v-model="config.tagsStyle.borderRadius"
+                size="mini"
+                style="margin: 0 8px 0 0px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+            <el-form-item label="字体背景默认颜色：" label-width="145px">
+              <div class="flex align-center">
+                <el-color-picker
+                  v-model="config.tagsStyle.color"
+                  show-alpha
+                  size="mini"
+                  style="margin-right: 5px;"
+                ></el-color-picker>
+                <el-color-picker
+                  v-model="config.tagsStyle.backgroundColor"
+                  show-alpha
+                  size="mini"
+                  style="margin-right: 5px;"
+                ></el-color-picker>
+                
+              </div>
+            </el-form-item>
+            <el-form-item label="枚举文本颜色：">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  icon="el-icon-plus"
+                  @click="addColorData()"
+                  >添加颜色配置</el-button
+                >
+              </el-form-item>
+              <div
+                class="colorData"
+                v-for="(v, i) in config.tagsStyle.colorArr"
+                :key="i"
+              >
+                <el-form-item class="no-margin">
+
+                  <el-input
+                    v-model="v.txt"
+                    size="mini"
+                    placeholder="请输入值"
+                  ></el-input>
+                  <el-color-picker
+                    v-model="v.color"
+                    size="mini"
+                    style="margin-left: 5px;"
+                    show-alpha
+                  ></el-color-picker>
+                  <el-color-picker
+                    v-model="v.background"
+                    size="mini"
+                    style="margin-left: 5px;"
+                    show-alpha
+                  ></el-color-picker>
+                  <i
+                    style="color: red"
+                    class="el-icon-delete"
+                    @click="delColor(i)"
+                  />
+                </el-form-item>
+              </div>
+          </div>
         </el-collapse-item>
       </el-collapse>
     </el-form>
@@ -462,11 +569,12 @@
 <script>
 import commonTab from "../componments/commonTab";
 import txtGradient from "../componments/txtGradient";
-import imgSelect from "../imgSelect";
+import ImageSelector from "../componments/ImageSelector";
 import { getImgData } from "@/utils/index.js";
+import commonSetTitle from "../componments/commonSetTitle";
 export default {
   name: "setting",
-  components: { commonTab, txtGradient, imgSelect },
+  components: { commonTab, txtGradient, ImageSelector ,commonSetTitle},
   data() {
     return {
       directionOption: [
@@ -549,7 +657,24 @@ export default {
   mounted() {
     this.getBackgroundData();
   },
+  watch:{
+    "config.tagsStyle.colorArr":{
+      handler(n){
+        console.log(n,'====n');
+      }
+    }
+  },
   methods: {
+    addColorData(){
+        this.config.tagsStyle.colorArr.push( {
+        txt:'',
+        color:'rgba(83, 195, 255, 1)',
+        background:'rgba(83, 195, 255, 0.102)'
+      })
+    },
+    delColor(i) {
+      this.config.tagsStyle.colorArr.splice(i, 1);
+    },
     async getBackgroundData() {
       this.backgroundData = await getImgData(this.config);
     },

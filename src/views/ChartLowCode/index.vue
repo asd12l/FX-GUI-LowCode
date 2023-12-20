@@ -35,7 +35,7 @@
             <div class="cockpit-item_cover">
               <img
                 v-if="item.img_url"
-                :src="JSON.parse(item.img_url)[0]['DownloadUrl']"
+                :src="(item.img_url && JSON.parse(item.img_url)[0]) ? JSON.parse(item.img_url)[0]['DownloadUrl'] : ''"
                 :style="{ width: '100%', height: '100%' }"
                 alt=""
                 srcset=""
@@ -60,10 +60,10 @@
         popper-class="page-btn"
         class="page-btn"
         style="
-           {
-            marginleft: 20px;
-          }
-        "
+             {
+              marginleft: 20px;
+            }
+          "
       >
         <div slot="reference">
           <el-button
@@ -234,9 +234,9 @@
             <div
               class="center flex-sub relative"
               :style="{
-                background: '#232424',
-                // backgroundImage: `url(${currectPanelBg})`
-              }"
+              background: '#232424',
+              // backgroundImage: `url(${currectPanelBg})`
+            }"
               ref="cutScreen"
             >
               <img
@@ -283,7 +283,9 @@
                     :component="item.component"
                     :scale="scale"
                     @changeSize="changeSize"
-                  ></component>
+                    @changeValue="changeValue"
+                  >
+                  </component>
                   <el-button
                     type="danger"
                     icon="el-icon-delete"
@@ -291,19 +293,19 @@
                     size="mini"
                     class="del-button"
                     v-show="
-                      currentConfig.id == item.id &&
-                        !containerCom.includes(item.component)
-                    "
+                    currentConfig.id == item.id &&
+                    !containerCom.includes(item.component)
+                  "
                     @click.stop="removeComponent($event, item)"
                   ></el-button>
                 </vue-drag-resize>
               </draggable>
               <div
                 v-show="
-                  // currentConfig.component === 'container' ||
-                  // currentConfig.parentId
-                  isShowContainerMask
-                "
+                // currentConfig.component === 'container' ||
+                // currentConfig.parentId
+                isShowContainerMask
+              "
                 @click.stop="clickMask"
                 :style="maskMaskStyle"
                 class="mask"
@@ -360,37 +362,32 @@ import {
   gaugeChart,
   wordChart,
   radarChart,
-  treeChart,
-} from "@/components/Charts";
-import stackedLine from "@/components/Charts/lineChart/stackedLine";
-import customLegendPie from "@/components/Charts/pie/pieChart";
-import "./index.scss";
-import { scatterMap, seriesMap } from "@/components/Map";
-import { editSceneJson, getFilterRows } from "@/utils/api";
-import { containerCom } from "@/utils/const";
-import DateComponent from "@/components/Date";
-import NumberComponent from "@/components/Number";
-import SilderBar from "../componments/sideBar";
-import SettingPanel from "../componments/settingPanel";
-import AddDialog from "../componments/addDialog";
-import dateMap from "@/components/date";
-import smallTitle from "@/components/title/smallTitle";
-import progressBar from "../../components/List/progressBar.vue";
-import Statistic from "../../components/Statistic/statistic.vue";
-import SceneSelector from "../componments/SceneSelector";
-import LayerControl from "../../components/LayerControl/layerControl.vue";
-import BasicText from "../../components/Text/text.vue";
-import RichEditor from "../../components/Text/richEditor.vue";
+  treeChart
+} from '@/components/Charts';
+import stackedLine from '@/components/Charts/lineChart/stackedLine';
+import customLegendPie from '@/components/Charts/pie/pieChart';
+import './index.scss';
+import { scatterMap, seriesMap } from '@/components/map';
+import { editSceneJson, getFilterRows } from '@/utils/api';
+import { containerCom } from '@/utils/const';
+import DateComponent from '@/components/date';
+import NumberComponent from '@/components/Number';
+import SilderBar from '../componments/sideBar';
+import SettingPanel from '../componments/settingPanel';
+import AddDialog from '../componments/addDialog';
+import dateMap from '@/components/date';
+import smallTitle from '@/components/title/smallTitle';
+import progressBar from '../../components/List/progressBar.vue';
+import Statistic from '../../components/Statistic/statistic.vue';
+import SceneSelector from '../componments/SceneSelector';
+import LayerControl from '../../components/LayerControl/layerControl.vue';
+import BasicText from '../../components/Text/text.vue';
+import RichEditor from '../../components/Text/richEditor.vue';
 import navigation from '@/components/Navigation';
 import background from '@/components/Background';
-import numberCount from '@/components/NumberCount';
 import importCamera from '@/components/Camera/importCamera';
 import splitCameraScreen from '@/components/Camera/splitCameraScreen';
-import numberScroll from '@/components/NumberCount/numberScroll';
 import eventList from '@/components/List/eventList.vue';
-import buttonGroup from '@/components/NumberCount/buttonGroup';
-import numberThree from '@/components/NumberCount/numberThree';
-import numberSteering from '@/components/NumberCount/numberSteering';
 import CarouselPic from '../../components/CarouselPic/index.vue';
 import AppraisingCard from '../../components/List/appraisingCard/appraisingCard.vue';
 import tabPanel from '@/components/title/tabPanel';
@@ -400,26 +397,32 @@ import groupBar from '@/components/Charts/barChart/groupBar.vue';
 import mixedLineandBar from '@/components/Charts/mixedLineandBar/index.vue';
 import checkboxGroup from '../../components/LayerControl/checkboxGroup.vue';
 import SwitchList from '../../components/List/switchList/index.vue';
-import numberFive from '@/components/NumberCount/numberFive';
-import numberSix from '@/components/NumberCount/numberSix';
-import buttonOne from '@/components/NumberCount/buttonOne';
 import {
   commonTable,
+  commonTable1,
+  commonTable2,
   scrollTable,
   selectBox,
   dateTimePicker,
   searchBox,
-  popupBox
-} from '@/components/Table';
+  popupBox,
+  personnelHouse
+} from '@/components/table';
 import Track from '@/components/Track/track';
 import eventDetail from '@/components/eventDetail';
 import danbing from '@/components/Camera/danbing';
 import weather from '@/components/Weather';
 import singleCamera from '@/components/SingleCamera';
-import personnelHouse from '@/components/Table/personnelHouse';
+import eventDetailParticular from '@/components/eventDetail/eventDetailParticular';
+import privateCloud from '@/components/privateCloud';
+import billBoard from '@/components/billBoard';
+import polygonArea from '@/components/polygonArea';
+import numberCount from '@/components/numberCount/index.js';
 export default {
   name: 'Chat',
   components: {
+    polygonArea,
+    billBoard,
     customLegendPie,
     mixedLineandBar,
     groupBar,
@@ -439,7 +442,6 @@ export default {
     treeChart,
     scatterMap,
     seriesMap,
-    DateComponent,
     NumberComponent,
     SilderBar,
     AddDialog,
@@ -451,38 +453,36 @@ export default {
     SceneSelector,
     navigation,
     background,
-    numberCount,
     importCamera,
     splitCameraScreen,
     LayerControl,
-    numberScroll,
     eventList,
     BasicText,
     RichEditor,
-    buttonGroup,
-    numberThree,
     CarouselPic,
     AppraisingCard,
     tabPanel,
     commonTable,
+    commonTable1,
+    commonTable2,
     scrollTable,
     selectBox,
     dateTimePicker,
     searchBox,
     popupBox,
-    numberFive,
-    numberSix,
-    numberSteering,
     checkboxGroup,
     SwitchList,
     CanvasTools,
     Track,
     eventDetail,
-    buttonOne,
     danbing,
     weather,
     singleCamera,
     personnelHouse,
+    eventDetailParticular,
+    DateComponent,
+    ...privateCloud, //私有云组件
+    ...numberCount //数值组件及按钮组件
   },
   data() {
     return {
@@ -608,6 +608,12 @@ export default {
     //   spinner: "el-icon-loading",
     //   background: "rgba(255, 255, 255, 1)",
     // });
+    const loading = this.$loading({
+      lock: true,
+      text: '拼命加载中',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    });
     this.containerCom = containerCom;
     this.initScreens();
     this.listen();
@@ -616,6 +622,7 @@ export default {
       this.$nextTick(async () => {
         await this.loadAllScene();
         await this.loadAllCockpit();
+        loading.close();
       });
     } catch (error) {}
     // loading.close();
@@ -883,11 +890,13 @@ export default {
       );
       this.currectPanelData[currectIndex].sceneId = rowid;
       if (currectIndex === this.currectIndex) {
+        let scene = sessionStorage.getItem('scene');
+        scene &&
+          (this.scenceList = JSON.parse(sessionStorage.getItem('scene')));
         const { scene_snapshot } = this.scenceList.find(
           (item) => item.rowid === rowid
         );
-        const panelBg =
-          scene_snapshot && JSON.parse(scene_snapshot)[0]['DownloadUrl'];
+        const panelBg = scene_snapshot;
         this.currectPanelBg = panelBg;
       }
 
@@ -916,24 +925,31 @@ export default {
       });
       this.currectIndex = this.currectPanelData.length - 1;
       this.currectPanelPageId = pageId;
-     
+
       const currectPageData = data.content ? JSON.parse(data.content) : [];
       const copyPageData = [];
       // 复制页面时组件重新生成id
       for (let index = 0; index < currectPageData.length; index++) {
-        let pageEle = currectPageData[index]
-        if (currectPageData[index].drawingList && currectPageData[index].drawingList.length) {
+        let pageEle = currectPageData[index];
+        if (
+          currectPageData[index].drawingList &&
+          currectPageData[index].drawingList.length
+        ) {
           let eleDrawingList = [];
-          for (let inx = 0; inx < currectPageData[index].drawingList.length; inx++) {
+          for (
+            let inx = 0;
+            inx < currectPageData[index].drawingList.length;
+            inx++
+          ) {
             eleDrawingList.push({
               ...currectPageData[index].drawingList[inx],
               id: guid()
-            })
+            });
           }
-          pageEle.drawingList = eleDrawingList
+          pageEle.drawingList = eleDrawingList;
         }
-        pageEle.id = guid()
-        copyPageData.push(pageEle)
+        pageEle.id = guid();
+        copyPageData.push(pageEle);
       }
 
       this.drawingList = copyPageData;
@@ -1121,7 +1137,7 @@ export default {
         JSON.stringify(this.currectPanelData)
       );
       sessionStorage.setItem('rowid', sessionStorage.getItem('rowid'));
-      window.open('/cockpitView/#/view');
+      window.open('/#/view');
       // this.exportImg();
       // console.log("panelPreview");
     },
@@ -1157,20 +1173,20 @@ export default {
     },
     // 获取所有场景
     async loadAllScene() {
-      try {
-        const {
-          data: { rows }
-        } = await getFilterRows({
-          appKey: appKey,
-          sign: sign,
-          // worksheetId: "cockpit",
-          worksheetId: 'scene',
-          pageSize: 100,
-          pageIndex: 1,
-          notGetTotal: true
-        });
-        this.scenceList = rows;
-      } catch (error) {}
+      // try {
+      //   const {
+      //     data: { rows }
+      //   } = await getFilterRows({
+      //     appKey: appKey,
+      //     sign: sign,
+      //     // worksheetId: "cockpit",
+      //     worksheetId: 'scene',
+      //     pageSize: 100,
+      //     pageIndex: 1,
+      //     notGetTotal: true
+      //   });
+      //   this.scenceList = rows;
+      // } catch (error) {}
     },
     // 获取所有驾驶舱
     async loadAllCockpit() {
@@ -1211,17 +1227,14 @@ export default {
           this.currectPanelPageId = JSON.parse(kbjson)[0].id;
 
           this.drawingList = JSON.parse(JSON.parse(kbjson)[0].content);
-
           const { scene_snapshot } =
             this.scenceList.find(
               (item) => item.rowid === this.currectPanelData[0].sceneId
             ) || {};
           this.currectPanelBg =
-            scene_snapshot && JSON.parse(scene_snapshot)[0]['DownloadUrl'];
-          console.log(
-            'this.currectPanelData[0]:::::::::::::::::::',
-            this.currectPanelData[0]
-          );
+            scene_snapshot &&
+            JSON.parse(scene_snapshot)[0] &&
+            JSON.parse(scene_snapshot)[0]['DownloadUrl'];
           this.currectSceneId = this.currectPanelData[0].sceneId;
         } else {
           this.currectPanelData = [{ title: '页面一', id: guid() }];
@@ -1238,6 +1251,12 @@ export default {
       const panelData = this.currectPanelData;
       panelData[this.currectIndex].content = JSON.stringify(this.drawingList);
       const { width, height } = this.$store.state.canvasConfig;
+      sessionStorage.setItem('panelData', JSON.stringify(panelData));
+      setTimeout(() => {
+        this.isLoading = false;
+        this.$message.success('保存成功');
+      }, 500);
+      return;
       try {
         const data = {
           appKey: appKey,
@@ -1465,10 +1484,11 @@ export default {
     },
     //修改setting
     changeSize(key, value) {
+      console.log(key, value, '===changeSize');
       // this.$refs[
       //   "container_" + this.$store.state.currentConfig.id
       // ][0].$el.style.display = newVal ? "block" : "none";
-      
+
       if (
         this.isContainerEdit() &&
         !containerCom.includes(this.currentConfig.component)
@@ -1488,7 +1508,7 @@ export default {
         this.drawingList.forEach((item) => {
           if (item.id === this.currentConfig.id) {
             item.config[key] = value;
-            console.log("item::::::", item)
+            console.log('item::::::setting', item);
             this.currentConfig = {
               id: item.id,
               ...item.config,
@@ -1505,6 +1525,7 @@ export default {
       });
     },
     changeValue(param1, param2, value) {
+      console.log(param1, param2, value, '===changeValue');
       if (
         this.isContainerEdit() &&
         !containerCom.includes(this.currentConfig.component)

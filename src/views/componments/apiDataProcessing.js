@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-03 14:43:04
  * @LastEditors: ydl
- * @LastEditTime: 2023-10-20 11:08:09
+ * @LastEditTime: 2023-11-06 16:53:41
  */
 
 const getChart = (data) => {
@@ -61,7 +61,6 @@ const getResultDataList = (data, config) => {
 const getTableData = (data, config) => {
   config.data.tableData = data.list || [];
   config.data.total = data.total || 0;
-  config.data.tableKeyData = data.list[0] && Object.keys(data.list[0]);
   return config.data;
 };
 const getScrollTableData = (data, config) => {
@@ -85,41 +84,6 @@ const getCheckboxGroup = (data, config) => {
   return data;
 };
 
-/**处理摄像头树状数据 */
-let collectData = {};
-let expandRowid = [];
-const getCmeraTreeData = (data, config) => {
-  collectData = {};
-  let d = dealTreeData(data);
-  console.log(config, "====config");
-  config.data.treeData = data;
-  config.data.collectData = d.collectData;
-  config.data.expandRowid = d.expandRowid;
-  return config.data;
-};
-
-const dealTreeData = (d) => {
-  d.forEach((item) => {
-    if (item.level === 1) {
-      expandRowid.push(item.rowid);
-    }
-    if (item.children && item.children.length > 0) {
-      dealTreeData(item.children);
-    } else {
-      if (item.is_collection == "是") {
-        collectData[item.rowid] = true;
-      }
-    }
-    if (item.device_list && item.device_list.length > 0) {
-      if (!item.children) {
-        item.children = [];
-      }
-      item.children.push(...item.device_list);
-    }
-  });
-  return { collectData, expandRowid };
-};
-
 const apiDataProcessing = {
   lineChart: (data) => getChart(data),
   barChart: (data) => getChart(data),
@@ -128,7 +92,7 @@ const apiDataProcessing = {
   navigation: (data, config) => getNavigation(data, config),
   numberCount: (data, config) => getNumberCount(data, config),
   importCamera: (data, config) => getResultDataList(data, config),
-  splitCameraScreen: (data, config) => getCmeraTreeData(data, config),
+  splitCameraScreen: (data, config) => getResultData(data, config),
   layerControl: (data, config) => getResultData(data, config),
   checkboxGroup: (data, config) => getCheckboxGroup(data, config),
   progressBar: (data, config) => getResultData(data, config),
@@ -141,10 +105,13 @@ const apiDataProcessing = {
   appraisingCard: (data, config) => getResultDataList(data, config),
   switchList: (data, config) => getResultData(data, config),
   commonTable: (data, config) => getTableData(data, config),
+  commonTable1: (data, config) => getTableData(data, config),
+  commonTable2: (data, config) => getTableData(data, config),
   scrollTable: (data, config) => getScrollTableData(data, config),
   barChart: (data, config) => getSerieData(data, config),
   numberFive: (data, config) => getResultDataList(data, config),
   carouselPic: (data, config) => getResultDataList(data, config),
+  personnelHouse: (data, config) => getResultDataList(data, config),
 };
 
 export default apiDataProcessing;

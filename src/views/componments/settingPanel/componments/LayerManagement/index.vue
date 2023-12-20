@@ -225,10 +225,10 @@ export default {
         })
         .map((item) => {
           const drawingList = item.config.drawingList || []
-          drawingList.reverse()
+          
           return { 
             ...item,
-            drawingList: drawingList,
+            drawingList: drawingList.slice().reverse(),
             name: item.config.name || item.config.key,
           };
         })

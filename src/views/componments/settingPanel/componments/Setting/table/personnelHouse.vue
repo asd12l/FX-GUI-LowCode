@@ -10,88 +10,93 @@
         :config="config"
         @changeSize="(type, val) => $emit('changeSize', type, val)"
       />
-      <el-form-item label="背景图片：">
-        <el-select v-model="config.box.backgroundImg" clearable>
-          <el-option
-            v-for="(item, index) in imgList.bg_img"
-            :key="index"
-            :label="`图片${index + 1}`"
-            :value="item"
-          >
-            <img
-              :src="item"
-              alt=""
-              style="max-width: 100px;max-height: 100px"
-            />
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="关闭按钮图片：">
-        <el-select v-model="config.box.closeImg" clearable>
-          <el-option
-            v-for="(item, index) in imgList.close_img"
-            :key="index"
-            :label="`图片${index + 1}`"
-            :value="item"
-          >
-            <img
-              :src="item"
-              alt=""
-              style="max-width: 100px;max-height: 100px"
-            />
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否POI点弹窗:">
+      <ImageSelector
+              label="背景图片："
+              @changeSrc="(val) => $emit('changeValue','box', 'backgroundImg', val)"
+              worksheetId="zhsq_rfyhyl"
+              imageField="bg_img"
+              :src="config.box.backgroundImg"
+            ></ImageSelector>
+            <ImageSelector
+              label="关闭按钮图片："
+              @changeSrc="(val) => $emit('changeValue','box', 'closeImg', val)"
+              worksheetId="zhsq_rfyhyl"
+              imageField="close_img"
+              :src="config.box.closeImg"
+            ></ImageSelector>
+   
+      <el-form-item label="是否POI点弹窗:"  label-width="120px">
         <el-switch
           v-model="config.isRelationPoi"
           @change="(val) => $emit('changeSize', 'isRelationPoi', val)"
         ></el-switch>
       </el-form-item>
-       <div v-if='config.isRelationPoi'>
-        <el-form-item label="关联图层表ID："  label-width="115px">
-        <el-input
-          v-model="relationWorksheetId"
-          size="mini"
-          @blur="getLayer"
-        ></el-input>
+      <div v-if="config.isRelationPoi">
+        <el-form-item label="关联图层表ID：" label-width="115px">
+          <el-input
+            v-model="relationWorksheetId"
+            size="mini"
+            @blur="getLayer"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="关联图层：">
+          <el-select
+            v-model="config.box.relationLayerId"
+            size="small"
+            multiple
+            class="currentPic"
+          >
+            <el-option
+              v-for="item in layerList"
+              :key="item.rowid"
+              :label="item.name"
+              :value="item.rowid"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </div>
+      <el-form-item label="手机号是否脱敏:"  label-width="120px">
+        <el-switch
+          v-model="config.box.desensitization"
+          @change="(val) => $emit('changeSize', 'desensitization', val)"
+        ></el-switch>
       </el-form-item>
-      <el-form-item label="关联图层：">
-        <!-- <el-select
-          v-model="relationLayerId"
-          @change="$emit('changeSize', 'relationLayerId', relationLayerId)"
-          size="small"
-          multiple
-          class="currentPic"
-        >
-          <el-option
-            v-for="(item) in layerList"
-            :key="item.rowid"
-            :label="item.name"
-            :value="item.rowid"
-          ></el-option>
-        </el-select> -->
-      </el-form-item>
-       </div>
+      <div v-if="config.box.desensitization">
+       
+        <el-form-item label="脱敏字段：">
+          <el-select
+            v-model="config.box.input"
+            popper-class="setting-select"
+            size="small"
+            multiple
+            class="currentPic"
+          >
+            <el-option
+              v-for="item in config.box.numDesensitization"
+              :key="item"
+              :label="item"
+              :value="item"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </div>
       <el-collapse>
         <el-collapse-item title="弹窗头部">
-          <commonTab :config="config" type1="box" />
-          <el-form-item label="头部图片：">
-            <el-select v-model="config.box.headImg" clearable>
-              <el-option
-                v-for="(item, index) in imgList.header_img"
-                :key="index"
-                :label="`图片${index + 1}`"
-                :value="item"
-              >
-                <img
-                  :src="item"
-                  alt=""
-                  style="max-width: 100px;max-height: 100px"
-                />
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <commonTab
+            :config="config"
+            type1="box"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
+          />
+          <ImageSelector
+              label="头部图片："
+              @changeSrc="(val) => $emit('changeValue','box', 'headImg', val)"
+              worksheetId="zhsq_rfyhyl"
+              imageField="header_img"
+              :src="config.box.headImg"
+            ></ImageSelector>
+         
           <el-form-item label="图片高度：">
             <div class="flex align-center">
               <el-input
@@ -105,98 +110,80 @@
         </el-collapse-item>
 
         <el-collapse-item title="页面中小标题样式">
-          <commonTab :config="config" type1="box" type2="smallTitle" />
-          <el-form-item label="文本缩进值：">
-            <div class="flex align-center">
-              <el-input
-                v-model="config.box.smallTitle.textIndent"
-                size="mini"
-                placeholder="请输入..."
-              ></el-input
-              >px
-            </div>
-          </el-form-item>
-          <el-form-item label="标题样式图片：">
-            <el-select v-model="config.box.smallImg" clearable>
-              <el-option
-                v-for="(item, index) in imgList.small_img"
-                :key="index"
-                :label="`图片${index + 1}`"
-                :value="item"
-              >
-                <img
-                  :src="item"
-                  alt=""
-                  style="max-width: 100px;max-height: 100px"
-                />
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="图片高度：">
-            <div class="flex align-center">
-              <el-input
-                v-model="config.box.smallTitle.height"
-                size="mini"
-                placeholder="请输入..."
-              ></el-input
-              >px
-            </div>
-          </el-form-item>
+          <div style="position: relative;">
+            <div class="hidden"></div>
+            <commonTab
+              :config="config"
+              type1="box"
+              type2="smallTitle"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            />
+            <el-form-item label="文本缩进值：">
+              <div class="flex align-center">
+                <el-input
+                  v-model="config.box.smallTitle.textIndent"
+                  size="mini"
+                  placeholder="请输入..."
+                ></el-input
+                >px
+              </div>
+            </el-form-item>
+            <ImageSelector
+              label="标题样式图片："
+              @changeSrc="(val) => $emit('changeValue','box', 'smallImg', val)"
+              worksheetId="zhsq_rfyhyl"
+              imageField="small_img"
+              :src="config.box.smallImg"
+            ></ImageSelector>
+            <el-form-item label="图片高度：">
+              <div class="flex align-center">
+                <el-input
+                  v-model="config.box.smallTitle.height"
+                  size="mini"
+                  placeholder="请输入..."
+                ></el-input
+                >px
+              </div>
+            </el-form-item>
+          </div>
         </el-collapse-item>
-        <el-collapse-item title="房屋信息" >
-          <el-collapse-item title="标题"  style="margin-bottom:10px;">
+        <el-collapse-item title="房屋信息">
+          <el-collapse-item title="标题" style="margin-bottom:10px;">
             <el-form-item label="表ID：">
               <el-input
                 size="mini"
+                v-model="config.box.houseWorksheetId"
+                @blur="getFont"
                 placeholder="请输入..."
-              ></el-input
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="字段值：">
+              <el-select
+                popper-class="setting-select"
+                placeholder="请选择字段"
+                v-model="config.box.name"
               >
-          </el-form-item>
-          <el-form-item label="字段值：">
-            <el-select
-              popper-class="setting-select"
-              placeholder="请选择字体"
-            >
-              <!-- <el-option
-                v-for="(item, i) in fontList"
-                :label="item"
-                :key="i"
-                :value="item"
-              ></el-option> -->
-            </el-select>
-          </el-form-item>
-           </el-collapse-item>
-           <el-collapse-item title="字段展示" >
-            <el-form-item label="表ID："   label-width="90px">
+                <el-option
+                  v-for="(item, i) in fontList"
+                  :label="item"
+                  :key="i"
+                  :value="item"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-collapse-item>
+          <el-collapse-item title="字段展示">
+            <!-- <el-form-item label="表ID：" label-width="90px">
               <el-input
+                v-model="houseTableId"
                 size="mini"
                 placeholder="请输入..."
-              ></el-input
-              >
-          </el-form-item>
-           <!-- <div class="box">
-            <span >字段展示</span>
-            <el-button type="primary" @click.stop="dialogVisible = true" size="mini" 
-                  >显示字段选择</el-button>
-            <el-dialog
-              title="显示字段信息"
-              :visible.sync="dialogVisible"
-              width="30%"
-              :before-close="handleClose"
-            >
-              <div>
-
-              </div>
-
-
-              <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click.stop="dialogVisible = false"
-                  >确 定</el-button
-                >
-              </span>
-            </el-dialog>
-          </div> -->
-          <el-form-item label="字段排列：" label-width="90px">
+              ></el-input>
+            </el-form-item> -->
+            <!-- <el-form-item label="字段排列：" label-width="90px">
           <div
             class="flex"
             style="color: #fff;"
@@ -209,96 +196,96 @@
             ></el-input-number>
             <div style="margin-left: 10px">个</div>
           </div>
-        </el-form-item>
-        <el-form-item label="字段名称宽高："  label-width="120px">
-            <div class="flex align-center">
-              <el-input
+        </el-form-item> -->
+            <el-form-item label="字段名称宽高：" label-width="120px">
+              <div class="flex align-center">
+                <el-input
+                  v-model="config.houseData.tableLeft.width"
+                  size="mini"
+                  placeholder="宽"
+                ></el-input
+                >x<el-input
+                  v-model="config.houseData.tableLeft.height"
+                  size="mini"
+                  placeholder="高"
+                ></el-input>
+              </div>
+            </el-form-item>
+            <el-form-item label="字段值宽高：" label-width="120px">
+              <div class="flex align-center">
+                <el-input
+                  v-model="config.houseData.tableRight.width"
+                  size="mini"
+                  placeholder="宽"
+                ></el-input
+                >x<el-input
+                  v-model="config.houseData.tableRight.height"
+                  size="mini"
+                  placeholder="高"
+                ></el-input>
+              </div>
+            </el-form-item>
+            <el-form-item label="字体大小：">
+              <div class="flex align-center">
+                <el-input
+                  v-model="config.houseData.fontSize"
+                  size="mini"
+                  placeholder="请输入..."
+                ></el-input
+                >px
+              </div>
+            </el-form-item>
+            <el-form-item label="字体颜色(左右)：" label-width="120px">
+              <el-color-picker
+                v-model="config.houseData.tableLeft.color"
                 size="mini"
-                placeholder="宽"
-              ></el-input
-              >x<el-input
+                show-alpha
+                style="margin-right:10px"
+              ></el-color-picker>
+              <el-color-picker
+                v-model="config.houseData.tableRight.color"
                 size="mini"
-                placeholder="高"
-              ></el-input
-              >
-            </div>
-          </el-form-item>
-          <el-form-item label="字段值宽高："  label-width="120px">
-            <div class="flex align-center">
-              <el-input
+                show-alpha
+              ></el-color-picker>
+            </el-form-item>
+            <el-form-item label="边框颜色(左右)： " label-width="120px">
+              <el-color-picker
+                v-model="config.houseData.tableLeft.borderColor"
                 size="mini"
-                placeholder="宽"
-              ></el-input
-              >x<el-input
+                show-alpha
+                style="margin-right:10px"
+              ></el-color-picker>
+              <el-color-picker
+                v-model="config.houseData.tableRight.borderColor"
                 size="mini"
-                placeholder="高"
-              ></el-input
-              >
-            </div>
-          </el-form-item>
-          <el-form-item label="字体大小：">
-            <div class="flex align-center">
-              <!-- 
-                v-model="config.box.height" -->
-              <el-input
+                show-alpha
+              ></el-color-picker>
+            </el-form-item>
+            <el-form-item label="背景颜色(左右)：" label-width="120px">
+              <el-color-picker
+                v-model="config.houseData.tableLeft.background"
                 size="mini"
-                placeholder="请输入..."
-              ></el-input
-              >px
-            </div>
-          </el-form-item>
-          <el-form-item label="字体颜色(左右)：" label-width="120px">
-        <el-color-picker
-          size="mini"
-          show-alpha
-          style='margin-right:10px'
-        ></el-color-picker>
-        <el-color-picker
-          size="mini"
-          show-alpha
-        ></el-color-picker>
-      </el-form-item>
-      <el-form-item label="边框颜色(左右)： " label-width="120px">
-        <el-color-picker
-          size="mini"
-          show-alpha
-          style='margin-right:10px'
-        ></el-color-picker>
-        <el-color-picker
-          size="mini"
-          show-alpha
-        ></el-color-picker>
-      </el-form-item>
-      <el-form-item label="背景颜色(左右)：" label-width="120px">
-        <el-color-picker
-          size="mini"
-          show-alpha
-          style='margin-right:10px'
-        ></el-color-picker>
-        <el-color-picker
-          size="mini"
-          show-alpha
-        ></el-color-picker>
-      </el-form-item>
-        </el-collapse-item>
-       
-        </el-collapse-item>
-          </el-collapse-item>
-        </div>
-        <!-- <el-collapse-item title="表格数据">
-            <div class="button-box">
+                show-alpha
+                style="margin-right:10px"
+              ></el-color-picker>
+              <el-color-picker
+                v-model="config.houseData.tableRight.background"
+                size="mini"
+                show-alpha
+              ></el-color-picker>
+            </el-form-item>
+            <el-form-item label="字段配置：">
               <el-button
                 type="primary"
                 size="mini"
                 icon="el-icon-plus"
-                @click="addShowTxt"
-                >添加文本</el-button
-              >
-            </div>
+                @click="addToptxt('houseData')"
+              ></el-button>
+            </el-form-item>
             <el-collapse-item
-              v-for="(item, i) in config.data.tableHead"
-              :key="i"
-              :title="`文本 ${i + 1} 配置：`"
+              v-for="(item, index) in config.houseData.tableHead"
+              :key="index"
+              :title="`文本 ${index + 1} 配置：`"
               style="margin-top:2px;"
             >
               <el-form-item label="文本名称：">
@@ -315,7 +302,7 @@
                   placeholder="请选择数据key"
                 >
                   <el-option
-                    v-for="(item, i) in config.data.tableKeyData"
+                    v-for="(item, i) in config.houseData.tableKeyData"
                     :label="item"
                     :key="i"
                     :value="item"
@@ -323,174 +310,241 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="文本宽度：">
-                <el-input
-                  v-model="config.tableHeadStyle.styleData[i].width"
-                  size="mini"
-                  placeholder="请输入宽度"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="文本颜色：">
-                <el-color-picker
-                  v-model="config.tableHeadStyle.styleData[i].color"
-                  size="mini"
-                  show-alpha
-                ></el-color-picker>
-              </el-form-item>
+
               <el-form-item label="枚举文本颜色：">
                 <el-button
                   type="primary"
                   size="mini"
                   icon="el-icon-plus"
-                  @click="addColorData(i)"
+                  @click="addColorData(index, 'houseData')"
                   >添加颜色配置</el-button
                 >
               </el-form-item>
-              <el-form-item
-                class="no-margin"
-                v-for="(v, index) in config.tableHeadStyle.styleData[i].colorData"
+              <div
+                class="colorData"
+                v-for="(v, i) in config.houseData.colorData[index]"
+                :key="i"
               >
-                <el-input
-                  v-model="v.label"
-                  size="mini"
-                  placeholder="请输入值"
-                ></el-input>
-                <el-color-picker
-                  v-model="v.color"
-                  size="mini"
-                  style="margin-left: 5px;"
-                  show-alpha
-                ></el-color-picker>
-                <i
-                  style="color: red"
-                  class="el-icon-delete"
-                  @click="delColor(i, index)"
-                />
-              </el-form-item>
-              <el-form-item label="内容是否隐藏：">
-                <el-switch v-model="item.showOverflow"></el-switch>
-              </el-form-item>
-              <span style="margin-left:30px">
-                <el-button
-                  type="primary"
-                  size="mini"
-                  @click="changeIndex('pre', 'tableHead', i, item)"
-                  >上移</el-button
-                >
-                <el-button
-                  type="primary"
-                  size="mini"
-                  @click="changeIndex('next', 'tableHead', i, item)"
-                  >下移</el-button
-                >
+                <el-form-item class="no-margin">
+                  <el-input
+                    v-model="v.label"
+                    size="mini"
+                    placeholder="请输入值"
+                  ></el-input>
+                  <el-color-picker
+                    v-model="v.color"
+                    size="mini"
+                    style="margin-left: 5px;"
+                    show-alpha
+                  ></el-color-picker>
+                  <i
+                    style="color: red"
+                    class="el-icon-delete"
+                    @click="delColor('houseData', index, i)"
+                  />
+                </el-form-item>
+              </div>
+              <span style="margin-left:163px">
                 <el-button
                   type="danger"
                   size="mini"
-                  @click="delData('tableHead', i)"
+                  @click="delData('houseData', index)"
                   >删除选项</el-button
                 >
               </span>
             </el-collapse-item>
-          </el-collapse-item> -->
-        <!-- <el-collapse-item title="表头样式">
-          <commonTab :config="config" type1="table" type2="theader"></commonTab>
-          <el-form-item label="高度：">
-            <el-input
-              v-model="config.table.theader.height"
-              size="mini"
-              placeholder="请输入高度"
-              style="margin-right:12px"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="背景颜色：">
-            <el-color-picker
-              v-model="config.table.theader.background"
-              size="mini"
-              show-alpha
-            ></el-color-picker>
-          </el-form-item>
+          </el-collapse-item>
         </el-collapse-item>
-        <el-collapse-item title="表格样式">
-          <el-form-item label="显示下边框：">
-            <el-switch v-model="config.table.borderShow"></el-switch>
-          </el-form-item>
-          <span v-if="config.table.borderShow">
-            <el-form-item label="边框宽度：">
+        <el-collapse-item title="住户信息">
+          <el-collapse-item title="标题" style="margin-bottom:10px;">
+            <el-form-item label="文本名称：">
+              <el-input
+                v-model="config.personnelData.titleName"
+                size="mini"
+                placeholder="请输入名称"
+              ></el-input>
+            </el-form-item>
+          </el-collapse-item>
+          <el-collapse-item title="表格" style="margin-bottom:10px;">
+            <el-form-item label="表ID：" label-width="90px">
+              <el-input
+                v-model="config.personnelData.houseTableId"
+                size="mini"
+                placeholder="请输入..."
+                @blur="getFont('personnel')"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="表格高度：" label-width="90px">
               <div class="flex align-center">
                 <el-input
-                  v-model="config.table.borderWidth"
+                  v-model="config.personnelData.height"
                   size="mini"
-                  placeholder="请输入边框宽度"
+                  placeholder="请输入.."
                   style="margin-right:12px"
                 ></el-input
                 >px
               </div>
             </el-form-item>
-            <el-form-item label="边框样式：">
-              <el-select
-                popper-class="setting-select"
-                v-model="config.table.borderStyle"
-                placeholder="请选边框样式"
-              >
-                <el-option
-                  v-for="(item, i) in styleList"
-                  :label="item"
-                  :key="i"
-                  :value="item"
-                >
-                </el-option>
-              </el-select>
+            <!-- <commonTab :config="config" type1="personnelData" type2="theader"></commonTab> -->
+            <el-form-item label="表行高度：" label-width="90px">
+              <div class="flex align-center">
+                <el-input
+                  v-model="config.personnelData.theader.height"
+                  size="mini"
+                  placeholder="请输入.."
+                  style="margin-right:12px"
+                ></el-input
+                >px
+              </div>
             </el-form-item>
-            <el-form-item label="边框颜色：">
+            <el-form-item label="字体大小：" label-width="90px">
+              <div class="flex align-center">
+                <el-input
+                  v-model="config.personnelData.theader.fontSize"
+                  size="mini"
+                  placeholder="请输入..."
+                  style="margin-right:12px"
+                ></el-input
+                >px
+              </div>
+            </el-form-item>
+            <el-form-item label="表头边框背景颜色：" label-width="150px">
               <el-color-picker
-                v-model="config.table.borderColor"
+                v-model="config.personnelData.theader.borderColor"
+                size="mini"
+                style="margin-right:10px"
+                show-alpha
+              ></el-color-picker>
+              <el-color-picker
+                v-model="config.personnelData.theader.background"
                 size="mini"
                 show-alpha
               ></el-color-picker>
             </el-form-item>
-          </span>
-          <el-form-item label="高度：">
-            <el-input
-              v-model="config.table.height"
-              size="mini"
-              placeholder="请输入高度"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="行高：">
-            <el-input
-              v-model="config.table.tbody.height"
-              size="mini"
-              placeholder="请输入行高"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="单行文本背景色：">
-            <el-color-picker
-              v-model="config.table.tbody.background1"
-              size="mini"
-              show-alpha
-            ></el-color-picker>
-          </el-form-item>
-          <el-form-item label="双行文本背景色：">
-            <el-color-picker
-              v-model="config.table.tbody.background2"
-              size="mini"
-              show-alpha
-            ></el-color-picker>
-          </el-form-item>
-          <el-form-item label="鼠标滑过背景色：">
-            <el-color-picker
-              v-model="config.table.tbody.background3"
-              size="mini"
-              show-alpha
-            ></el-color-picker>
-          </el-form-item>
-          <commonTab
-            :config="config"
-            type1="table"
-            type2="tbody"
-            :isTxtAlign="false"
-          ></commonTab>
-        </el-collapse-item> -->
+
+            <el-form-item label="文字颜色(表头表体)：" label-width="150px">
+              <el-color-picker
+                v-model="config.personnelData.theader.color"
+                size="mini"
+                show-alpha
+                style="margin-right:10px"
+              ></el-color-picker>
+              <el-color-picker
+                v-model="config.personnelData.tbody.color"
+                size="mini"
+                show-alpha
+              ></el-color-picker>
+            </el-form-item>
+
+            <el-form-item label="表行滑过填充颜色：" label-width="150px">
+              <el-color-picker
+                v-model="config.personnelData.tbody.background"
+                size="mini"
+                show-alpha
+              ></el-color-picker>
+            </el-form-item>
+            <el-form-item label="字段配置：">
+              <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-plus"
+                @click="addToptxt('personnelData')"
+              ></el-button>
+            </el-form-item>
+            <el-collapse-item
+              v-for="(item, index) in config.personnelData.tableHead"
+              :key="index"
+              :title="`文本 ${index + 1} 配置：`"
+              style="margin-top:2px;"
+            >
+              <el-form-item label="文本名称：">
+                <el-input
+                  v-model="item.label"
+                  size="mini"
+                  placeholder="请输入名称"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="数据：">
+                <el-select
+                  popper-class="setting-select"
+                  v-model="item.value"
+                  placeholder="请选择数据key"
+                >
+                  <el-option
+                    v-for="(item, i) in config.personnelData.tableKeyData"
+                    :label="item"
+                    :key="i"
+                    :value="item"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="枚举文本颜色：">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  icon="el-icon-plus"
+                  @click="addColorData(index, 'personnelData')"
+                  >添加颜色配置</el-button
+                >
+              </el-form-item>
+              <div
+                class="colorData"
+                v-for="(v, i) in config.personnelData.colorData[index]"
+                :key="i"
+              >
+                <el-form-item class="no-margin">
+                  <el-input
+                    v-model="v.label"
+                    size="mini"
+                    placeholder="请输入值"
+                  ></el-input>
+                  <el-color-picker
+                    v-model="v.color"
+                    size="mini"
+                    style="margin-left: 5px;"
+                    show-alpha
+                  ></el-color-picker>
+                  <i
+                    style="color: red"
+                    class="el-icon-delete"
+                    @click="delColor('personnelData', index, i)"
+                  />
+                </el-form-item>
+              </div>
+              <span style="margin-left:163px">
+                <el-button
+                  type="danger"
+                  size="mini"
+                  @click="delData('personnelData', index)"
+                  >删除选项</el-button
+                >
+              </span>
+            </el-collapse-item>
+          </el-collapse-item>
+          <el-collapse-item title="人员标签">
+            <el-form-item label="最多显示：">
+              <div class="flex" style="color: #fff;margin-left:10px">
+                <el-input-number
+                  v-model="config.personnelData.dataNumber"
+                  :min="1"
+                  :step="1"
+                  step-strictly
+                  label=""
+                ></el-input-number>
+                <div style="margin-left: 10px">个</div>
+              </div>
+            </el-form-item>
+            <el-form-item label="背景色透明度：" label-width="120px">
+              <el-input
+                v-model="config.personnelData.opacity"
+                size="mini"
+                placeholder="请输入..."
+              ></el-input>
+            </el-form-item>
+          </el-collapse-item>
+        </el-collapse-item>
       </el-collapse>
     </el-form>
   </el-scrollbar>
@@ -501,9 +555,10 @@ import commonTab from "../componments/commonTab";
 import commonSetTitle from "../componments/commonSetTitle";
 import { getFilterRows } from "@/utils/api";
 import { appKey, sign } from "@/utils/const.js";
+import ImageSelector from "../componments/ImageSelector";
 export default {
   name: "setting",
-  components: { commonTab, commonSetTitle },
+  components: { commonTab, commonSetTitle,ImageSelector },
   data() {
     return {
       styleList: ["solid", "dashed"],
@@ -522,7 +577,11 @@ export default {
       selectData: [],
       imgList: {},
       dialogVisible: false,
-      relationWorksheetId:'',
+      relationWorksheetId: "", //关联图层表id
+      layerList: [],
+      houseTableId: "", //楼宇详情表id
+      houseTableOption: [],
+      fontList: [],
     };
   },
   props: {
@@ -538,18 +597,51 @@ export default {
   },
   watch: {},
   mounted() {
-    this.getSelectData();
+    // this.getSelectData();
 
     this.getImgData();
   },
   methods: {
-    getLayer(){},
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
+    async getFont(type) {
+      let id =
+        type == "personnel"
+          ? this.config.personnelData.houseTableId
+          : this.config.box.houseWorksheetId;
+      let { data } = await getFilterRows({
+        appKey: appKey,
+        sign: sign,
+        worksheetId: id,
+        pageSize: 500,
+        pageIndex: 1,
+      });
+      if (type == "personnel") {
+        this.config.personnelData.tableKeyData =
+          data.rows[0] && Object.keys(data.rows[0]);
+      } else {
+        this.fontList = data.rows[0] && Object.keys(data.rows[0]);
+        this.config.houseData.tableKeyData = [...this.fontList];
+        this.config.box.numDesensitization = [...this.fontList];
+      }
+    },
+    async getLayer() {
+      this.$emit("changeSize", "relationWorksheetId", this.relationWorksheetId);
+      let { data } = await getFilterRows({
+        appKey: appKey,
+        sign: sign,
+        worksheetId: this.relationWorksheetId,
+        pageSize: 500,
+        pageIndex: 1,
+      });
+      this.layerList = data.rows;
+      // this.$emit('changeSize', 'layerList', this.layerList);
+    },
+    addToptxt(type) {
+      let length = this.config[type].tableHead.length;
+      this.config[type].tableHead.push({
+        label: "",
+        value: "",
+        id: length,
+      });
     },
     async getImgData() {
       let { data } = await getFilterRows({
@@ -590,83 +682,32 @@ export default {
         }
       });
     },
-    addShowTxt() {
-      let length = this.config.data.tableHead.length;
-      this.config.data.tableHead.push({
-        label: "",
-        value: "",
-        showOverflow: false,
-        id: length,
-      });
-      this.config.tableHeadStyle.styleData.push({
-        width: "",
-        color: "#fff",
-        colorData: [],
-      });
-    },
-    addColorData(i) {
-      this.config.tableHeadStyle.styleData[i].colorData.push({
-        label: "",
-        color: "",
-      });
-    },
-    delColor(i, index) {
-      this.config.tableHeadStyle.styleData[i].colorData.splice(index, 1);
-    },
-    addShowCardTxt() {
-      let length = this.config.data.cardData.length;
-      this.config.data.cardData.push({
-        label: "",
-        value: "",
-        width: "",
-        height: "",
-        id: length,
-      });
-    },
-    addShowButtonTxt() {
-      let length = this.config.data.buttonData.length;
-      this.config.data.buttonData.push({
-        label: "",
-        value: "",
-        width: "",
-        background: "",
-        color: "",
-        id: length,
-      });
-    },
-    delData(dataType, i) {
-      this.config.data[dataType].splice(i, 1);
-      if (dataType === "tableHead") {
-        this.getSelectData();
-      }
-    },
-    getSelectData() {
-      this.selectData = this.config.data.tableHead.filter((item) => item.type);
-      this.selectData.push({ label: "关键字", type: "search" });
-    },
-    changeIndex(type, dataType, i, data) {
-      let index;
-      if (type === "pre") {
-        if (i === 0) {
-          this.$message.warning("当前已经是第一个，无法再上移");
-          return;
-        } else {
-          index = i - 1;
-        }
+
+    addColorData(i, type) {
+      if (this.config[type].colorData[i]) {
+        this.config[type].colorData[i].push({
+          label: "",
+          color: "",
+        });
       } else {
-        if (i === this.config.data[dataType].length - 1) {
-          this.$message.warning("当前已经是最后一个，无法再下移");
-          return;
-        } else {
-          index = i + 1;
+        let len1 = this.config[type].tableHead.length;
+        let len2 = this.config[type].colorData.length;
+        const len = len1 - len2;
+        for (let i = 0; i < len; i++) {
+          this.config[type].colorData.push([]);
         }
+        this.config[type].colorData[i].push({
+          label: "",
+          color: "",
+        });
       }
-      let d = this.config.data[dataType];
-      d.splice(index, 1, ...d.splice(i, 1, d[index]));
-      if (dataType === "tableHead") {
-        let s = this.config.tableHeadStyle.styleData;
-        s.splice(index, 1, ...s.splice(i, 1, s[index]));
-      }
+    },
+    delColor(type, index, i) {
+      this.config[type].colorData[index].splice(i, 1);
+    },
+
+    delData(dataType, i) {
+      this.config[dataType].tableHead.splice(i, 1);
     },
   },
 };
@@ -703,8 +744,8 @@ export default {
 
   .el-collapse {
     border: none;
-    .el-input-number--small{
-      width:100px;
+    .el-input-number--small {
+      width: 100px;
     }
     .box {
       color: #fff;
@@ -712,20 +753,20 @@ export default {
       font-size: 13px;
       display: flex;
       align-items: center;
-      margin-top:5px;
-      margin-bottom:18px;
-      >span{
-        margin-right:20px;
-        width:70px;
-        text-align:right;
+      margin-top: 5px;
+      margin-bottom: 18px;
+      > span {
+        margin-right: 20px;
+        width: 70px;
+        text-align: right;
       }
       .el-dialog__wrapper {
         display: flex;
         align-items: center;
-        .el-dialog{
-          margin-top:0 !important; 
-          .el-dialog__header{
-            font-weight:900;
+        .el-dialog {
+          margin-top: 0 !important;
+          .el-dialog__header {
+            font-weight: 900;
           }
         }
       }
@@ -758,6 +799,15 @@ export default {
     justify-content: flex-end;
     margin-bottom: 10px;
   }
+  .colorData {
+    display: flex;
+    .el-form-item__content {
+      flex-wrap: nowrap;
+      .el-input {
+        margin-right: 5px;
+      }
+    }
+  }
 }
 .el-select-dropdown__list {
   display: flex;
@@ -779,5 +829,13 @@ export default {
       max-height: 100%;
     }
   }
+}
+.hidden {
+  width: 100px;
+  height: 30px;
+  background-color: #1c1c1f;
+  position: absolute;
+  right: 100px;
+  top: 0;
 }
 </style>

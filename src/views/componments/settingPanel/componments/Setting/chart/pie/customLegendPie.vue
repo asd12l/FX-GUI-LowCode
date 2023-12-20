@@ -79,18 +79,76 @@
           <el-form-item label="显示标题：">
             <el-switch v-model="config.title.show"></el-switch>
           </el-form-item>
-          <el-form-item label="标题内容：" v-if="config.title.show">
-            <el-input v-model="config.title.text" size="mini"></el-input>
+          <!-- <el-form-item label="标题：">
+            <el-switch v-model="config.title.show"></el-switch>
+          </el-form-item> -->
+          <el-form-item label="标题内容类型：" v-if="config.title.show">
+            <el-select v-model="config.title.type">
+              <el-option
+                v-for="(item, index) in titleTypeList"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="字体：" v-if="config.title.show">
+          <el-form-item label="标题文本：" v-if="config.title.show">
+            <div class="flex align-center">
+              <el-input
+                v-model="config.title.textStyle.titletText"
+                size="mini"
+                style="margin: 0 8px 0 12px"
+              ></el-input
+              >
+            </div>
+          </el-form-item>
+          <el-form-item label="标题样式：" v-if="config.title.show">
             <div class="flex align-center">
               <el-color-picker
-                v-model="config.title.textStyle.color"
+                v-model="config.title.textStyle.titleColor"
                 show-alpha
                 size="mini"
               ></el-color-picker>
               <el-input
-                v-model="config.title.textStyle.fontSize"
+                v-model="config.title.textStyle.titleFontSize"
+                size="mini"
+                style="margin: 0 8px 0 12px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+          <el-form-item label="数值样式：" v-if="config.title.show">
+            <div class="flex align-center">
+              <el-color-picker
+                v-model="config.title.textStyle.totalColor"
+                show-alpha
+                size="mini"
+              ></el-color-picker>
+              <el-input
+                v-model="config.title.textStyle.totalFontSize"
+                size="mini"
+                style="margin: 0 8px 0 12px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+          <el-form-item label="单位样式：" v-if="config.title.show">
+            <el-input
+                v-model="config.title.textStyle.unitText"
+                size="mini"
+                style="margin: 0 8px 0 12px"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="单位样式：" v-if="config.title.show">
+            <div class="flex align-center">
+              <el-color-picker
+                v-model="config.title.textStyle.unitcColor"
+                show-alpha
+                size="mini"
+              ></el-color-picker>
+              <el-input
+                v-model="config.title.textStyle.unitFontSize"
                 size="mini"
                 style="margin: 0 8px 0 12px"
               ></el-input
@@ -98,7 +156,7 @@
             </div>
           </el-form-item>
           <el-form-item label="X位置：" v-if="config.title.show">
-            <el-input v-model="config.title.left" size="mini"></el-input>
+            <el-input v-model="config.title.left"  size="mini"></el-input>
           </el-form-item>
           <el-form-item label="Y位置：" v-if="config.title.show">
             <el-input v-model="config.title.top" size="mini"></el-input>
@@ -146,7 +204,44 @@
           <el-form-item label="显示图例：">
             <el-switch v-model="config.legend.show"></el-switch>
           </el-form-item>
-
+          <el-form-item label="单位：">
+            <el-input v-model="config.legend.unit" size="mini"></el-input>
+          </el-form-item>
+          <el-form-item label="单位样式：" v-if="config.legend.show">
+            <div class="flex align-center">
+              <el-color-picker
+                v-model="config.legend.unitColor"
+                size="mini"
+                show-alpha
+              ></el-color-picker>
+              <el-input
+                v-model="config.legend.unitFontSize"
+                size="mini"
+                style="margin: 0 8px 0 12px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+          <el-form-item label="数值样式：" v-if="config.legend.show">
+            <div class="flex align-center">
+              <el-color-picker
+                v-model="config.legend.totalColor"
+                size="mini"
+                show-alpha
+              ></el-color-picker>
+              <el-input
+                v-model="config.legend.totalFontSize"
+                size="mini"
+                style="margin: 0 8px 0 12px"
+              ></el-input
+              >px
+            </div>
+          </el-form-item>
+          <el-form-item label="标题宽度：">
+            <div class="flex align-center">
+              <el-input v-model="config.legend.titleWidth" size="mini"></el-input>px
+            </div>
+          </el-form-item>
           <el-form-item label="字体：" v-if="config.legend.show">
             <div class="flex align-center">
               <el-color-picker
@@ -162,6 +257,7 @@
               >px
             </div>
           </el-form-item>
+          
           <el-form-item label="图标：" v-if="config.legend.show">
             <el-select v-model="config.legend.icon">
               <el-option
@@ -764,6 +860,16 @@ export default {
         {
           label: "垂直",
           value: "vertical",
+        },
+      ],
+      titleTypeList: [
+        {
+          label: "总数",
+          value: "total",
+        },
+        {
+          label: "最大值",
+          value: "max",
         },
       ],
       positionOption: [

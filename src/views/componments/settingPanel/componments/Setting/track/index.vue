@@ -87,6 +87,9 @@
             type1="box"
             :isShowLetterSpacing="false"
             :isShowFontStyle="false"
+            @changeValue="
+              (param1, param2, val) => $emit('changeValue', param1, param2, val)
+            "
           ></commonTab>
           <el-form-item label="顶部框宽度：">
             <div class="flex align-center">

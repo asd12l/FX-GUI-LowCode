@@ -8,7 +8,12 @@
     >
       <el-form-item label="名称：">
         <div class="componentName" style="display:flex;align-items:center">
-          <el-input v-model="config.name" size="mini" placeholder="" @change="(val) => $emit('changeSize', 'name', val)"></el-input>
+          <el-input
+            v-model="config.name"
+            size="mini"
+            placeholder=""
+            @change="(val) => $emit('changeSize', 'name', val)"
+          ></el-input>
           <span
             :class="config.isLock ? 'active' : ''"
             @click="(val) => $emit('changeSize', 'isLock', !config.isLock)"
@@ -18,64 +23,61 @@
             @click="(val) => $emit('changeSize', 'isShow', !config.isShow)"
           ></span>
         </div>
-        </el-form-item>
-  
-        <el-form-item label="组件宽度：">
-          <el-input
-            v-model="config.width"
-            size="mini"
-            @change="(val) => $emit('changeSize', 'width', val)"
-            placeholder="请输入组件宽度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="组件高度：">
-          <el-input
-            v-model="config.height"
-            size="mini"
-            @change="(val) => $emit('changeSize', 'height', val)"
-            placeholder="请输入组件高度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="X距离：">
-          <el-input
-            v-model="config.left"
-            size="mini"
-            @change="(val) => $emit('changeSize', 'left', val)"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="Y距离：">
-          <el-input
-            v-model="config.top"
-            size="mini"
-            @change="(val) => $emit('changeSize', 'top', val)"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="默认展示隐藏：" >
-        <el-switch 
+      </el-form-item>
+
+      <el-form-item label="组件宽度：">
+        <el-input
+          v-model="config.width"
+          size="mini"
+          @change="(val) => $emit('changeSize', 'width', val)"
+          placeholder="请输入组件宽度"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="组件高度：">
+        <el-input
+          v-model="config.height"
+          size="mini"
+          @change="(val) => $emit('changeSize', 'height', val)"
+          placeholder="请输入组件高度"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="X距离：">
+        <el-input
+          v-model="config.left"
+          size="mini"
+          @change="(val) => $emit('changeSize', 'left', val)"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="Y距离：">
+        <el-input
+          v-model="config.top"
+          size="mini"
+          @change="(val) => $emit('changeSize', 'top', val)"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="默认展示隐藏：">
+        <el-switch
           style="margin-top: 7px;"
           v-model="config.isShowModule"
           @change="(val) => $emit('changeSize', 'isShowModule', val)"
         ></el-switch>
       </el-form-item>
-        <el-form-item label="单个容器宽度：">
-          <el-input
-            v-model="config.contain.width"
-            size="mini"
-            placeholder="请输入单个容器宽度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="单个容器高度：">
-          <el-input
-            v-model="config.contain.height"
-            size="mini"
-            placeholder="请输入单个容器高度"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="排列：">
-        <div
-          class="flex"
-          style="color: #fff"
-        >
+      <el-form-item label="单个容器宽度：">
+        <el-input
+          v-model="config.contain.width"
+          size="mini"
+          placeholder="请输入单个容器宽度"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="单个容器高度：">
+        <el-input
+          v-model="config.contain.height"
+          size="mini"
+          placeholder="请输入单个容器高度"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="排列：">
+        <div class="flex" style="color: #fff">
           <div style="margin-right: 10px">一行</div>
           <el-input-number
             v-model="config.contain.arrangeNum"
@@ -145,6 +147,10 @@
               :config="config"
               type1="textTitle"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
 
             <el-form-item label="高度：">
@@ -240,6 +246,10 @@
               :config="config"
               type1="txtRowOne"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
 
             <!-- <el-form-item label="高度：">
@@ -336,6 +346,10 @@
               :config="config"
               type1="txtRowtwo"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
 
             <!-- <el-form-item label="高度：">
@@ -433,6 +447,10 @@
               :config="config"
               type1="txtRowthree"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
 
             <!-- <el-form-item label="高度：">
@@ -529,6 +547,10 @@
               :config="config"
               type1="txtRowfour"
               :isShowFontSet="false"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
             ></commonTab>
 
             <!-- <el-form-item label="高度：">
@@ -754,9 +776,7 @@ export default {
           value: "outside",
         },
       ],
-      fontList: [
-        "Microsoft YaHei",
-      ],
+      fontList: ["Microsoft YaHei"],
       imgList: [
         {
           name: "图1",

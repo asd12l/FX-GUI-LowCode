@@ -23,7 +23,16 @@ module.exports = {
       vue$: "vue/dist/vue.esm.js", //配置别名 确保webpack可以找到.vue文件
       "@": path.resolve("src"),
     },
-    extensions: ['.js', '.ts', '.vue', '.json', '.css', '.node', '.sass', ".jsx"],
+    extensions: [
+      ".js",
+      ".ts",
+      ".vue",
+      ".json",
+      ".css",
+      ".node",
+      ".sass",
+      ".jsx",
+    ],
   },
   externals: {
     cesium: "Cesium",
@@ -84,6 +93,7 @@ module.exports = {
         removeComments: true,
       },
     }),
+   
   ],
 };
 

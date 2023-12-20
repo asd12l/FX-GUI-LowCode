@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-15 10:54:41
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-09-01 14:38:54
+ * @LastEditTime: 2023-11-21 11:21:57
 -->
 <template>
   <div
@@ -162,6 +162,7 @@ export default {
         ]
       };
       this.myChart.setOption(option, true);
+      let that = this;
       this.changeIndexTimer = setInterval(() => {
         // 每次向后滚动一个，最后一个从头开始。
         if (option.dataZoom[0].endValue == this.config.data.length - 1) {
@@ -171,7 +172,7 @@ export default {
           option.dataZoom[0].endValue = option.dataZoom[0].endValue + 1;
           option.dataZoom[0].startValue = option.dataZoom[0].startValue + 1;
         }
-        this.myChart.setOption(option);
+        that.myChart.setOption(option);
       }, 2000);
     }
   },

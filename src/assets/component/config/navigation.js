@@ -3,8 +3,8 @@
  * @version:
  * @Author: ydl
  * @Date: 2023-07-21 17:28:51
- * @LastEditors: ydl
- * @LastEditTime: 2023-09-18 14:57:50
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-21 13:38:12
  */
 export default {
   name: "导航",
@@ -14,7 +14,7 @@ export default {
   top: 0,
   sourceType: "api",
   api:
-    "https://www.sjxks.com/v1/xiaokunshan/layer/getPages?account_id=eb71dac7-a4dc-4cbb-9022-251c93acca1e",
+    "",
   requestType: "get",
   worksheetId: "cockpit_navbar",
   data: [],
@@ -22,7 +22,7 @@ export default {
     background: "",
   },
   title: {
-    txt: "小昆山镇城市运行管理平台",
+    txt: "页面标题",
     width: 827,
     height: 76,
     lineHeight: 76,

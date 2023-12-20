@@ -86,7 +86,11 @@
       <el-collapse>
         <el-collapse-item title="弹窗头部" name="titleNumber">
             <el-form-item label="弹窗头部图片：">
-            <imgSelect :backgroundData="backgroundData" :config="config" datatype1="wholeStyle" type="head_bg" />
+            <imgSelect :backgroundData="backgroundData" :config="config" datatype1="wholeStyle" type="head_bg"
+                @changeValue="
+                  (param1, param2, val) =>
+                    $emit('changeValue', param1, param2, val)
+                " />
           </el-form-item>
       <el-form-item label="头部高度：">
         <el-input
@@ -156,7 +160,11 @@
         </el-collapse-item>
         <el-collapse-item title="关闭按钮" name="closeImg">
             <el-form-item label="关闭按钮图片：">
-            <imgSelect :backgroundData="backgroundData" :config="config" datatype1="closeImg" type="close" />
+            <imgSelect :backgroundData="backgroundData" :config="config" datatype1="closeImg" type="close"
+                @changeValue="
+                  (param1, param2, val) =>
+                    $emit('changeValue', param1, param2, val)
+                " />
           </el-form-item>
           <el-form-item label="宽度：">
             <el-input
@@ -193,13 +201,12 @@
 </template>
 
 <script>
-import commonTab from "../componments/commonTab";
 import imgSelect from "../imgSelect";
 import StylesFilter from "../common";
 import { getImgData } from "@/utils/index.js";
 export default {
   name: "setting",
-  components: { commonTab, imgSelect, StylesFilter },
+  components: { imgSelect, StylesFilter },
   data() {
     return {
       directionOption: [

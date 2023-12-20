@@ -8,7 +8,12 @@
     >
       <el-form-item label="名称：">
         <div class="componentName" style="display:flex;align-items:center">
-          <el-input v-model="config.name" size="mini" placeholder="" @change="(val) => $emit('changeSize', 'name', val)"></el-input>
+          <el-input
+            v-model="config.name"
+            size="mini"
+            placeholder=""
+            @change="(val) => $emit('changeSize', 'name', val)"
+          ></el-input>
           <span
             :class="config.isLock ? 'active' : ''"
             @click="(val) => $emit('changeSize', 'isLock', !config.isLock)"
@@ -51,10 +56,10 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="默认展示隐藏：">
-        <el-switch 
-        style="margin-top: 7px;"
-        v-model="config.isShowModule"
-        @change="(val) => $emit('changeSize', 'isShowModule', val)"
+        <el-switch
+          style="margin-top: 7px;"
+          v-model="config.isShowModule"
+          @change="(val) => $emit('changeSize', 'isShowModule', val)"
         ></el-switch>
       </el-form-item>
       <el-form-item label="是否滚动：">
@@ -63,25 +68,22 @@
           v-model="config.box.isScroll"
         ></el-switch>
       </el-form-item>
-      <!-- <el-form-item label="单条标签宽高：">
-        <el-input
+      <el-form-item label="单条标签宽高：">
+        <div style="display:flex">
+          <el-input
         v-model="config.width"
           size="mini"
-          @change="(val) => $emit('changeSize', 'height', val)"
+          @change="(val) => $emit('changeSize', 'width', val)"
           placeholder="宽度"
         ></el-input>
         <span style="margin: 0 10px">x</span>
         <el-input
           v-model="config.box.height"
+          @change="(val) => $emit('changeValue', 'box', 'height',val)"
           size="mini"
           placeholder="高度"
         ></el-input>
-      </el-form-item> -->
-      <el-form-item label="单个容器宽：">
-        <el-input v-model="config.width" size="mini"></el-input>
-      </el-form-item>
-      <el-form-item label="单个容器高：">
-        <el-input v-model="config.box.height" size="mini"></el-input>
+        </div>
       </el-form-item>
       <el-collapse>
         <el-collapse-item title="文本(名称)" name="titleName">
@@ -92,7 +94,14 @@
             ></el-switch>
           </el-form-item>
           <div v-if="config.textName.show">
-            <commonTab :config="config" type1="textName"></commonTab>
+            <commonTab
+              :config="config"
+              type1="textName"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <!-- <el-form-item label="宽：">
               <el-input v-model="config.textName.width" size="mini"></el-input>
             </el-form-item>
@@ -129,7 +138,14 @@
             ></el-switch>
           </el-form-item>
           <div v-if="config.textTime.show">
-            <commonTab :config="config" type1="textTime"></commonTab>
+            <commonTab
+              :config="config"
+              type1="textTime"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <el-form-item label="宽：">
               <el-input v-model="config.textTime.width" size="mini"></el-input>
             </el-form-item>
@@ -167,7 +183,14 @@
             ></el-switch>
           </el-form-item>
           <div v-if="config.textAddress.show">
-            <commonTab :config="config" type1="textAddress"></commonTab>
+            <commonTab
+              :config="config"
+              type1="textAddress"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <el-form-item label="上边距：">
               <div class="flex align-center">
                 <el-input
@@ -222,7 +245,14 @@
             ></el-switch>
           </el-form-item>
           <div v-if="config.textTag.show">
-            <commonTab :config="config" type1="textTag"></commonTab>
+            <commonTab
+              :config="config"
+              type1="textTag"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
             <el-form-item label="背景颜色：">
               <div class="flex align-center">
                 <el-color-picker
@@ -234,19 +264,31 @@
               </div>
             </el-form-item>
             <el-form-item label="宽：">
-              <el-input v-model="config.textTag.minWidth" size="mini"></el-input>
+              <el-input
+                v-model="config.textTag.minWidth"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <el-form-item label="高：">
               <el-input v-model="config.textTag.height" size="mini"></el-input>
             </el-form-item>
             <el-form-item label="行间距：">
-              <el-input v-model="config.textTag.lineheight" size="mini"></el-input>
+              <el-input
+                v-model="config.textTag.lineheight"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <el-form-item label="上边距：">
-              <el-input v-model="config.textName.marginTop" size="mini"></el-input>
+              <el-input
+                v-model="config.textName.marginTop"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <el-form-item label="右边距：">
-              <el-input v-model="config.textTag.marginRight" size="mini"></el-input>
+              <el-input
+                v-model="config.textTag.marginRight"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <el-form-item label="枚举文本颜色：">
               <el-button
@@ -260,8 +302,9 @@
             <el-form-item
               class="no-margin"
               v-for="(v, index) in config.tagColor"
-            >         
-                <el-input
+              :key="index"
+            >
+              <el-input
                 v-model="v.label"
                 size="mini"
                 placeholder="请输入值"
@@ -295,19 +338,35 @@
           </el-form-item>
           <div v-if="config.textStatus.show" style="position: relative;">
             <div class="hidden"></div>
-            <commonTab :config="config" type1="textStatus"></commonTab>
-            
+            <commonTab
+              :config="config"
+              type1="textStatus"
+              @changeValue="
+                (param1, param2, val) =>
+                  $emit('changeValue', param1, param2, val)
+              "
+            ></commonTab>
+
             <el-form-item label="宽：">
-              <el-input v-model="config.textStatus.minWidth" size="mini"></el-input>
+              <el-input
+                v-model="config.textStatus.minWidth"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <!-- <el-form-item label="高：">
               <el-input v-model="config.textStatus.height" size="mini"></el-input>
             </el-form-item> -->
             <el-form-item label="上边距：">
-              <el-input v-model="config.textAddress.marginTop" size="mini"></el-input>
+              <el-input
+                v-model="config.textAddress.marginTop"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <el-form-item label="右边距：">
-              <el-input v-model="config.textStatus.marginRight" size="mini"></el-input>
+              <el-input
+                v-model="config.textStatus.marginRight"
+                size="mini"
+              ></el-input>
             </el-form-item>
             <el-form-item label="枚举文本颜色：">
               <el-button
@@ -321,6 +380,7 @@
             <el-form-item
               class="no-margin"
               v-for="(v, index) in config.statusColor"
+              :key="index"
             >
               <el-input
                 v-model="v.label"
@@ -468,8 +528,9 @@ export default {
       this.config.tagColor.push({
         label: "",
         color: "",
-        backgroundColor:'',
+        backgroundColor: "",
       });
+      console.log("=======iiiii", this.config.tagColor);
     },
     delColorTag(i, index) {
       this.config.tagColor.splice(index, 1);
@@ -559,7 +620,7 @@ export default {
       }
     }
   }
-  .hidden{
+  .hidden {
     width: 100px;
     height: 30px;
     background-color: #1c1c1f;

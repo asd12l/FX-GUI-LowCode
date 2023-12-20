@@ -7,7 +7,7 @@ const clearMap = () => {
   const map = AMap.DMap;
   map.clearMap();
 };
-const getPolygonCenter = function(positions) {
+const getPolygonCenter = function (positions) {
   const total = positions.length;
   let X = 0; let Y = 0; let Z = 0;
   positions.forEach((p) => {
@@ -103,7 +103,7 @@ const graspRoad = () => {
   if (!this.graspRoad) {
     this.graspRoad = new AMap.GraspRoad();
   }
-  this.graspRoad.driving(path, function(error, result) {
+  this.graspRoad.driving(path, function (error, result) {
     if (!error) {
       const newPath = result.data.points.map((p) => {
         return [p.x, p.y];
@@ -113,7 +113,7 @@ const graspRoad = () => {
 };
 let transfer = null;
 const busTransfer = (pStart, pEnd) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const transferOption = {
       city: '上海市',
       nightflag: true, // 是否计算夜班车
@@ -123,7 +123,7 @@ const busTransfer = (pStart, pEnd) => {
       transfer = new AMap.Transfer(transferOption);
     }
     // 根据起、终点坐标查询公交换乘路线
-    transfer.search(new AMap.LngLat(pStart[0], pStart[1]), new AMap.LngLat(pEnd[0], pEnd[1]), function(status, result) {
+    transfer.search(new AMap.LngLat(pStart[0], pStart[1]), new AMap.LngLat(pEnd[0], pEnd[1]), function (status, result) {
       // result即是对应的公交路线数据信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_TransferResult
       if (status === 'complete') {
         if (result.plans && result.plans.length) {
@@ -140,12 +140,12 @@ const busTransfer = (pStart, pEnd) => {
 };
 
 const searchLine = () => {
-  $.get('http://jtjt.skyinforcloud.cn:50081/api/public/index.php/jiaotou/line/bus/getLineList', {}, (response) => {
+  $.get('', {}, (response) => {
     response.data.forEach((val) => {
       lineSearch(val.name, val.id);
     });
   });
-  function lineSearch(name, line_id) {
+  function lineSearch (name, line_id) {
     const linesearch = new AMap.LineSearch({
       pageIndex: 1,
       pageSize: 2,
@@ -153,12 +153,12 @@ const searchLine = () => {
       extensions: 'all'
     });
     // 搜索“536”相关公交线路
-    linesearch.search(name, function(status, result) {
+    linesearch.search(name, function (status, result) {
       if (status === 'complete' && result.info === 'OK') {
         console.log(result);
         let path1 = '';
         let path2 = '';
-        result.lineInfo && result.lineInfo.forEach(function(line, index) {
+        result.lineInfo && result.lineInfo.forEach(function (line, index) {
           const path = [];
           const pathObject = {};
           line.path.forEach((p) => {
@@ -174,7 +174,7 @@ const searchLine = () => {
           }
         });
         console.log(line_id, path1, path2);
-        $.post('http://jtjt.skyinforcloud.cn:50081/api/public/index.php/jiaotou/line/bus/updateLinePathInfo', { path1, path2, line_id }, (response) => {
+        $.post('', { path1, path2, line_id }, (response) => {
           console.log(response);
         });
       } else {

@@ -77,25 +77,22 @@
           @change="(val) => $emit('changeSize', 'isShowCheckbox', val)"
         ></el-switch>
       </el-form-item>
-      <el-form-item label="样式：">
-        <el-select
-          clearable
-          v-model="config.box.backgroundImage"
-        >
-          <el-option
-            v-for="item,index in bgPiclist"
-            :key="index"
-            :label="`图片${index + 1}`"
-            :value="item.DownloadUrl"
-          >
-            <img
-              :src="item.DownloadUrl"
-              alt=""
-              style="max-width: 100px;max-height: 100px"
-            >
-          </el-option>
-        </el-select>
+      <el-form-item
+        label="节点默认展开："
+        label-width="110px"
+      >
+        <el-switch
+          style="margin-top: 7px;"
+          v-model="config.box.isExpand"
+        ></el-switch>
       </el-form-item>
+      <ImageSelector
+        label="样式："
+        @changeSrc="(val) => $emit('changeValue', 'box', 'backgroundImage', val)"
+        worksheetId="fylbbj"
+        imageField="pic_url"
+        :src="config.box.backgroundImage"
+      ></ImageSelector>
       <el-form-item label="主题颜色：">
         <el-color-picker
           v-model="config.box.mainColor"
@@ -279,12 +276,6 @@
               style="width: 100%;margin-bottom: 20px"
               @change="chooseTab"
             >
-              <!-- <el-option
-                v-for="item,index in config.level_2_tab[config.input.level_2_option_value]"
-                :key="index"
-                :label="item"
-                :value="index"
-              ></el-option> -->
               <el-option
                 v-for="item,index in config.level_2_tab[config.input.level_2_option_value]"
                 :key="index"
@@ -807,50 +798,22 @@
               ></el-input>px
             </div>
           </el-form-item>
-          <el-form-item
+          <ImageSelector
+            v-if="config.right.type === 2"
             label="默认图标："
+            @changeSrc="(val) => $emit('changeValue', 'right', 'defaultPic', val)"
+            worksheetId="fylbbj"
+            imageField="default_icon"
+            :src="config.right.defaultPic"
+          ></ImageSelector>
+          <ImageSelector
             v-if="config.right.type === 2"
-          >
-            <el-select
-              clearable
-              v-model="config.right.defaultPic"
-            >
-              <el-option
-                v-for="item,index in defaultPics"
-                :key="index"
-                :label="`图标${index + 1}`"
-                :value="item.DownloadUrl"
-              >
-                <img
-                  :src="item.DownloadUrl"
-                  alt=""
-                  style="max-width: 100px;max-height: 100px"
-                >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item
             label="选中图标："
-            v-if="config.right.type === 2"
-          >
-            <el-select
-              clearable
-              v-model="config.right.hoverPic"
-            >
-              <el-option
-                v-for="item,index in selectPics"
-                :key="index"
-                :label="`图标${index + 1}`"
-                :value="item.DownloadUrl"
-              >
-                <img
-                  :src="item.DownloadUrl"
-                  alt=""
-                  style="max-width: 100px;max-height: 100px"
-                >
-              </el-option>
-            </el-select>
-          </el-form-item>
+            @changeSrc="(val) => $emit('changeValue', 'right', 'hoverPic', val)"
+            worksheetId="fylbbj"
+            imageField="select_icon"
+            :src="config.right.hoverPic"
+          ></ImageSelector>
           <el-form-item
             label="图标大小："
             v-if="config.right.type === 2"
@@ -883,81 +846,38 @@
             ></el-color-picker>
           </el-form-item>
         </el-collapse-item>
+        <el-collapse-item title="二次确认弹窗">
+          <el-color-picker
+            v-model="config.box.subboxColor"
+            show-alpha
+            size="mini"
+          ></el-color-picker>
+        </el-collapse-item>
       </el-collapse>
     </el-form>
   </el-scrollbar>
 </template>
 
 <script>
-import { getFilterRows } from '@/utils/api';
-import { appKey, sign } from '@/utils/const.js';
+import ImageSelector from '../componments/ImageSelector';
 import vueJsonEditor from 'vue-json-editor';
 export default {
+  name: 'switchList',
+  components: {
+    ImageSelector,
+    vueJsonEditor
+  },
   props: {
     config: {
       type: Object
     }
   },
-  components: {
-    vueJsonEditor
-  },
   data() {
     return {
-      condition: '',
-      bgPiclist: [],
-      defaultPics: [],
-      selectPics: []
+      condition: ''
     };
   },
-  // watch: {
-  //   config: {
-  //     handler(nl) {
-  //       // console.log(nl, nl.data.level_1_tab, 'config===form==================');
-  //     },
-  //     deep: true,
-  //     immediate: true
-  //   }
-  // },
-  mounted() {
-    this.getPicData();
-  },
   methods: {
-    async getPicData() {
-      // try {
-      const data = {
-        appKey: appKey,
-        sign: sign,
-        worksheetId: 'fylbbj',
-        rowId: sessionStorage.getItem('rowid'),
-        pageIndex: 1,
-        pageSize: 100
-      };
-      const result = await getFilterRows(data);
-      this.bgPiclist = result.data.rows
-        .map((item) => {
-          if (item.pic_url) {
-            return JSON.parse(item.pic_url);
-          }
-        })
-        .filter((item) => item)[0];
-      this.defaultPics = result.data.rows
-        .map((item) => {
-          if (item.default_icon) {
-            return JSON.parse(item.default_icon);
-          }
-        })
-        .filter((item) => item)[0];
-      this.selectPics = result.data.rows
-        .map((item) => {
-          if (item.select_icon) {
-            return JSON.parse(item.select_icon);
-          }
-        })
-        .filter((item) => item)[0];
-      // } catch (error) {
-      //   this.$message.error('获取失败');
-      // }
-    },
     level1Change() {
       this.config.level_1_tab[this.config.input.level_1_option_value] =
         this.config.input.level_1_input_value;
@@ -1024,18 +944,18 @@ export default {
       let level_2_worksheetid1 = this.config.level_2_worksheetid1;
       let level_2_params1 = this.config.level_2_params1;
       level_2_tab[this.config.input.level_2_option_value].push('新增');
-      level_2_worksheetid[this.config.input.level_2_option_value].push('');
-      level_2_params[this.config.input.level_2_option_value].push('');
-      level_2_worksheetid1[this.config.input.level_2_option_value].push('');
-      level_2_params1[this.config.input.level_2_option_value].push('');
+      level_2_worksheetid[this.config.input.level_2_option_value].push([]);
+      level_2_params[this.config.input.level_2_option_value].push([]);
+      level_2_worksheetid1[this.config.input.level_2_option_value].push([]);
+      level_2_params1[this.config.input.level_2_option_value].push([]);
       this.config.input.level_2_option_childValue =
         level_2_tab[this.config.input.level_2_option_value].length - 1;
       this.$emit('changeSize', 'level_2_tab', level_2_tab);
       this.$emit('changeValue', 'input', 'level_2_input_value', '新增');
-      this.$emit('changeValue', 'input', 'worksheetid', '');
-      this.$emit('changeValue', 'input', 'param', '');
-      this.$emit('changeValue', 'input', 'worksheetid1', '');
-      this.$emit('changeValue', 'input', 'param1', '');
+      this.$emit('changeValue', 'input', 'worksheetid', []);
+      this.$emit('changeValue', 'input', 'param', []);
+      this.$emit('changeValue', 'input', 'worksheetid1', []);
+      this.$emit('changeValue', 'input', 'param1', []);
     },
     chooseTab(item) {
       this.$emit(
@@ -1090,10 +1010,12 @@ export default {
       this.$emit('changeSize', 'level_2_worksheetid', data);
     },
     input4Change() {
+      console.log(this.config.input.param, 'input4Change');
       let data = this.config.level_2_params;
       data[this.config.input.level_2_option_value][
         this.config.input.level_2_option_childValue
       ] = this.config.input.param;
+      console.log(data, 'input4Change');
       this.$emit('changeSize', 'level_2_params', data);
     },
     input5Change() {

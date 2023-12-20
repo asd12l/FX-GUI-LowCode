@@ -7,7 +7,10 @@
       style="padding: 8px 16px"
     >
       <el-form-item label="名称：">
-        <div class="componentName" style="display: flex; align-items: center">
+        <div
+          class="componentName"
+          style="display: flex; align-items: center"
+        >
           <el-input
             v-model="config.name"
             size="mini"
@@ -57,31 +60,52 @@
       <el-form-item label="排列：">
         <div style="display: flex">
           <div style="margin-right: 10px; width: 42px">一行</div>
-          <el-input v-model="config.label.columns" size="mini"></el-input>
+          <el-input
+            v-model="config.label.columns"
+            size="mini"
+          ></el-input>
           <div style="margin-left: 10px">个</div>
         </div>
       </el-form-item>
       <el-form-item label="单个宽高：">
         <div style="display: flex">
-          <el-input v-model="config.box.width" size="mini"></el-input>x
-          <el-input v-model="config.box.height" size="mini"></el-input>
+          <el-input
+            v-model="config.box.width"
+            size="mini"
+          ></el-input>x
+          <el-input
+            v-model="config.box.height"
+            size="mini"
+          ></el-input>
         </div>
       </el-form-item>
-      <el-form-item label="默认展示隐藏：" label-width="110px">
+      <el-form-item
+        label="默认展示隐藏："
+        label-width="110px"
+      >
         <el-switch
           style="margin-top: 7px"
           v-model="config.isShowModule"
           @change="(val) => $emit('changeSize', 'isShowModule', val)"
         ></el-switch>
       </el-form-item>
+      <el-form-item label="页面名称：">
+        <el-input
+          v-model="config.box.page_name"
+          size="mini"
+        ></el-input>
+      </el-form-item>
       <el-collapse>
-        <el-collapse-item title="文本" name="title">
+        <el-collapse-item
+          title="文本"
+          name="title"
+        >
           <div class="fontStyle">
             <div class="block">
               <span
                 class="bg"
                 :class="config.label.fontWeight === 'bold' ? 'active' : ''"
-                ><span
+              ><span
                   :class="
                     config.label.fontWeight === 'bold' ? 'bold' : 'non-bold'
                   "
@@ -93,15 +117,14 @@
                       config.label.fontWeight === 'bold' ? 'normal' : 'bold'
                     )
                   "
-                ></span
-              ></span>
+                ></span></span>
               <span class="title">加粗</span>
             </div>
             <div class="block">
               <span
                 class="bg"
                 :class="config.label.fontStyle === 'italic' ? 'active' : ''"
-                ><span
+              ><span
                   :class="
                     config.label.fontStyle === 'italic'
                       ? 'incline'
@@ -115,54 +138,53 @@
                       config.label.fontStyle === 'normal' ? 'italic' : 'normal'
                     )
                   "
-                ></span
-              ></span>
+                ></span></span>
               <span class="title">倾斜</span>
             </div>
             <div class="block">
               <span
                 class="bg"
                 :class="config.label.textAlign === 'left' ? 'active' : ''"
-                ><span
+              ><span
                   :class="
                     config.label.textAlign === 'left' ? 'left' : 'non-left'
                   "
                   @click="$emit('changeValue', 'label', 'textAlign', 'left')"
-                ></span
-              ></span>
+                ></span></span>
               <span class="title">左对齐</span>
             </div>
             <div class="block">
               <span
                 class="bg"
                 :class="config.label.textAlign === 'center' ? 'active' : ''"
-                ><span
+              ><span
                   :class="
                     config.label.textAlign === 'center'
                       ? 'center'
                       : 'non-center'
                   "
                   @click="$emit('changeValue', 'label', 'textAlign', 'center')"
-                ></span
-              ></span>
+                ></span></span>
               <span class="title">居中</span>
             </div>
             <div class="block">
               <span
                 class="bg"
                 :class="config.label.textAlign === 'right' ? 'active' : ''"
-                ><span
+              ><span
                   :class="
                     config.label.textAlign === 'right' ? 'right' : 'non-right'
                   "
                   @click="$emit('changeValue', 'label', 'textAlign', 'right')"
-                ></span
-              ></span>
+                ></span></span>
               <span class="title">右对齐</span>
             </div>
           </div>
           <el-form-item label="宽：">
-            <el-input v-model="config.label.width" size="mini"></el-input>
+            <el-input
+              v-model="config.label.width"
+              size="mini"
+            ></el-input>
           </el-form-item>
           <el-form-item label="颜色/字号：">
             <div class="flex align-center">
@@ -175,14 +197,19 @@
                 v-model="config.label.fontSize"
                 size="mini"
                 style="margin: 0 8px 0 12px"
-              ></el-input
-              >px
+              ></el-input>px
             </div>
           </el-form-item>
           <el-form-item label="字体：">
             <div class="flex align-center">
-              <el-select v-model="config.label.fontFamily" placeholder="请选择">
-                <el-option label="微软雅黑" value="微软雅黑"></el-option>
+              <el-select
+                v-model="config.label.fontFamily"
+                placeholder="请选择"
+              >
+                <el-option
+                  label="微软雅黑"
+                  value="微软雅黑"
+                ></el-option>
               </el-select>
             </div>
           </el-form-item>
@@ -195,12 +222,28 @@
         </el-collapse-item>
       </el-collapse>
       <el-collapse>
-        <el-collapse-item title="图片" name="title">
+        <el-collapse-item
+          title="图片"
+          name="title"
+        >
+          <ImageSelector
+            label="背景图片："
+            @changeSrc="(val) => $emit('changeValue', 'icon', 'backgroundUrl', val)"
+            worksheetId="tckzzj"
+            imageField="backgroundPic"
+            :src="config.icon.backgroundUrl"
+          ></ImageSelector>
           <el-form-item label="宽：">
-            <el-input v-model="config.icon.width" size="mini"></el-input>
+            <el-input
+              v-model="config.icon.width"
+              size="mini"
+            ></el-input>
           </el-form-item>
           <el-form-item label="高：">
-            <el-input v-model="config.icon.height" size="mini"></el-input>
+            <el-input
+              v-model="config.icon.height"
+              size="mini"
+            ></el-input>
           </el-form-item>
         </el-collapse-item>
       </el-collapse>
@@ -208,21 +251,26 @@
   </el-scrollbar>
 </template>
   
-  <script>
+<script>
+import ImageSelector from '../componments/ImageSelector';
 export default {
-  name: "layerControl",
+  name: 'checkboxGroup',
+  components: {
+    ImageSelector
+  },
   data() {
-    return {};
+    return {
+      backgroundPicList: []
+    };
   },
   props: {
     config: {
       type: Object,
       default: () => {
         return {};
-      },
-    },
-  },
-  methods: {},
+      }
+    }
+  }
 };
 </script>
   

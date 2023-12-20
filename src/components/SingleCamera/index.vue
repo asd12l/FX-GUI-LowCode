@@ -4,96 +4,106 @@
  * @Author: 卜倩倩
  * @Date: 2023-10-13 09:55:57
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-10-25 09:17:31
+ * @LastEditTime: 2023-11-21 14:08:13
 -->
 <template>
-  <div
+  <transition
+    name="el-fade-in"
     v-show="isShowModuleFunc(config)"
-    class="singleCamera-wrapper"
-    :style="{
-     width: config.width + 'px',
-     height: config.height + 'px',
-     background: config.box.backgroundColor,
-     ...scssStyle
-    }"
   >
     <div
-      class="head"
+      class="singleCamera-wrapper"
+      v-show="isShowModuleFunc(config)"
       :style="{
+        width: config.width + 'px',
+        height: config.height + 'px',
+        background: config.box.backgroundColor,
+        ...scssStyle
+        }"
+    >
+      <div
+        class="head"
+        :style="{
       backgroundImage: 'url('+ config.box.headPic +')'
     }"
-    >
-      <span :style="{
+      >
+        <span :style="{
           fontSize: config.box.headFontSize + 'px',
         }">{{camera && camera.device_name}}</span>
-      <span
-        class="close-icon"
-        @click="config.isShowModule = false"
-        :style="{
+        <span
+          class="close-icon"
+          @click="closeModal"
+          :style="{
           width: config.box.closeIconWidth + 'px',
           height: config.box.closeIconHeight + 'px',
           backgroundImage: 'url(' + config.box.closePic + ')',
         }"
-      ></span>
-      <div
-        class="tabs"
-        v-if="config.offline_record.isShow"
-        :style="{
+        ></span>
+        <div
+          class="tabs"
+          v-if="config.offline_record.isShow"
+          :style="{
           fontSize: config.offline_record.headFont + 'px'
         }"
-      >
-        <span
-          :class="activeTab === 1? 'active':''"
-          @click="activeTab = 1"
-        >视频播放</span>
-        <span
-          :class="activeTab === 2? 'active':''"
-          @click="activeTab = 2"
-        >掉线记录</span>
+        >
+          <span
+            :class="activeTab === 1? 'active':''"
+            @click="activeTab = 1"
+          >视频播放</span>
+          <span
+            :class="activeTab === 2? 'active':''"
+            @click="activeTab = 2"
+          >掉线记录</span>
+        </div>
       </div>
-    </div>
-    <div class="singleCamera-content">
-      <Camera
-        v-show="(activeTab === 1 && config.offline_record.isShow) || !config.offline_record.isShow"
-        @changeHeight="changeHeight"
-        :config="config"
-        :camera_data="camera"
-      ></Camera>
-      <div
-        class="offline-record"
-        v-show="activeTab === 2"
-      >
-        <div :style="{
+      <div class="singleCamera-content">
+        <Camera
+          ref="camera"
+          v-if="config.isShowModule"
+          v-show="(activeTab === 1 && config.offline_record.isShow) || !config.offline_record.isShow"
+          @changeHeight="changeHeight"
+          :config="config"
+          :camera_data="camera"
+        ></Camera>
+        <div
+          class="offline-record"
+          v-show="activeTab === 2"
+        >
+          <div :style="{
           fontSize: config.offline_record.headFont + 'px',
           color: config.offline_record.color,
           marginBottom: '15px'
         }">历史掉线记录：</div>
-        <div
-          class="data-line"
-          v-for="item in 10"
-          :key="item"
-          :style="{
+          <div
+            class="data-line"
+            v-for="item in offlineRecords"
+            :key="item"
+            :style="{
           fontSize: config.offline_record.dataFont + 'px'
         }"
-        >
-          <span>2023-10-11 12:19:12------2023-10-11 17:23:56</span>
-          <span :style="{
+          >
+            <span>{{item.riqi}}</span>
+            <span :style="{
             color: config.offline_record.color
           }">掉线</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
+import 'element-ui/lib/theme-chalk/base.css';
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import Camera from './camera.vue';
-import { getRowDetail } from '@/utils/api';
+import { getRowDetail, getFilterRows } from '@/utils/api';
 import { appKey, sign } from '@/utils/const.js';
 export default {
   name: 'SingleCamera',
   components: {
-    Camera
+    Camera,
+    CollapseTransition
   },
   props: {
     config: {
@@ -103,15 +113,8 @@ export default {
   data() {
     return {
       activeTab: 1,
-      camera: {
-        // device_name: '渭川村-汇欣苑2幢高空抛物',
-        // camera_type: '枪机',
-        // serial: '34020000001110000999',
-        // code: '34020000001320010012',
-        // svs_url: location.origin || 'http://192.168.6.66',
-        // is_intranet: false,
-        // account_id: 'b9a3ef50-f626-4ddb-a208-d5fe96c0d348'
-      }
+      camera: {},
+      offlineRecords: []
     };
   },
   computed: {
@@ -121,6 +124,18 @@ export default {
         '--lineColor': this.config.offline_record.lineColor,
         '--activeTab': 'url(' + this.config.offline_record.pic + ')'
       };
+    }
+  },
+  watch: {
+    'config.isShowModule': {
+      handler(nval, oval) {
+        if (nval) {
+          this.$setModal(this.config.box.modalBgc);
+        } else {
+          this.$removeModal();
+          this.camera = {};
+        }
+      }
     }
   },
   mounted() {
@@ -133,6 +148,10 @@ export default {
   //   }
   // },
   methods: {
+    closeModal() {
+      this.config.isShowModule = false;
+      this.$refs.camera.closeModal();
+    },
     changeHeight(param) {
       if (param === 1) {
         this.config.height = this.config.height - 114;
@@ -143,7 +162,7 @@ export default {
     async updateComponentData({ rowid }) {
       try {
         this.id = rowid;
-        this.config.isShowModule = true;
+        // this.config.isShowModule = true;
         const data = {
           appKey: appKey,
           sign: sign,
@@ -158,11 +177,32 @@ export default {
       } catch (error) {
         this.camera = null;
       }
-      // this.eventDetail.alam_drawbox = data.alam_drawbox
-      //   ? JSON.parse(data.alam_drawbox)
-      //   : [];
-      // this.eventDetail.alarm_img_url =
-      //   'http://skyinfor.yikuaida.cn/file/mdpic/doc/20231011/d419f991d5944ffe9ada8ef808f01bc3.jpg';
+
+      this.getDeviceOfflineRecord(rowid);
+    },
+    async getDeviceOfflineRecord(rowid) {
+      try {
+        const data = {
+          appKey: appKey,
+          sign: sign,
+          worksheetId: 'dropRecord',
+          rowId: rowid,
+          filters: [
+            {
+              controlId: 'camera_list',
+              dataType: 29,
+              spliceType: 1,
+              filterType: 24,
+              dynamicSource: [],
+              values: [
+                rowid //监控rowid
+              ]
+            }
+          ]
+        };
+        const result = await getFilterRows(data);
+        this.offlineRecords = result.data.rows;
+      } catch (error) {}
     }
   }
 };
@@ -175,6 +215,7 @@ export default {
   box-sizing: border-box;
   box-shadow: 0px 0px 14px 0px rgba(100, 190, 255, 0.4),
     inset 0px 0px 50px 0px rgba(48, 141, 255, 0.5);
+  z-index: 100;
 
   .head {
     width: 100%;

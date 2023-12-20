@@ -113,11 +113,12 @@ export default {
     },
     setBgColor() {
       if (this.gradientType === "txtBg") {
-        this.config[this.parentType].color = this.colorValue;
+        this.$emit("changeValue", this.parentType, "color", this.colorValue);
       } else if (this.gradientType === "background") {
-        this.config[this.type].background = this.colorValue;
+        this.$emit("changeValue", this.type, "background", this.colorValue);
       } else {
-        this.config[this.type].borderColor = this.colorValue;
+        // d[this.type].borderColor = this.colorValue;
+        this.$emit("changeValue", this.type, "borderColor", this.colorValue);
       }
     },
     getLinearColor() {
@@ -171,11 +172,15 @@ export default {
           this.gradientType === "txtBg" ||
           this.gradientType === "background"
         ) {
-          d.background = bglinear;
-          d.backgroundColors = bgColors;
+          this.$emit("changeValue", this.type, "background", bglinear);
+          this.$emit("changeValue", this.type, "backgroundColors", bgColors);
+          // d.background = bglinear;
+          // d.backgroundColors = bgColors;
         } else {
-          d.borderImage = bglinear;
-          d.borderColors = bgColors;
+          this.$emit("changeValue", this.type, "borderImage", bglinear);
+          this.$emit("changeValue", this.type, "borderColors", bgColors);
+          // d.borderImage = bglinear;
+          // d.borderColors = bgColors;
         }
         this.gradientColorData = bgColors;
       }

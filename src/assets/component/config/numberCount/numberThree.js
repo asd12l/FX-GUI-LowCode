@@ -13,68 +13,39 @@
     data:  [
       {
           "name": "宜居",
-          "value": [
-          {
-              "name": "基础保障",
-              "value": 100
-          },
-          {
-              "name": "品质提升",
-              "value": 6
-          }
-          ]
+           line1:'基础保障',
+           line2:'100',
+           line3:'品质提示',
+           line4:'6',
       },
       {
           "name": "宜业",
-          "value": [
-          {
-              "name": "基础保障",
-              "value": 10
-          },
-          {
-              "name": "品质提升",
-              "value": 7
-          }
-          ]
+          line1:'基础保障',
+          line2:'100',
+          line3:'品质提示',
+          line4:'6',
       },
       {
           "name": "宜游",
-          "value": [
-          {
-              "name": "基础保障",
-              "value": 12
-          },
-          {
-              "name": "品质提升",
-              "value": 57
-          }
-          ]
+          line1:'基础保障',
+          line2:'100',
+          line3:'品质提示',
+          line4:'6',
       },
       {
           "name": "宜养",
-          "value": [
-          {
-              "name": "基础保障",
-              "value": 27
-          },
-          {
-              "name": "品质提升",
-              "value": 2
-          }
-          ]
+          line1:'基础保障',
+          line2:'100',
+          line3:'品质提示',
+          line4:'6',
       },
       {
           "name": "宜学",
-          "value": [
-          {
-              "name": "基础保障",
-              "value": 23
-          },
-          {
-              "name": "品质提升",
-              "value": 45
-          }
-          ]
+          line1:'基础保障',
+          line2:'100',
+          line3:'品质提示',
+          line4:'6',
+          
       } 
      ],
      contain:{

@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-01 13:58:48
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-09-01 15:55:55
+ * @LastEditTime: 2023-11-22 16:42:05
  */
 export default {
   name: '富文本编辑器',
@@ -16,5 +16,9 @@ export default {
   lock: true,
   isShowModule: true,
   writingMode: 'horizontal-tb',
-  data: '这里是文本内容'
+  data: [
+    {
+      text: '<p>这里是文本内容</p>'
+    }
+  ]
 }

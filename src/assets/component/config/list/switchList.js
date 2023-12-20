@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-08-23 13:30:11
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-10-24 15:53:01
+ * @LastEditTime: 2023-11-24 14:00:38
  */
 export default {
   width: 400,
@@ -17,11 +17,13 @@ export default {
   isShowCheckbox: false,
   isLock: true,
   box: {
-    backgroundImage: '',
+    isExpand: false,
+    backgroundImage: require('../../../../assets/image/img/map/progressBar/1.png'),
     opacity: 0.5,
     mainColor: 'rgba(255,119,66,1)',
     hoverColor: 'rgba(255,255,255,.1)',
-    activeColor: 'rgba(255,255,255,.1)'
+    activeColor: 'rgba(255,255,255,.1)',
+    subboxColor: 'rgba(255,119,66,1)'
   },
   searchBox: {
     display: 'flex',
@@ -30,8 +32,8 @@ export default {
     fontSize: 18,
     width: 300,
     height: 40,
-    left: 2,
-    top: 30,
+    left: 30,
+    top: 0,
     select: ''
   },
   level_1: {
@@ -100,9 +102,9 @@ export default {
     level_1_input_value: '',
     level_2_input_value: '',
     worksheetid: '',
-    param: '',
+    param: null,
     worksheetid1: '',
-    param1: '',
+    param1: null,
   },
   level_1_tab: [],
   level_2_tab: [],
@@ -180,7 +182,7 @@ export default {
       ]
     }
   ],
-  api: 'http://www.skyinforcloud.com:81/v1/weichuan/index/get_camera_group_tree',
+  api: '',
   requestType: "POST",
   requestParams: {
     account_id: 'b9a3ef50-f626-4ddb-a208-d5fe96c0d348'

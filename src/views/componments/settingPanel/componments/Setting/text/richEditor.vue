@@ -94,7 +94,7 @@
         />
         <Editor
           style="height: 300px; overflow-y: hidden;"
-          v-model="config.data"
+          v-model="data"
           :defaultConfig="editorConfig"
           :mode="mode"
           @onCreated="onCreated"
@@ -111,6 +111,7 @@ import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
 export default {
   data() {
     return {
+      data: '',
       editor: null,
       toolbarConfig: {
         toolbarKeys: [
@@ -150,13 +151,26 @@ export default {
       }
     }
   },
+  watch: {
+    'config.data': {
+      handler(nval) {
+        if (typeof nval === 'string') {
+          this.data = nval;
+        } else {
+          this.data = nval[0].text;
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   mounted() {},
   methods: {
     onCreated(editor) {
       this.editor = Object.seal(editor); // 一定要用 Object.seal() ，否则会报错
     },
     onChange(val) {
-      // console.log(val.getHtml());
+      console.log(val, val.getHtml());
       this.$emit('changeSize', 'data', val.getHtml());
     }
   },

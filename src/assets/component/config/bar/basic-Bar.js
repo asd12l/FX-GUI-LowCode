@@ -3,14 +3,14 @@
  * @version:
  * @Author: ydl
  * @Date: 2023-07-21 09:10:09
- * @LastEditors: ydl
- * @LastEditTime: 2023-08-17 16:50:39
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-21 11:14:56
  */
 export default {
   name: "基础柱状图",
   sourceType: "api",
   requestType: "get",
-  api: "https://www.sjxks.com/v1/xiaokunshan/security/view3",
+  api: "",
   requestParams: {
     account_id: "eb71dac7-a4dc-4cbb-9022-251c93acca1e",
   },

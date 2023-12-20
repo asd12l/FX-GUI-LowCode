@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2023-10-13 09:46:16
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-10-17 17:15:00
+ * @LastEditTime: 2023-11-24 13:35:35
  */
 export default {
   width: 870,
@@ -22,26 +22,28 @@ export default {
     width: 870,
     height: 650,
     backgroundColor: 'rgba(4, 21, 27, 0.95)',
-    headPic: '',
+    headPic: require('../../../assets/image/img/map/camera/8.png'),
     headFontSize: 26,
-    closePic: '',
-    emptyPic: '',
+    closePic: require('../../../assets/image/img/map/eventDetail/2.png'),
+    emptyPic: require('../../../assets/image/img/map/camera/6.png'),
     closeIconWidth: 20,
-    closeIconHeight: 20
+    closeIconHeight: 20,
+    modalBgc: 'rgba(0,0,0,.5)',
+    svs_url: window.location.host
   },
   controlBtn: {
     width: 70,
     height: 70,
-    upwardPic: '',
-    upwardPic_hover: '',
-    shrinkPic: '',
-    shrinkPic_hover: '',
-    enlargePic: '',
-    enlargePic_hover: '',
+    upwardPic: require('../../../assets/image/img/map/camera/2.png'),
+    upwardPic_hover: require('../../../assets/image/img/map/camera/3.png'),
+    shrinkPic: require('../../../assets/image/img/map/camera/5.png'),
+    shrinkPic_hover: require('../../../assets/image/img/map/camera/5.png'),
+    enlargePic: require('../../../assets/image/img/map/camera/4.png'),
+    enlargePic_hover: require('../../../assets/image/img/map/camera/4.png'),
   },
   offline_record: {
     isShow: false,
-    pic: '',
+    pic: require('../../../assets/image/img/map/camera/1.png'),
     headFont: 16,
     dataFont: 16,
     color: '#fff',

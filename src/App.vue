@@ -5,37 +5,38 @@
 </template>
 
 <script>
-const appName = "九里亭";
-import { getKey, getAppkeyList, getAppInfo } from "@/utils/api";
-import { projectId } from "@/utils/const.js";
+const appName = '数据库';
+import { getKey, getAppkeyList, getAppInfo } from '@/utils/api';
+import { projectId } from '@/utils/const.js';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {},
   data() {
     return {
-      key: "",
+      key: ''
     };
   },
   computed: {},
   watch: {},
   async created() {
-    await this.loadKey();
-    this.loadAppkeyList();
-    this.loadAppInfo();
+    // sessionStorage.setItem('rowid', '567af94a-4df9-4f74-b44e-f644f898c3be')
+    // await this.loadKey();
+    // this.loadAppkeyList();
+    // this.loadAppInfo();
   },
   mounted() {},
   methods: {
     async loadAppInfo() {
       const {
-        data: { apps },
+        data: { apps }
       } = await getAppInfo({ projectId: projectId, containsLinks: true });
       const appInfo = apps.find((item) => item.name === appName);
-      localStorage.setItem("appInfo", JSON.stringify(appInfo));
+      localStorage.setItem('appInfo', JSON.stringify(appInfo));
     },
     async loadKey() {
       const {
-        data: { key },
+        data: { key }
       } = await getKey();
 
       this.key = key;
@@ -43,18 +44,18 @@ export default {
     async loadAppkeyList() {
       const { data } = await getAppkeyList(this.key);
       if (data && data.length > 0) {
-        localStorage.setItem("appkeyList", JSON.stringify(data));
+        localStorage.setItem('appkeyList', JSON.stringify(data));
         const dataInfo = data.find((item) => item.app_name === appName);
         localStorage.setItem(
-          "systemInfo",
+          'systemInfo',
           JSON.stringify({
             app_key: dataInfo.app_key,
-            sign: dataInfo.sign,
+            sign: dataInfo.sign
           })
         );
       }
-    },
-  },
+    }
+  }
 };
 </script>
 <style>

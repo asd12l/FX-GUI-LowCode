@@ -4,7 +4,7 @@
  * @Author: 卜倩倩
  * @Date: 2022-10-14 16:34:29
  * @LastEditors: 卜倩倩
- * @LastEditTime: 2023-10-24 14:55:14
+ * @LastEditTime: 2023-11-21 16:33:20
 -->
 <template>
   <div
@@ -111,11 +111,11 @@
         >
           <span
             :class="[active == 1 ? 'active' : '']"
-            @click="active = 1, getStreamStart(), changeHeight(1)"
+            @click="getStreamStart(), changeHeight(1)"
           >实时画面</span>
           <span
             :class="[active == 2 ? 'active' : '']"
-            @click="active = 2, dateChange(), changeHeight(2)"
+            @click="dateChange(), changeHeight(2)"
           >查看回放</span>
         </div>
       </div>
@@ -182,19 +182,31 @@ export default {
   watch: {
     camera_data: {
       handler(nl) {
-        console.log(nl, 'pppppppp');
         this.getStreamStart();
       },
       deep: true
+    },
+    'config.isShowModule': {
+      handler(nval, oval) {
+        if (!nval) {
+          this.videoUrl = '';
+        }
+      }
     }
   },
   methods: {
+    closeModal() {
+      this.time = '00:00:00';
+      this.videoUrl = null;
+      this.changeHeight(1);
+    },
     changeHeight(param) {
+      if (param === this.active) return;
+      this.active = param;
       this.$emit('changeHeight', param);
     },
     async getStreamStart() {
       if (!this.camera_data) {
-        console.log('111111111');
         this.videoUrl = '';
         this.isShowNoVideo = true;
         return;
@@ -205,10 +217,11 @@ export default {
         const res = await stream_start({
           serial: camera.CameraAddress.split('&')[0].split('=')[1],
           code: camera.CameraAddress.split('&')[1].split('=')[1],
-          svs_url: camera.CameraType
+          svs_url: this.config.box.svs_url || window.location.origin
           // is_intranet: this.camera_data.is_intranet
         });
         this.videoUrl = res.WS_FLV;
+        console.log(res, this.videoUrl, '摄像头接口================');
         this.isShowNoVideo = !this.videoUrl;
       } catch (error) {
         this.videoUrl = '';
@@ -253,7 +266,7 @@ export default {
         const res = await playback_start({
           serial: camera.CameraAddress.split('&')[0].split('=')[1],
           code: camera.CameraAddress.split('&')[1].split('=')[1],
-          svs_url: camera.CameraType,
+          svs_url: this.config.box.svs_url || window.location.origin,
           starttime: this.start_time,
           endtime: this.end_time
         });
@@ -274,7 +287,7 @@ export default {
       const res = await playback_recordlist({
         serial: camera.CameraAddress.split('&')[0].split('=')[1],
         code: camera.CameraAddress.split('&')[1].split('=')[1],
-        svs_url: camera.CameraType,
+        svs_url: this.config.box.svs_url || window.location.origin,
         starttime: this.value + 'T' + '00:00:00',
         endtime: this.dateFormat(new Date(), 'yyyy-MM-ddTHH:mm:ss')
       });
@@ -317,10 +330,11 @@ export default {
     },
     async controlYun(command) {
       if (this.videoUrl) {
+        let camera = JSON.parse(this.camera_data.camera);
         const res = await getControl_ptz({
-          serial: this.camera_data.serial,
-          code: this.camera_data.code,
-          svs_url: this.camera_data.svs_url,
+          serial: camera.CameraAddress.split('&')[0].split('=')[1],
+          code: camera.CameraAddress.split('&')[1].split('=')[1],
+          svs_url: this.config.box.svs_url || window.location.origin,
           command: command
         });
       } else {

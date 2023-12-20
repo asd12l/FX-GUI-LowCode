@@ -3,193 +3,161 @@
  * @version:
  * @Author: ydl
  * @Date: 2023-07-21 09:10:10
- * @LastEditors: ydl
- * @LastEditTime: 2023-09-07 11:17:27
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-21 13:56:14
  */
 export default {
-    name: "人房信息",
-    width: 794,
-    height: 700,
-    left: 0,
-    top: 0,
-
-    box:{
-        backgroundImg:require('@/assets/image/xiaokunshan/bg14.png'),
-        headImg:require('@/assets/image/xiaokunshan/pop-title.png'),
-        closeImg:require('@/assets/image/xiaokunshan/bg11.png'),
-        smallImg: require('@/assets/image/xiaokunshan/title2.png'),
-        height: 44,
-        color:'#fff',
-        fontSize:26,
-        fontWeight: "bold",
-        fontStyle: "normal", //'italic' 倾斜
-        fontFamily: "Microsoft YaHei",
-        textAlign: "left",
-        smallTitle:{
-            height: 40,
-            fontSize:20,
-            fontWeight: "normal",
-            fontStyle: "normal", //'italic' 倾斜
-            fontFamily: "Microsoft YaHei",
-            textAlign: "left",
-            textIndent:50,
-        }
+  name: "人房信息",
+  width: 794,
+  height: 700,
+  left: 0,
+  top: 0,
+  relationWorksheetId: '652cee0d1f76aeb5855bcbed',
+  box: {
+    relationLayerId: '',
+    desensitization: false,//手机号脱敏
+    input: ['mobile'],
+    numDesensitization: ['mobile'],
+    houseWorksheetId: '652cd71a1f76aeb5855bc643',
+    name: 'name',
+    backgroundImg: require('@/assets/image/xiaokunshan/bg14.png'),
+    headImg: require('@/assets/image/xiaokunshan/pop-title.png'),
+    closeImg: require('@/assets/image/xiaokunshan/bg11.png'),
+    smallImg: require('@/assets/image/xiaokunshan/title2.png'),
+    height: 44,
+    color: '#fff',
+    fontSize: 26,
+    fontWeight: "bold",
+    fontStyle: "normal", //'italic' 倾斜
+    fontFamily: "Microsoft YaHei",
+    textAlign: "left",
+    smallTitle: {
+      height: 40,
+      fontSize: 20,
+      fontWeight: "normal",
+      fontStyle: "normal", //'italic' 倾斜
+      fontFamily: "Microsoft YaHei",
+      textAlign: "left",
+      textIndent: 50,
+    }
+  },
+  sourceType: "静态",
+  showDataType: "table",
+  worksheetId: 'zhsq_rfyhyl',
+  isRelationPoi: false,
+  tableHeadStyle: {
+    styleData: [],
+  },
+  houseData: {
+    fontSize: 16,
+    tableLeft: {
+      width: 120,
+      height: 34,
+      color: '#64beff',
+      borderColor: 'rgba(48, 141, 255, 0.2)',
+      background: 'rgba(48, 141, 255, 0.05)',
     },
-    sourceType: "静态",
-    showDataType: "table",
-    worksheetId:'zhsq_rfyhyl',
-    isRelationPoi:true,
-    table: {
-      align: "center",
-      indexShow: false,
-      borderShow: false,
-      borderWidth: 1,
-      borderStyle: "solid",
-      borderColor: "#EBEEF5",
-      height: 660,
-      theader: {
-        background: "rgba(125, 221, 255, 0.1)",
-        color: "#81b4ff",
-        height: 40,
-        fontSize: 12,
-        fontWeight: "normal",
-        fontStyle: "normal", //'italic' 倾斜
-        fontFamily: "Microsoft YaHei",
-        textAlign: "center",
-      },
-      tbody: {
-        height: 60,
-        background1: "",
-        background2: "rgba(71, 140, 164, 0.1)",
-        background3: "rgba(125, 221, 255, 0.3)",
-        fontSize: 14,
-        fontWeight: "normal",
-        fontStyle: "normal", //'italic' 倾斜
-        fontFamily: "Microsoft YaHei",
-        letterSpacing: 0,
-        color: "#fff",
-      },
+    tableRight: {
+      width: 250,
+      height: 34,
+      color: '#fff',
+      borderColor: 'rgba(48, 141, 255, 0.3)',
+      background: 'rgba(48, 141, 255, 0.15)',
     },
-    card: {
-      width: 270,
-      height: 282,
-      margin: "0,10,20,10",
+    tableKeyData: ['rental_type', "people_num", "is_rental", "mobile", "address", "obligee", 'household_name'],
+    tableHead: [
+      {
+        label: "房屋性质：",
+        value: "rental_type"
+      },
+      {
+        label: "居住人数：", value: "people_num", color: "#fff",
+      },
+      {
+        label: "户主姓名：", value: "household_name", color: "#fff",
+      },
+      {
+        label: "详细地址：", value: "address", color: "#fff",
+      },
+      { label: "权利人：", value: "obligee", color: "#fff" },
+      { label: "权利人电话：", value: "mobile", color: "#fff" },
+    ],
+    colorData: [[], [], [], [], [], []],
+  },
+  personnelData: {
+    height: 370,
+    houseTableId: '652cd71a1f76aeb5855bc652',
+    opacity: 0.2,
+    dataNumber: 1,
+    tableKeyData: ['name', "mobile", "attr", "mobile", "skill"],
+    titleName: '住户名称',
+    theader: {
+      background: "rgba(125, 221, 255, 0.1)",
+      borderColor: ' rgba(69, 162, 255, 0.3)',
+      color: "#ACDAFF",
+      height: 40,
       fontSize: 16,
       fontWeight: "normal",
       fontStyle: "normal", //'italic' 倾斜
-      textAlign: "left",
+      fontFamily: "Microsoft YaHei",
+      textAlign: "center",
+    },
+    tbody: {
+      height: 60,
+      background: 'rgba(48, 141, 255, 0.3)',
+      fontSize: 14,
+      fontWeight: "normal",
+      fontStyle: "normal", //'italic' 倾斜
       fontFamily: "Microsoft YaHei",
       letterSpacing: 0,
-      lineHeight: 30,
       color: "#fff",
-      background: "rgba(69, 128, 188, 0.1)",
-      button: {
-        height: 24,
-        fontSize: 14,
-        fontWeight: "normal",
-        fontStyle: "normal", //'italic' 倾斜
-        textAlign: "center",
-        fontFamily: "Microsoft YaHei",
-        letterSpacing: 0,
+    },
+    tableHead: [
+      {
+        label: "住户姓名",
+        value: "name",
+        color: "#FFDB6B",
       },
-    },
-    pagination: {
-      show: true,
-      marginTop: 20,
-      background: "#01162C",
-      color: "#fff",
-      activeBackground: "#45A2FF",
-      activeColor: "#143452",
-    },
-    data: {
-      tableHead: [
-        {
-          label: "快照",
-          value: "alarm_img",
-          id: 0,
-        },
-        {
-          label: "事件来源",
-          value: "alarm_source",
-          id: 1,
-        },
-        {
-          label: "事件名称",
-          value: "event_name",
-          id: 2,
-        },
-        {
-          label: "事件类型",
-          value: "alarm_type",
-          id: 3,
-        },
-        {
-          label: "事件等级",
-          value: "alarm_level",
-          id: 4,
-        },
-        {
-          label: "发生地址",
-          value: "address",
-          id: 5,
-        },
-        {
-          label: "发生时间",
-          value: "alarm_time",
-          id: 6,
-        },
-        {
-          label: "事件阶段",
-          value: "stage",
-          id: 7,
-        },
-      ],
-      tableData: [],
-      tableKeyData: [],
-      cardData: [
-        {
-          label: "",
-          value: "event_name",
-        },
-        {
-          label: "",
-          value: "alarm_img",
-          width: 250,
-          height: 146,
-        },
-        {
-          label: "发生时间",
-          value: "alarm_time",
-        },
-        {
-          label: "发生地址",
-          value: "address",
-        },
-      ],
-      buttonData: [
-        {
-          value: "stage",
-          width: 80,
-          background: "rgba(255, 151, 77, 0.1)",
-          color: "#FF974D",
-        },
-        {
-          value: "alarm_class",
-          width: 80,
-          background: "rgba(53, 211, 255, 0.1)",
-          color: "#35d3ff",
-        },
-        {
-          value: "alarm_source",
-          width: 80,
-          background: "rgba(255, 217, 139, 0.1)",
-          color: "#ffd98b",
-        },
-      ],
-      total: 10,
-    },
-    tableHeadStyle: {
-      styleData: [],
-    },
-  };
-  
+      { label: "手机号码", value: "mobile", color: "#fff", },
+      { label: "类型", value: "attr", color: "#fff", },
+      { label: "特殊人员标签", value: "skill", color: "#fff", },
+    ],
+    colorData: [[], [], [], [], [], []],
+  },
+  data: {
+    position: "121.6,28.6,19.58",
+    district: "[]",
+    type: "大套",
+    is_rental: "否",
+    obligee: "张三",
+    mobile: "+86136xxxx2677",
+    address: "三区45幢3",
+    people: [
+      {
+        household_name: "张三",
+        name: "张三",
+        mobile: "+86139xxxx8099",
+        attr: "子",
+        type: [],
+        skill: ['80+', '退役军人'],
+        tags: [],
+        rowid: "c4f730ca-21b2-4a82-a7b0-b19014a643d9",
+      },
+      {
+        household_name: "张三",
+        name: "李四",
+        mobile: "+86139xxxx8099",
+        attr: "妻",
+        type: ["村民代表"],
+        skill: [],
+        tags: ["村民代表"],
+        rowid: "2b3fea9d-bf5d-4e91-bfde-892128a4409d",
+      }
+    ],
+    name: "C7-3",
+    rowid: "24346621-fb24-48d4-9976-fa703381b667",
+    rental_type: "自住",
+    people_num: 4,
+    household_name: "张三,李四",
+  },
+};

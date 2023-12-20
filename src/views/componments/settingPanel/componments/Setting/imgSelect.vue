@@ -3,8 +3,8 @@
  * @version: 
  * @Author: ydl
  * @Date: 2023-08-16 11:35:41
- * @LastEditors: ydl
- * @LastEditTime: 2023-10-25 09:55:14
+ * @LastEditors: 卜倩倩
+ * @LastEditTime: 2023-11-23 11:52:38
 -->
 <template>
   <el-select
@@ -28,36 +28,34 @@
 </template>
 
 <script>
-import { getFilterRows } from "@/utils/api";
-import { appKey, sign } from "@/utils/const.js";
+import { getFilterRows } from '@/utils/api';
+import { appKey, sign } from '@/utils/const.js';
 export default {
   props: {
     config: {
-      type: Object,
+      type: Object
     },
-    backgroundData: {
-      type: Object,
-    },
+    backgroundData: {},
     type: {
       type: String,
-      default: "beijingtu",
+      default: 'beijingtu'
     },
     datatype1: {
-      type: String,
+      type: String
     },
     imgType: {
       type: String,
-      default: "background",
+      default: 'background'
     },
     index: {
-      type: Number,
-    },
+      type: Number
+    }
   },
   data() {
     return {
       imgList: {},
       selectedImg: {},
-      cockpitNavbar: "",
+      cockpitNavbar: ''
     };
   },
   watch: {
@@ -68,11 +66,11 @@ export default {
       handler() {
         this.init();
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   mounted() {
-    // this.init();
+    this.init();
   },
   methods: {
     init() {
@@ -80,7 +78,7 @@ export default {
       this.getImg();
     },
     getImg() {
-      console.log(this.backgroundData, "===data");
+      console.log(this.backgroundData, '===data');
       if (this.datatype1) {
         //数组格式
         if (this.index || this.index == 0) {
@@ -100,30 +98,36 @@ export default {
         this.$set(this.selectedImg, this.type, this.config[this.imgType]);
       }
       let data = [];
-      this.backgroundData.rows.forEach((item) => {
-        if (item.sfqy === "启用") {
-          let d = item[this.type] ? JSON.parse(item[this.type]) : [];
-          if (d.length > 0) {
-            d.forEach((v) => {
-              data.push(v.DownloadUrl);
-            });
+      if (Array.isArray(this.backgroundData.rows)) {
+        this.backgroundData.rows.forEach((item) => {
+          if (item.sfqy === '启用') {
+            let d = item[this.type] ? JSON.parse(item[this.type]) : [];
+            if (d.length > 0) {
+              d.forEach((v) => {
+                data.push(v.DownloadUrl);
+              });
+            }
           }
-        }
-      });
+        });
+      }
       this.$set(this.imgList, this.type, data);
     },
     changeSelectImg(val) {
       this.$set(this.selectedImg, this.type, val);
       if (this.datatype1) {
         if (this.index || this.index == 0) {
-          this.config[this.datatype1][this.index][this.imgType] = val;
+          let d = { ...this.config[this.datatype1][this.index] };
+          d[this.imgType] = val;
+          this.$emit('changeValue', this.datatype1, this.index, d);
+          // this.config[this.datatype1][this.index][this.imgType] = val;
         } else {
-          this.config[this.datatype1][this.imgType] = val;
+          // this.config[this.datatype1][this.imgType] = val;
+          this.$emit('changeValue', this.datatype1, this.imgType, val);
         }
       } else {
-        this.$emit("changeSize", [this.imgType], val);
+        this.$emit('changeSize', [this.imgType], val);
       }
-    },
-  },
+    }
+  }
 };
 </script>
