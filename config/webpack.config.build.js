@@ -26,26 +26,11 @@ module.exports = merge(base, {
       },
     },
   },
-  // module: {
-  //   rules: [
-  //     {
-  //       test: /\.css$/,
-  //       use: [{ loader: MiniCssExtractPlugin.loader }, "css-loader"],
-  //     },
-  //   ],
-  // },
   plugins: [
     new MiniCssExtractPlugin({ filename: "css/[hash].css" }),
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("production"),
-    }),
-    //   new HtmlWebpackPlugin({
-    //     template:'./index.html',
-    //     inject: 'body',
-    //     minify: {
-    //         removeComments: true
-    //     }
-    // })
+    })
   ],
 });
